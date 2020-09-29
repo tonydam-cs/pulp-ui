@@ -1,0 +1,40 @@
+# This config represents the latest values used when running the plugin-template. Any settings that
+# were not present before running plugin-template have been added with their default values.
+
+additional_plugins: []
+black: true
+check_commit_message: true
+cherry_pick_automation: false
+coverage: false
+deploy_client_to_pypi: false
+deploy_client_to_rubygems: false
+deploy_daily_client_to_pypi: false
+deploy_daily_client_to_rubygems: false
+deploy_to_pypi: true
+docker_fixtures: false
+docs_test: false
+plugin_app_label: ui
+plugin_camel: Pulp-UI
+plugin_camel_short: UI
+plugin_caps: PULP-UI
+plugin_caps_short: UI
+plugin_dash: pulp-ui
+plugin_dash_short: ui
+plugin_name: pulp-ui
+plugin_snake: pulp_ui
+publish_docs_to_pulpprojectdotorg: false
+pulp_settings: null
+pulpcore_branch: master
+pulpcore_pip_version_specifier: null
+pulpprojectdotorg_key_id: null
+pydocstyle: true
+pypi_username: null
+redmine_project: null
+stable_branch: null
+test_bindings: false
+test_performance: false
+test_s3: false
+travis_addtl_services: []
+travis_notifications: null
+update_redmine: false
+
