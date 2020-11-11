@@ -3,7 +3,7 @@ import { PageSection, Title } from '@patternfly/react-core';
 import { Table, TableHeader, TableBody, textCenter } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 
-import * as PulpCoreClient from '@app/js-client';
+import * as PulpCoreClient from '@app/pulpcore-client';
 //import { Configuration } from '@app/js-client/configuration';
 //import { StatusApi } from '@app/js-client/api';
 
