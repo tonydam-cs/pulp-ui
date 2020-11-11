@@ -16,7 +16,12 @@ module.exports = merge(common('development'), {
     historyApiFallback: true,
     hot: true,
     overlay: true,
-    open: true
+    open: true,
+    watchContentBase: true,
+    liveReload: true,
+    proxy: {
+      '/pulp/api': 'http://localhost:24817'
+    }
   },
   module: {
     rules: [
