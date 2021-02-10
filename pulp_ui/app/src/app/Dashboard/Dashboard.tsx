@@ -8,7 +8,7 @@ import * as PulpCoreClient from '@app/pulpcore-client';
 //import { StatusApi } from '@app/js-client/api';
 
 //const params = PulpCoreClient.ConfigurationParameters();
-const configuration = new PulpCoreClient.Configuration({username: 'pulp', password: 'password', basePath: 'http://localhost'});
+const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
 const statusAPI = new PulpCoreClient.StatusApi({configuration: configuration});
 const resp = statusAPI.statusRead();
 

@@ -122,37 +122,6 @@ export interface ExportResponse {
 /**
  * Serializer for File Content.
  * @export
- * @interface FileFileContent
- */
-export interface FileFileContent {
-    /**
-     * Artifact file representing the physical content
-     * @type {string}
-     * @memberof FileFileContent
-     */
-    artifact?: string;
-    /**
-     * Path where the artifact is located relative to distributions base_path
-     * @type {string}
-     * @memberof FileFileContent
-     */
-    relative_path: string;
-    /**
-     * An uploaded file that may be turned into the artifact of the content unit.
-     * @type {any}
-     * @memberof FileFileContent
-     */
-    file?: any;
-    /**
-     * A URI of a repository the new content unit should be associated with.
-     * @type {string}
-     * @memberof FileFileContent
-     */
-    repository?: string;
-}
-/**
- * Serializer for File Content.
- * @export
  * @interface FileFileContentResponse
  */
 export interface FileFileContentResponse {
@@ -236,6 +205,12 @@ export interface FileFileDistribution {
      */
     content_guard?: string | null;
     /**
+     * 
+     * @type {object}
+     * @memberof FileFileDistribution
+     */
+    pulp_labels?: object;
+    /**
      * A unique name. Ex, `rawhide` and `stable`.
      * @type {string}
      * @memberof FileFileDistribution
@@ -284,6 +259,12 @@ export interface FileFileDistributionResponse {
      * @memberof FileFileDistributionResponse
      */
     content_guard?: string | null;
+    /**
+     * 
+     * @type {object}
+     * @memberof FileFileDistributionResponse
+     */
+    pulp_labels?: object;
     /**
      * A unique name. Ex, `rawhide` and `stable`.
      * @type {string}
@@ -476,6 +457,12 @@ export interface FileFileRemote {
      */
     password?: string | null;
     /**
+     * 
+     * @type {object}
+     * @memberof FileFileRemote
+     */
+    pulp_labels?: object;
+    /**
      * Total number of simultaneous connections.
      * @type {number}
      * @memberof FileFileRemote
@@ -487,6 +474,36 @@ export interface FileFileRemote {
      * @memberof FileFileRemote
      */
     policy?: PolicyEnum;
+    /**
+     * aiohttp.ClientTimeout.total (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemote
+     */
+    total_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemote
+     */
+    connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemote
+     */
+    sock_connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_read (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemote
+     */
+    sock_read_timeout?: number | null;
+    /**
+     * Limits total download rate in requests per second
+     * @type {number}
+     * @memberof FileFileRemote
+     */
+    rate_limit?: number | null;
 }
 /**
  * Serializer for File Remotes.
@@ -561,6 +578,12 @@ export interface FileFileRemoteResponse {
      */
     password?: string | null;
     /**
+     * 
+     * @type {object}
+     * @memberof FileFileRemoteResponse
+     */
+    pulp_labels?: object;
+    /**
      * Timestamp of the most recent update of the remote.
      * @type {string}
      * @memberof FileFileRemoteResponse
@@ -578,6 +601,36 @@ export interface FileFileRemoteResponse {
      * @memberof FileFileRemoteResponse
      */
     policy?: PolicyEnum;
+    /**
+     * aiohttp.ClientTimeout.total (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemoteResponse
+     */
+    total_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemoteResponse
+     */
+    connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemoteResponse
+     */
+    sock_connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_read (q.v.) for download-connections.
+     * @type {number}
+     * @memberof FileFileRemoteResponse
+     */
+    sock_read_timeout?: number | null;
+    /**
+     * Limits total download rate in requests per second
+     * @type {number}
+     * @memberof FileFileRemoteResponse
+     */
+    rate_limit?: number | null;
 }
 /**
  * Serializer for File Repositories.
@@ -585,6 +638,12 @@ export interface FileFileRemoteResponse {
  * @interface FileFileRepository
  */
 export interface FileFileRepository {
+    /**
+     * 
+     * @type {object}
+     * @memberof FileFileRepository
+     */
+    pulp_labels?: object;
     /**
      * A unique name for this repository.
      * @type {string}
@@ -628,6 +687,12 @@ export interface FileFileRepositoryResponse {
      * @memberof FileFileRepositoryResponse
      */
     versions_href?: string;
+    /**
+     * 
+     * @type {object}
+     * @memberof FileFileRepositoryResponse
+     */
+    pulp_labels?: object;
     /**
      * 
      * @type {string}
@@ -920,6 +985,12 @@ export interface PatchedfileFileDistribution {
      */
     content_guard?: string | null;
     /**
+     * 
+     * @type {object}
+     * @memberof PatchedfileFileDistribution
+     */
+    pulp_labels?: object;
+    /**
      * A unique name. Ex, `rawhide` and `stable`.
      * @type {string}
      * @memberof PatchedfileFileDistribution
@@ -1012,6 +1083,12 @@ export interface PatchedfileFileRemote {
      */
     password?: string | null;
     /**
+     * 
+     * @type {object}
+     * @memberof PatchedfileFileRemote
+     */
+    pulp_labels?: object;
+    /**
      * Total number of simultaneous connections.
      * @type {number}
      * @memberof PatchedfileFileRemote
@@ -1023,6 +1100,36 @@ export interface PatchedfileFileRemote {
      * @memberof PatchedfileFileRemote
      */
     policy?: PolicyEnum;
+    /**
+     * aiohttp.ClientTimeout.total (q.v.) for download-connections.
+     * @type {number}
+     * @memberof PatchedfileFileRemote
+     */
+    total_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof PatchedfileFileRemote
+     */
+    connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_connect (q.v.) for download-connections.
+     * @type {number}
+     * @memberof PatchedfileFileRemote
+     */
+    sock_connect_timeout?: number | null;
+    /**
+     * aiohttp.ClientTimeout.sock_read (q.v.) for download-connections.
+     * @type {number}
+     * @memberof PatchedfileFileRemote
+     */
+    sock_read_timeout?: number | null;
+    /**
+     * Limits total download rate in requests per second
+     * @type {number}
+     * @memberof PatchedfileFileRemote
+     */
+    rate_limit?: number | null;
 }
 /**
  * Serializer for File Repositories.
@@ -1030,6 +1137,12 @@ export interface PatchedfileFileRemote {
  * @interface PatchedfileFileRepository
  */
 export interface PatchedfileFileRepository {
+    /**
+     * 
+     * @type {object}
+     * @memberof PatchedfileFileRepository
+     */
+    pulp_labels?: object;
     /**
      * A unique name for this repository.
      * @type {string}
@@ -1425,7 +1538,7 @@ export const ContentFilesApiFp = function(configuration?: Configuration) {
         async create(relativePath: string, artifact?: string, file?: any, repository?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await ContentFilesApiAxiosParamCreator(configuration).create(relativePath, artifact, file, repository, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -1448,7 +1561,7 @@ export const ContentFilesApiFp = function(configuration?: Configuration) {
         async list(limit?: number, offset?: number, ordering?: string, relativePath?: string, repositoryVersion?: string, repositoryVersionAdded?: string, repositoryVersionRemoved?: string, sha256?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileContentResponseList>> {
             const localVarAxiosArgs = await ContentFilesApiAxiosParamCreator(configuration).list(limit, offset, ordering, relativePath, repositoryVersion, repositoryVersionAdded, repositoryVersionRemoved, sha256, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -1464,7 +1577,7 @@ export const ContentFilesApiFp = function(configuration?: Configuration) {
         async read(fileFileContentHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileContentResponse>> {
             const localVarAxiosArgs = await ContentFilesApiAxiosParamCreator(configuration).read(fileFileContentHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -1686,8 +1799,13 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileDistribution !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileDistribution !== undefined ? fileFileDistribution : {}) : (fileFileDistribution || "");
+            const nonString = typeof fileFileDistribution !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileDistribution !== undefined ? fileFileDistribution : {})
+                : (fileFileDistribution || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -1703,15 +1821,19 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
          * @param {string} [basePathIn] base_path__in
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/distributions/file/file/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -1756,8 +1878,20 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
                 localVarQueryParameter['name'] = name;
             }
 
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
             if (nameIn !== undefined) {
                 localVarQueryParameter['name__in'] = nameIn;
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
             }
 
             if (offset !== undefined) {
@@ -1766,6 +1900,10 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (pulpLabelSelect !== undefined) {
+                localVarQueryParameter['pulp_label_select'] = pulpLabelSelect;
             }
 
             if (fields !== undefined) {
@@ -1846,8 +1984,13 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof patchedfileFileDistribution !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(patchedfileFileDistribution !== undefined ? patchedfileFileDistribution : {}) : (patchedfileFileDistribution || "");
+            const nonString = typeof patchedfileFileDistribution !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(patchedfileFileDistribution !== undefined ? patchedfileFileDistribution : {})
+                : (patchedfileFileDistribution || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -1967,8 +2110,13 @@ export const DistributionsFileApiAxiosParamCreator = function (configuration?: C
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileDistribution !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileDistribution !== undefined ? fileFileDistribution : {}) : (fileFileDistribution || "");
+            const nonString = typeof fileFileDistribution !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileDistribution !== undefined ? fileFileDistribution : {})
+                : (fileFileDistribution || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -1994,7 +2142,7 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
         async _delete(fileFileDistributionHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration)._delete(fileFileDistributionHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2008,7 +2156,7 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
         async create(fileFileDistribution: FileFileDistribution, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).create(fileFileDistribution, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2021,18 +2169,22 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
          * @param {string} [basePathIn] base_path__in
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileDistributionResponseList>> {
-            const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameIn, offset, ordering, fields, excludeFields, options);
+        async list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileDistributionResponseList>> {
+            const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2047,7 +2199,7 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
         async partialUpdate(fileFileDistributionHref: string, patchedfileFileDistribution: PatchedfileFileDistribution, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).partialUpdate(fileFileDistributionHref, patchedfileFileDistribution, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2063,7 +2215,7 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
         async read(fileFileDistributionHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileDistributionResponse>> {
             const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).read(fileFileDistributionHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2078,7 +2230,7 @@ export const DistributionsFileApiFp = function(configuration?: Configuration) {
         async update(fileFileDistributionHref: string, fileFileDistribution: FileFileDistribution, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await DistributionsFileApiAxiosParamCreator(configuration).update(fileFileDistributionHref, fileFileDistribution, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2120,16 +2272,20 @@ export const DistributionsFileApiFactory = function (configuration?: Configurati
          * @param {string} [basePathIn] base_path__in
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileDistributionResponseList> {
-            return DistributionsFileApiFp(configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileDistributionResponseList> {
+            return DistributionsFileApiFp(configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Trigger an asynchronous partial update task
@@ -2208,17 +2364,21 @@ export class DistributionsFileApi extends BaseAPI {
      * @param {string} [basePathIn] base_path__in
      * @param {number} [limit] Number of results to return per page.
      * @param {string} [name] name
+     * @param {string} [nameContains] name__contains
+     * @param {string} [nameIcontains] name__icontains
      * @param {string} [nameIn] name__in
+     * @param {string} [nameStartswith] name__startswith
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [pulpLabelSelect] pulp_label_select
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DistributionsFileApi
      */
-    public list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return DistributionsFileApiFp(this.configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(basePath?: string, basePathContains?: string, basePathIcontains?: string, basePathIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any) {
+        return DistributionsFileApiFp(this.configuration).list(basePath, basePathContains, basePathIcontains, basePathIn, limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2323,22 +2483,22 @@ export const ExportersFileExportsApiAxiosParamCreator = function (configuration?
         /**
          * Trigger an asynchronous task to export a file publication.
          * @summary Create an export
-         * @param {string} fileFilesystemExportHref 
+         * @param {string} fileFileFilesystemExporterHref 
          * @param {PublicationExport} publicationExport 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (fileFilesystemExportHref: string, publicationExport: PublicationExport, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'fileFilesystemExportHref' is not null or undefined
-            if (fileFilesystemExportHref === null || fileFilesystemExportHref === undefined) {
-                throw new RequiredError('fileFilesystemExportHref','Required parameter fileFilesystemExportHref was null or undefined when calling create.');
+        create: async (fileFileFilesystemExporterHref: string, publicationExport: PublicationExport, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fileFileFilesystemExporterHref' is not null or undefined
+            if (fileFileFilesystemExporterHref === null || fileFileFilesystemExporterHref === undefined) {
+                throw new RequiredError('fileFileFilesystemExporterHref','Required parameter fileFileFilesystemExporterHref was null or undefined when calling create.');
             }
             // verify required parameter 'publicationExport' is not null or undefined
             if (publicationExport === null || publicationExport === undefined) {
                 throw new RequiredError('publicationExport','Required parameter publicationExport was null or undefined when calling create.');
             }
-            const localVarPath = `{file_filesystem_export_href}exports/`
-                .replace(`{${"file_filesystem_export_href"}}`, encodeURIComponent(String(fileFilesystemExportHref)));
+            const localVarPath = `{file_file_filesystem_exporter_href}exports/`
+                .replace(`{${"file_file_filesystem_exporter_href"}}`, encodeURIComponent(String(fileFileFilesystemExporterHref)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -2372,8 +2532,13 @@ export const ExportersFileExportsApiAxiosParamCreator = function (configuration?
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof publicationExport !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(publicationExport !== undefined ? publicationExport : {}) : (publicationExport || "");
+            const nonString = typeof publicationExport !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(publicationExport !== undefined ? publicationExport : {})
+                : (publicationExport || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -2536,22 +2701,22 @@ export const ExportersFileExportsApiFp = function(configuration?: Configuration)
         async _delete(fileFilesystemExportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await ExportersFileExportsApiAxiosParamCreator(configuration)._delete(fileFilesystemExportHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
         /**
          * Trigger an asynchronous task to export a file publication.
          * @summary Create an export
-         * @param {string} fileFilesystemExportHref 
+         * @param {string} fileFileFilesystemExporterHref 
          * @param {PublicationExport} publicationExport 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(fileFilesystemExportHref: string, publicationExport: PublicationExport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await ExportersFileExportsApiAxiosParamCreator(configuration).create(fileFilesystemExportHref, publicationExport, options);
+        async create(fileFileFilesystemExporterHref: string, publicationExport: PublicationExport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await ExportersFileExportsApiAxiosParamCreator(configuration).create(fileFileFilesystemExporterHref, publicationExport, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2570,7 +2735,7 @@ export const ExportersFileExportsApiFp = function(configuration?: Configuration)
         async list(fileFileFilesystemExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedExportResponseList>> {
             const localVarAxiosArgs = await ExportersFileExportsApiAxiosParamCreator(configuration).list(fileFileFilesystemExporterHref, limit, offset, ordering, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2586,7 +2751,7 @@ export const ExportersFileExportsApiFp = function(configuration?: Configuration)
         async read(fileFilesystemExportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ExportResponse>> {
             const localVarAxiosArgs = await ExportersFileExportsApiAxiosParamCreator(configuration).read(fileFilesystemExportHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -2612,13 +2777,13 @@ export const ExportersFileExportsApiFactory = function (configuration?: Configur
         /**
          * Trigger an asynchronous task to export a file publication.
          * @summary Create an export
-         * @param {string} fileFilesystemExportHref 
+         * @param {string} fileFileFilesystemExporterHref 
          * @param {PublicationExport} publicationExport 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create(fileFilesystemExportHref: string, publicationExport: PublicationExport, options?: any): AxiosPromise<AsyncOperationResponse> {
-            return ExportersFileExportsApiFp(configuration).create(fileFilesystemExportHref, publicationExport, options).then((request) => request(axios, basePath));
+        create(fileFileFilesystemExporterHref: string, publicationExport: PublicationExport, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return ExportersFileExportsApiFp(configuration).create(fileFileFilesystemExporterHref, publicationExport, options).then((request) => request(axios, basePath));
         },
         /**
          * FilesystemExports provide a history of previous exports.
@@ -2672,14 +2837,14 @@ export class ExportersFileExportsApi extends BaseAPI {
     /**
      * Trigger an asynchronous task to export a file publication.
      * @summary Create an export
-     * @param {string} fileFilesystemExportHref 
+     * @param {string} fileFileFilesystemExporterHref 
      * @param {PublicationExport} publicationExport 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ExportersFileExportsApi
      */
-    public create(fileFilesystemExportHref: string, publicationExport: PublicationExport, options?: any) {
-        return ExportersFileExportsApiFp(this.configuration).create(fileFilesystemExportHref, publicationExport, options).then((request) => request(this.axios, this.basePath));
+    public create(fileFileFilesystemExporterHref: string, publicationExport: PublicationExport, options?: any) {
+        return ExportersFileExportsApiFp(this.configuration).create(fileFileFilesystemExporterHref, publicationExport, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2818,8 +2983,13 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileFilesystemExporter !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileFilesystemExporter !== undefined ? fileFileFilesystemExporter : {}) : (fileFileFilesystemExporter || "");
+            const nonString = typeof fileFileFilesystemExporter !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileFilesystemExporter !== undefined ? fileFileFilesystemExporter : {})
+                : (fileFileFilesystemExporter || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -2831,7 +3001,10 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
          * @summary List file filesystem exporters
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -2839,7 +3012,7 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/exporters/file/filesystem/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -2868,8 +3041,20 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
                 localVarQueryParameter['name'] = name;
             }
 
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
             if (nameIn !== undefined) {
                 localVarQueryParameter['name__in'] = nameIn;
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
             }
 
             if (offset !== undefined) {
@@ -2958,8 +3143,13 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof patchedfileFileFilesystemExporter !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(patchedfileFileFilesystemExporter !== undefined ? patchedfileFileFilesystemExporter : {}) : (patchedfileFileFilesystemExporter || "");
+            const nonString = typeof patchedfileFileFilesystemExporter !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(patchedfileFileFilesystemExporter !== undefined ? patchedfileFileFilesystemExporter : {})
+                : (patchedfileFileFilesystemExporter || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -3079,8 +3269,13 @@ export const ExportersFilesystemApiAxiosParamCreator = function (configuration?:
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileFilesystemExporter !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileFilesystemExporter !== undefined ? fileFileFilesystemExporter : {}) : (fileFileFilesystemExporter || "");
+            const nonString = typeof fileFileFilesystemExporter !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileFilesystemExporter !== undefined ? fileFileFilesystemExporter : {})
+                : (fileFileFilesystemExporter || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -3106,7 +3301,7 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
         async _delete(fileFileFilesystemExporterHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration)._delete(fileFileFilesystemExporterHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3120,7 +3315,7 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
         async create(fileFileFilesystemExporter: FileFileFilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileFilesystemExporterResponse>> {
             const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).create(fileFileFilesystemExporter, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3129,7 +3324,10 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
          * @summary List file filesystem exporters
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3137,10 +3335,10 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileFilesystemExporterResponseList>> {
-            const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options);
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileFilesystemExporterResponseList>> {
+            const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3155,7 +3353,7 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
         async partialUpdate(fileFileFilesystemExporterHref: string, patchedfileFileFilesystemExporter: PatchedfileFileFilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileFilesystemExporterResponse>> {
             const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).partialUpdate(fileFileFilesystemExporterHref, patchedfileFileFilesystemExporter, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3171,7 +3369,7 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
         async read(fileFileFilesystemExporterHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileFilesystemExporterResponse>> {
             const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).read(fileFileFilesystemExporterHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3186,7 +3384,7 @@ export const ExportersFilesystemApiFp = function(configuration?: Configuration) 
         async update(fileFileFilesystemExporterHref: string, fileFileFilesystemExporter: FileFileFilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileFilesystemExporterResponse>> {
             const localVarAxiosArgs = await ExportersFilesystemApiAxiosParamCreator(configuration).update(fileFileFilesystemExporterHref, fileFileFilesystemExporter, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3224,7 +3422,10 @@ export const ExportersFilesystemApiFactory = function (configuration?: Configura
          * @summary List file filesystem exporters
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3232,8 +3433,8 @@ export const ExportersFilesystemApiFactory = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileFilesystemExporterResponseList> {
-            return ExportersFilesystemApiFp(configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileFilesystemExporterResponseList> {
+            return ExportersFilesystemApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * FilesystemExporters export content from a publication to a path on the file system.  WARNING: This feature is provided as a tech preview and may change in the future. Backwards compatibility is not guaranteed.
@@ -3308,7 +3509,10 @@ export class ExportersFilesystemApi extends BaseAPI {
      * @summary List file filesystem exporters
      * @param {number} [limit] Number of results to return per page.
      * @param {string} [name] name
+     * @param {string} [nameContains] name__contains
+     * @param {string} [nameIcontains] name__icontains
      * @param {string} [nameIn] name__in
+     * @param {string} [nameStartswith] name__startswith
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
@@ -3317,8 +3521,8 @@ export class ExportersFilesystemApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ExportersFilesystemApi
      */
-    public list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return ExportersFilesystemApiFp(this.configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3466,8 +3670,13 @@ export const PublicationsFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFilePublication !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFilePublication !== undefined ? fileFilePublication : {}) : (fileFilePublication || "");
+            const nonString = typeof fileFilePublication !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFilePublication !== undefined ? fileFilePublication : {})
+                : (fileFilePublication || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -3659,7 +3868,7 @@ export const PublicationsFileApiFp = function(configuration?: Configuration) {
         async _delete(fileFilePublicationHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await PublicationsFileApiAxiosParamCreator(configuration)._delete(fileFilePublicationHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3673,7 +3882,7 @@ export const PublicationsFileApiFp = function(configuration?: Configuration) {
         async create(fileFilePublication: FileFilePublication, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await PublicationsFileApiAxiosParamCreator(configuration).create(fileFilePublication, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3698,7 +3907,7 @@ export const PublicationsFileApiFp = function(configuration?: Configuration) {
         async list(limit?: number, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: string, repositoryVersion?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFilePublicationResponseList>> {
             const localVarAxiosArgs = await PublicationsFileApiAxiosParamCreator(configuration).list(limit, offset, ordering, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, repositoryVersion, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3714,7 +3923,7 @@ export const PublicationsFileApiFp = function(configuration?: Configuration) {
         async read(fileFilePublicationHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFilePublicationResponse>> {
             const localVarAxiosArgs = await PublicationsFileApiAxiosParamCreator(configuration).read(fileFilePublicationHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -3956,8 +4165,13 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileRemote !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileRemote !== undefined ? fileFileRemote : {}) : (fileFileRemote || "");
+            const nonString = typeof fileFileRemote !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileRemote !== undefined ? fileFileRemote : {})
+                : (fileFileRemote || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -3969,9 +4183,13 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
          * @summary List file remotes
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [pulpLastUpdated] pulp_last_updated
          * @param {string} [pulpLastUpdatedGt] pulp_last_updated__gt
          * @param {string} [pulpLastUpdatedGte] pulp_last_updated__gte
@@ -3983,7 +4201,7 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/remotes/file/file/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -4012,8 +4230,20 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
                 localVarQueryParameter['name'] = name;
             }
 
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
             if (nameIn !== undefined) {
                 localVarQueryParameter['name__in'] = nameIn;
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
             }
 
             if (offset !== undefined) {
@@ -4022,6 +4252,10 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (pulpLabelSelect !== undefined) {
+                localVarQueryParameter['pulp_label_select'] = pulpLabelSelect;
             }
 
             if (pulpLastUpdated !== undefined) {
@@ -4126,8 +4360,13 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof patchedfileFileRemote !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(patchedfileFileRemote !== undefined ? patchedfileFileRemote : {}) : (patchedfileFileRemote || "");
+            const nonString = typeof patchedfileFileRemote !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(patchedfileFileRemote !== undefined ? patchedfileFileRemote : {})
+                : (patchedfileFileRemote || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -4247,8 +4486,13 @@ export const RemotesFileApiAxiosParamCreator = function (configuration?: Configu
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileRemote !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileRemote !== undefined ? fileFileRemote : {}) : (fileFileRemote || "");
+            const nonString = typeof fileFileRemote !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileRemote !== undefined ? fileFileRemote : {})
+                : (fileFileRemote || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -4274,7 +4518,7 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
         async _delete(fileFileRemoteHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration)._delete(fileFileRemoteHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4288,7 +4532,7 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
         async create(fileFileRemote: FileFileRemote, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileRemoteResponse>> {
             const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).create(fileFileRemote, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4297,9 +4541,13 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
          * @summary List file remotes
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [pulpLastUpdated] pulp_last_updated
          * @param {string} [pulpLastUpdatedGt] pulp_last_updated__gt
          * @param {string} [pulpLastUpdatedGte] pulp_last_updated__gte
@@ -4311,10 +4559,10 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileRemoteResponseList>> {
-            const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).list(limit, name, nameIn, offset, ordering, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options);
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileRemoteResponseList>> {
+            const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4329,7 +4577,7 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
         async partialUpdate(fileFileRemoteHref: string, patchedfileFileRemote: PatchedfileFileRemote, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).partialUpdate(fileFileRemoteHref, patchedfileFileRemote, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4345,7 +4593,7 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
         async read(fileFileRemoteHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileRemoteResponse>> {
             const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).read(fileFileRemoteHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4360,7 +4608,7 @@ export const RemotesFileApiFp = function(configuration?: Configuration) {
         async update(fileFileRemoteHref: string, fileFileRemote: FileFileRemote, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RemotesFileApiAxiosParamCreator(configuration).update(fileFileRemoteHref, fileFileRemote, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -4398,9 +4646,13 @@ export const RemotesFileApiFactory = function (configuration?: Configuration, ba
          * @summary List file remotes
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [pulpLastUpdated] pulp_last_updated
          * @param {string} [pulpLastUpdatedGt] pulp_last_updated__gt
          * @param {string} [pulpLastUpdatedGte] pulp_last_updated__gte
@@ -4412,8 +4664,8 @@ export const RemotesFileApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileRemoteResponseList> {
-            return RemotesFileApiFp(configuration).list(limit, name, nameIn, offset, ordering, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileRemoteResponseList> {
+            return RemotesFileApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Trigger an asynchronous partial update task
@@ -4488,9 +4740,13 @@ export class RemotesFileApi extends BaseAPI {
      * @summary List file remotes
      * @param {number} [limit] Number of results to return per page.
      * @param {string} [name] name
+     * @param {string} [nameContains] name__contains
+     * @param {string} [nameIcontains] name__icontains
      * @param {string} [nameIn] name__in
+     * @param {string} [nameStartswith] name__startswith
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [pulpLabelSelect] pulp_label_select
      * @param {string} [pulpLastUpdated] pulp_last_updated
      * @param {string} [pulpLastUpdatedGt] pulp_last_updated__gt
      * @param {string} [pulpLastUpdatedGte] pulp_last_updated__gte
@@ -4503,8 +4759,8 @@ export class RemotesFileApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof RemotesFileApi
      */
-    public list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any) {
-        return RemotesFileApiFp(this.configuration).list(limit, name, nameIn, offset, ordering, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, pulpLastUpdated?: string, pulpLastUpdatedGt?: string, pulpLastUpdatedGte?: string, pulpLastUpdatedLt?: string, pulpLastUpdatedLte?: string, pulpLastUpdatedRange?: string, fields?: string, excludeFields?: string, options?: any) {
+        return RemotesFileApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, pulpLastUpdated, pulpLastUpdatedGt, pulpLastUpdatedGte, pulpLastUpdatedLt, pulpLastUpdatedLte, pulpLastUpdatedRange, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -4652,8 +4908,13 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileRepository !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileRepository !== undefined ? fileFileRepository : {}) : (fileFileRepository || "");
+            const nonString = typeof fileFileRepository !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileRepository !== undefined ? fileFileRepository : {})
+                : (fileFileRepository || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -4665,15 +4926,19 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
          * @summary List file repositorys
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/repositories/file/file/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -4702,8 +4967,20 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
                 localVarQueryParameter['name'] = name;
             }
 
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
             if (nameIn !== undefined) {
                 localVarQueryParameter['name__in'] = nameIn;
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
             }
 
             if (offset !== undefined) {
@@ -4712,6 +4989,10 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
 
             if (ordering !== undefined) {
                 localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (pulpLabelSelect !== undefined) {
+                localVarQueryParameter['pulp_label_select'] = pulpLabelSelect;
             }
 
             if (fields !== undefined) {
@@ -4792,8 +5073,13 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof repositoryAddRemoveContent !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(repositoryAddRemoveContent !== undefined ? repositoryAddRemoveContent : {}) : (repositoryAddRemoveContent || "");
+            const nonString = typeof repositoryAddRemoveContent !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(repositoryAddRemoveContent !== undefined ? repositoryAddRemoveContent : {})
+                : (repositoryAddRemoveContent || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -4852,8 +5138,13 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof patchedfileFileRepository !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(patchedfileFileRepository !== undefined ? patchedfileFileRepository : {}) : (patchedfileFileRepository || "");
+            const nonString = typeof patchedfileFileRepository !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(patchedfileFileRepository !== undefined ? patchedfileFileRepository : {})
+                : (patchedfileFileRepository || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -4972,8 +5263,13 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof repositorySyncURL !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(repositorySyncURL !== undefined ? repositorySyncURL : {}) : (repositorySyncURL || "");
+            const nonString = typeof repositorySyncURL !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(repositorySyncURL !== undefined ? repositorySyncURL : {})
+                : (repositorySyncURL || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -5032,8 +5328,13 @@ export const RepositoriesFileApiAxiosParamCreator = function (configuration?: Co
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof fileFileRepository !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(fileFileRepository !== undefined ? fileFileRepository : {}) : (fileFileRepository || "");
+            const nonString = typeof fileFileRepository !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(fileFileRepository !== undefined ? fileFileRepository : {})
+                : (fileFileRepository || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -5059,7 +5360,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async _delete(fileFileRepositoryHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration)._delete(fileFileRepositoryHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5073,7 +5374,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async create(fileFileRepository: FileFileRepository, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileRepositoryResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).create(fileFileRepository, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5082,18 +5383,22 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
          * @summary List file repositorys
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileRepositoryResponseList>> {
-            const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options);
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedfileFileRepositoryResponseList>> {
+            const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5108,7 +5413,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async modify(fileFileRepositoryHref: string, repositoryAddRemoveContent: RepositoryAddRemoveContent, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).modify(fileFileRepositoryHref, repositoryAddRemoveContent, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5123,7 +5428,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async partialUpdate(fileFileRepositoryHref: string, patchedfileFileRepository: PatchedfileFileRepository, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).partialUpdate(fileFileRepositoryHref, patchedfileFileRepository, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5139,7 +5444,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async read(fileFileRepositoryHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileFileRepositoryResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).read(fileFileRepositoryHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5153,7 +5458,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async sync(fileFileRepositoryHref: string, repositorySyncURL: RepositorySyncURL, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).sync(fileFileRepositoryHref, repositorySyncURL, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5168,7 +5473,7 @@ export const RepositoriesFileApiFp = function(configuration?: Configuration) {
         async update(fileFileRepositoryHref: string, fileFileRepository: FileFileRepository, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileApiAxiosParamCreator(configuration).update(fileFileRepositoryHref, fileFileRepository, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5206,16 +5511,20 @@ export const RepositoriesFileApiFactory = function (configuration?: Configuratio
          * @summary List file repositorys
          * @param {number} [limit] Number of results to return per page.
          * @param {string} [name] name
+         * @param {string} [nameContains] name__contains
+         * @param {string} [nameIcontains] name__icontains
          * @param {string} [nameIn] name__in
+         * @param {string} [nameStartswith] name__startswith
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpLabelSelect] pulp_label_select
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileRepositoryResponseList> {
-            return RepositoriesFileApiFp(configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedfileFileRepositoryResponseList> {
+            return RepositoriesFileApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Trigger an asynchronous task to create a new repository version.
@@ -5311,17 +5620,21 @@ export class RepositoriesFileApi extends BaseAPI {
      * @summary List file repositorys
      * @param {number} [limit] Number of results to return per page.
      * @param {string} [name] name
+     * @param {string} [nameContains] name__contains
+     * @param {string} [nameIcontains] name__icontains
      * @param {string} [nameIn] name__in
+     * @param {string} [nameStartswith] name__startswith
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [pulpLabelSelect] pulp_label_select
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RepositoriesFileApi
      */
-    public list(limit?: number, name?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return RepositoriesFileApiFp(this.configuration).list(limit, name, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any) {
+        return RepositoriesFileApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5706,8 +6019,13 @@ export const RepositoriesFileVersionsApiAxiosParamCreator = function (configurat
             localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof repositoryVersion !== "string") && configuration.isJsonMime(localVarRequestOptions.headers['Content-Type']);
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(repositoryVersion !== undefined ? repositoryVersion : {}) : (repositoryVersion || "");
+            const nonString = typeof repositoryVersion !== 'string';
+            const needsSerialization = nonString && configuration && configuration.isJsonMime
+                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
+                : nonString;
+            localVarRequestOptions.data =  needsSerialization
+                ? JSON.stringify(repositoryVersion !== undefined ? repositoryVersion : {})
+                : (repositoryVersion || "");
 
             return {
                 url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
@@ -5733,7 +6051,7 @@ export const RepositoriesFileVersionsApiFp = function(configuration?: Configurat
         async _delete(fileFileRepositoryVersionHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileVersionsApiAxiosParamCreator(configuration)._delete(fileFileRepositoryVersionHref, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5766,7 +6084,7 @@ export const RepositoriesFileVersionsApiFp = function(configuration?: Configurat
         async list(fileFileRepositoryHref: string, content?: string, contentIn?: string, limit?: number, number?: string, numberGt?: string, numberGte?: string, numberLt?: string, numberLte?: string, numberRange?: string, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedRepositoryVersionResponseList>> {
             const localVarAxiosArgs = await RepositoriesFileVersionsApiAxiosParamCreator(configuration).list(fileFileRepositoryHref, content, contentIn, limit, number, numberGt, numberGte, numberLt, numberLte, numberRange, offset, ordering, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5782,7 +6100,7 @@ export const RepositoriesFileVersionsApiFp = function(configuration?: Configurat
         async read(fileFileRepositoryVersionHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RepositoryVersionResponse>> {
             const localVarAxiosArgs = await RepositoriesFileVersionsApiAxiosParamCreator(configuration).read(fileFileRepositoryVersionHref, fields, excludeFields, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
@@ -5796,7 +6114,7 @@ export const RepositoriesFileVersionsApiFp = function(configuration?: Configurat
         async repair(fileFileRepositoryVersionHref: string, repositoryVersion: RepositoryVersion, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
             const localVarAxiosArgs = await RepositoriesFileVersionsApiAxiosParamCreator(configuration).repair(fileFileRepositoryVersionHref, repositoryVersion, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
             };
         },
