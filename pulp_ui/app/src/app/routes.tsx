@@ -4,11 +4,15 @@ import { Alert, PageSection } from '@patternfly/react-core';
 import { DynamicImport } from '@app/DynamicImport';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { Dashboard } from '@app/Dashboard/Dashboard';
+import { Content } from '@app/Content/Content';
+import { MonitorTasks} from '@app/MonitorTasks/MonitorTasks'
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
+import { TasksIconConfig } from '@patternfly/react-icons';
+import { Contacts } from './Contacts/Contacts';
 
 let routeFocusTimer: number;
 
@@ -67,6 +71,13 @@ const routes: AppRouteConfig[] = [
     title: 'PatternFly Seed | Main Dashboard',
   },
   {
+    component: MonitorTasks,
+    exact: true,
+    label: 'Monitor Tasks',
+    path: '/monitor',
+    title: "Patternfly Seed | Monitor Tasks"
+  },
+  {
     component: Support,
     exact: true,
     isAsync: true,
@@ -93,6 +104,22 @@ const routes: AppRouteConfig[] = [
       },
     ],
   },
+  {
+    component: Contacts,
+    exact: true,
+    isAsync: true,
+    label: 'Contacts',
+    path: '/Contacts',
+    title: 'PatternFly Seed | Contacts Page'
+  },
+  {
+    component: Content,
+    exact: true,
+    isAsync: true,
+    label: 'Content',
+    path: '/Content',
+    title: 'PatternFly Seed | Content Page'
+  }
 ];
 
 // a custom hook for sending focus to the primary content container

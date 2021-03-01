@@ -35,7 +35,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   };
   const Header = (
     <PageHeader
-      logo="Patternfly"
+      logo="Pulp 3"
       logoProps={logoProps}
       showNavToggle
       isNavOpen={isNavOpen}
