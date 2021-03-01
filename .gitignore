@@ -21,6 +21,9 @@ pip-wheel-metadata/
 sdist/
 var/
 wheels/
+node_modules/
+pulp-ui/app/package.json
+pulp-ui/app/package-lock.json
 *.egg-info/
 .installed.cfg
 *.egg
