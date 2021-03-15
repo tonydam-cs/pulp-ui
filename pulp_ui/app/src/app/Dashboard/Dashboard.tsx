@@ -79,6 +79,30 @@ const configuration = new PulpCoreClient.Configuration({username: 'admin', passw
 const statusAPI = new PulpCoreClient.StatusApi({configuration: configuration});
 const resp = statusAPI.statusRead();
 
+const userDropdownItems = [
+  <DropdownItem>Link</DropdownItem>,
+  <DropdownItem component="button">Action</DropdownItem>,
+  <DropdownItem isDisabled>Disabled link</DropdownItem>,
+  <DropdownItem isDisabled component="button">
+    Disabled action
+  </DropdownItem>,
+  <DropdownSeparator />,
+  <DropdownItem>Separated link</DropdownItem>,
+  <DropdownItem component="button">Separated action</DropdownItem>
+];
+
+const PageBreadcrumb = (
+  <Breadcrumb>
+    <BreadcrumbItem>Section home</BreadcrumbItem>
+    <BreadcrumbItem to="#">Section title</BreadcrumbItem>
+    <BreadcrumbItem to="#">Section title</BreadcrumbItem>
+    <BreadcrumbItem to="#" isActive>
+      Section landing
+    </BreadcrumbItem>
+  </Breadcrumb>
+);
+
+
 const panelContent = (
   <DrawerPanelContent>
     <DrawerHead>
@@ -218,15 +242,25 @@ const drawerContent = (
 );
 
 const Dashboard: React.FunctionComponent = () => (
-  <PageSection>
-     <Title headingLevel="h1" size="lg">Dashboard</Title>
-     <Divider component="div" />
-     <Drawer>
-       <DrawerContent panelContent = {panelContent}>
-         <DrawerContentBody>{drawerContent}</DrawerContentBody>
-       </DrawerContent>
-     </Drawer>
-  </PageSection>
+  <Page
+    breadcrumb={PageBreadcrumb}
+  >
+    <PageSection variant={PageSectionVariants.light}>
+      <TextContent>
+        <Text component="h1">Your Dashboard</Text>
+        <Text component="p">
+          Body text should be Overpass Regular at 16px. It should have leading of 24px because <br />
+          of it’s relative line height of 1.5.
+        </Text>
+        </TextContent>
+      <Divider component="div" />
+      <Drawer>
+        <DrawerContent panelContent = {panelContent}>
+          <DrawerContentBody>{drawerContent}</DrawerContentBody>
+        </DrawerContent>
+      </Drawer>
+    </PageSection>
+  </Page>
 )
 
 export { Dashboard };

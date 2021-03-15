@@ -68,14 +68,14 @@ const routes: AppRouteConfig[] = [
     exact: true,
     label: 'Dashboard',
     path: '/',
-    title: 'PatternFly Seed | Main Dashboard',
+    title: 'Pulp 3 | Main Dashboard',
   },
   {
     component: MonitorTasks,
     exact: true,
     label: 'Monitor Tasks',
     path: '/monitor',
-    title: "Patternfly Seed | Monitor Tasks"
+    title: "Pulp 3 | Monitor Tasks"
   },
   {
     component: Support,
@@ -83,7 +83,7 @@ const routes: AppRouteConfig[] = [
     isAsync: true,
     label: 'Support',
     path: '/support',
-    title: 'PatternFly Seed | Support Page',
+    title: 'Pulp 3 | Support Page',
   },
   {
     label: 'Settings',
@@ -93,14 +93,14 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'General',
         path: '/settings/general',
-        title: 'PatternFly Seed | General Settings',
+        title: 'Pulp 3 | General Settings',
       },
       {
         component: ProfileSettings,
         exact: true,
         label: 'Profile',
         path: '/settings/profile',
-        title: 'PatternFly Seed | Profile Settings',
+        title: 'Pulp 3 | Profile Settings',
       },
     ],
   },
@@ -110,7 +110,7 @@ const routes: AppRouteConfig[] = [
     isAsync: true,
     label: 'Contacts',
     path: '/Contacts',
-    title: 'PatternFly Seed | Contacts Page'
+    title: 'Pulp 3 | Contacts Page'
   },
   {
     component: Content,
@@ -118,7 +118,7 @@ const routes: AppRouteConfig[] = [
     isAsync: true,
     label: 'Content',
     path: '/Content',
-    title: 'PatternFly Seed | Content Page'
+    title: 'Pulp 3 | Content Page'
   }
 ];
 
