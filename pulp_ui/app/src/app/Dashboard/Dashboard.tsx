@@ -75,8 +75,8 @@ import TimesCircleIcon from "@patternfly/react-icons/dist/js/icons/times-circle-
 import HistoryIcon from "@patternfly/react-icons/dist/js/icons/history-icon";
 
 //const params = PulpCoreClient.ConfigurationParameters();
-const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
-const statusAPI = new PulpCoreClient.StatusApi({configuration: configuration});
+const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'password', basePath: 'http://localhost:9000' });
+const statusAPI = new PulpCoreClient.StatusApi({ configuration: configuration });
 const resp = statusAPI.statusRead();
 
 const userDropdownItems = [
@@ -138,7 +138,7 @@ const drawerContent = (
     <DataList
       aria-label="data list"
       selectedDataListItemId=""
-      //onSelectDataListItem={this.onSelectDataListItem}
+    //onSelectDataListItem={this.onSelectDataListItem}
     >
       <DataListItem aria-labelledby="full-page-item1">
         <DataListItemRow>
@@ -147,11 +147,11 @@ const drawerContent = (
               <DataListCell key="primary content">
                 <Flex direction={{ default: "column" }}>
                   <FlexItem>
-                      <p>
-                        <big>
-                          <a href="/Content" aria-label="Pulp project website">Pulp Website</a>
-                        </big>
-                      </p>
+                    <p>
+                      <big>
+                        <a href="/ViewRepo" aria-label="Pulp project website">Pulp Website</a>
+                      </big>
+                    </p>
                     <small>
                       A Red Hat application for managing software
                       repositories <a>https://pulpproject.org/</a>
@@ -199,7 +199,7 @@ const drawerContent = (
                   <FlexItem>
                     <p>
                       <big>
-                        <a href="/Content" aria-label="Patternfly-react-element">Patternfly-react-element</a>
+                        <a href="/ViewRepo" aria-label="Patternfly-react-element">Patternfly-react-element</a>
                       </big>
                     </p>
                     <small>PatternFly elements</small>
@@ -252,10 +252,10 @@ const Dashboard: React.FunctionComponent = () => (
           Body text should be Overpass Regular at 16px. It should have leading of 24px because <br />
           of it’s relative line height of 1.5.
         </Text>
-        </TextContent>
+      </TextContent>
       <Divider component="div" />
       <Drawer>
-        <DrawerContent panelContent = {panelContent}>
+        <DrawerContent panelContent={panelContent}>
           <DrawerContentBody>{drawerContent}</DrawerContentBody>
         </DrawerContent>
       </Drawer>

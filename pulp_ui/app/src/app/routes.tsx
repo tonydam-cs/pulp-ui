@@ -4,8 +4,9 @@ import { Alert, PageSection } from '@patternfly/react-core';
 import { DynamicImport } from '@app/DynamicImport';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { Dashboard } from '@app/Dashboard/Dashboard';
+import { ViewRepo } from '@app/ViewRepo/ViewRepo';
 import { Content } from '@app/Content/Content';
-import { MonitorTasks} from '@app/MonitorTasks/MonitorTasks'
+import { MonitorTasks } from '@app/MonitorTasks/MonitorTasks'
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
@@ -69,6 +70,13 @@ const routes: AppRouteConfig[] = [
     label: 'Dashboard',
     path: '/',
     title: 'Pulp 3 | Main Dashboard',
+  },
+  {
+    component: ViewRepo,
+    exact: true,
+    label: 'View Repo Sample',
+    path: '/ViewRepo',
+    title: 'Pulp 3 | Content Page'
   },
   {
     component: MonitorTasks,
