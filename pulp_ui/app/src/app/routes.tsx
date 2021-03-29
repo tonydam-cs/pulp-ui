@@ -14,6 +14,7 @@ import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { TasksIconConfig } from '@patternfly/react-icons';
 import { Contacts } from './Contacts/Contacts';
+import { Status } from './Status/Status';
 
 let routeFocusTimer: number;
 
@@ -127,6 +128,14 @@ const routes: AppRouteConfig[] = [
     label: 'Content',
     path: '/Content',
     title: 'Pulp 3 | Content Page'
+  },
+  {
+    component: Status,
+    exact: true,
+    isAsync: true,
+    label: 'Status',
+    path: '/Status',
+    title: 'Pulp 3 | Status Page'
   }
 ];
 
