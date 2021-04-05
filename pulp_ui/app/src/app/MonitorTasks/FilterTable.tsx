@@ -1,15 +1,17 @@
+
 import React from 'react';
-import { DataToolbar , DataToolbarItem, DataToolbarContent } from '@patternfly/react-core';
+import '@patternfly/react-core/dist/styles/base.css';
+// import { DataToolbar , DataToolbarItem, DataToolbarContent } from '@patternfly/react-core';
 import {
   Button,
   ButtonVariant,
   Bullseye,
-  //DataToolbar,
- // DataToolbarItem,
-  DataToolbarContent,
-  DataToolbarFilter,
-  DataToolbarToggleGroup,
-  DataToolbarGroup,
+  Toolbar,
+  ToolbarItem,
+  ToolbarContent,
+  ToolbarFilter,
+  ToolbarToggleGroup,
+  ToolbarGroup,
   Dropdown,
   DropdownItem,
   DropdownPosition,
@@ -175,7 +177,7 @@ class FilterTableDemo extends React.Component {
     const { isCategoryDropdownOpen, currentCategory } = this.state;
 
     return (
-      <DataToolbarItem>
+      <ToolbarItem>
         <Dropdown
           onSelect={this.onCategorySelect}
           position={DropdownPosition.left}
@@ -192,7 +194,7 @@ class FilterTableDemo extends React.Component {
           ]}
           style={{ width: '100%' }}
         ></Dropdown>
-      </DataToolbarItem>
+      </ToolbarItem>
     );
   }
 
@@ -217,7 +219,7 @@ class FilterTableDemo extends React.Component {
 
     return (
       <React.Fragment>
-        <DataToolbarFilter
+        <ToolbarFilter
           chips={filters.location}
           deleteChip={this.onDelete}
           categoryName="Location"
@@ -233,8 +235,8 @@ class FilterTableDemo extends React.Component {
           >
             {locationMenuItems}
           </Select>
-        </DataToolbarFilter>
-        <DataToolbarFilter
+        </ToolbarFilter>
+        <ToolbarFilter
           chips={filters.name}
           deleteChip={this.onDelete}
           categoryName="Name"
@@ -259,8 +261,8 @@ class FilterTableDemo extends React.Component {
               <SearchIcon />
             </Button>
           </InputGroup>
-        </DataToolbarFilter>
-        <DataToolbarFilter
+        </ToolbarFilter>
+        <ToolbarFilter
           chips={filters.status}
           deleteChip={this.onDelete}
           categoryName="Status"
@@ -277,7 +279,7 @@ class FilterTableDemo extends React.Component {
           >
             {statusMenuItems}
           </Select>
-        </DataToolbarFilter>
+        </ToolbarFilter>
       </React.Fragment>
     );
   }
@@ -285,20 +287,20 @@ class FilterTableDemo extends React.Component {
   renderToolbar() {
     const { filters } = this.state;
     return (
-      <DataToolbar
+      <Toolbar
         id="data-toolbar-with-chip-groups"
         clearAllFilters={this.onDelete}
         collapseListedFiltersBreakpoint="xl"
       >
-        <DataToolbarContent>
-          <DataToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-            <DataToolbarGroup variant="filter-group">
+        <ToolbarContent>
+          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+            <ToolbarGroup variant="filter-group">
               {this.buildCategoryDropdown()}
               {this.buildFilterDropdown()}
-            </DataToolbarGroup>
-          </DataToolbarToggleGroup>
-        </DataToolbarContent>
-      </DataToolbar>
+            </ToolbarGroup>
+          </ToolbarToggleGroup>
+        </ToolbarContent>
+      </Toolbar>
     );
   }
 
@@ -360,4 +362,7 @@ class FilterTableDemo extends React.Component {
   }
 }
 
-export{FilterTableDemo}
+//export{FilterTableDemo}
+
+
+
