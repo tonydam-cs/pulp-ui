@@ -47,6 +47,8 @@ import {
   PageSection,
   PageSectionVariants,
   PageSidebar,
+  Pagination,
+  PaginationVariant,
   Progress,
   Select,
   SelectVariant,
@@ -93,11 +95,8 @@ const userDropdownItems = [
 
 const PageBreadcrumb = (
   <Breadcrumb>
-    <BreadcrumbItem>Section home</BreadcrumbItem>
-    <BreadcrumbItem to="#">Section title</BreadcrumbItem>
-    <BreadcrumbItem to="#">Section title</BreadcrumbItem>
     <BreadcrumbItem to="#" isActive>
-      Section landing
+      Dashboard
     </BreadcrumbItem>
   </Breadcrumb>
 );
@@ -168,24 +167,6 @@ const drawerContent = (
                   </Flex>
                 </Flex>
               </DataListCell>
-              // <DataListAction id='actions1' aria-label='actions' aria-labelledby='actions'>
-              //   <Stack>
-              //     <StackItem>
-              //       <Button variant={ButtonVariant.secondary}>
-              //         View Content
-              //       </Button>
-              //     </StackItem>
-              //     <br />
-              //     <StackItem>
-              //       <Button
-              //         variant={ButtonVariant.danger}
-              //         icon={<TimesCircleIcon />}
-              //       >
-              //         Delete
-              //       </Button>
-              //     </StackItem>
-              //   </Stack>
-              // </DataListAction>
             ]}
           />
         </DataListItemRow>
@@ -215,24 +196,6 @@ const drawerContent = (
                   </Flex>
                 </Flex>
               </DataListCell>
-              // <DataListAction id='actions2' aria-label='actions' aria-labelledby='actions'>
-              //   <Stack>
-              //     <StackItem>
-              //       <Button variant={ButtonVariant.secondary}>
-              //         View Content
-              //       </Button>
-              //     </StackItem>
-              //     <br />
-              //     <StackItem>
-              //       <Button
-              //         variant={ButtonVariant.danger}
-              //         icon={<TimesCircleIcon />}
-              //       >
-              //         Delete
-              //       </Button>
-              //     </StackItem>
-              //   </Stack>
-              // </DataListAction>
             ]}
           />
         </DataListItemRow>
@@ -248,10 +211,6 @@ const Dashboard: React.FunctionComponent = () => (
     <PageSection variant={PageSectionVariants.light}>
       <TextContent>
         <Text component="h1">Your Dashboard</Text>
-        <Text component="p">
-          Body text should be Overpass Regular at 16px. It should have leading of 24px because <br />
-          of it’s relative line height of 1.5.
-        </Text>
       </TextContent>
       <Divider component="div" />
       <Drawer>
@@ -259,6 +218,11 @@ const Dashboard: React.FunctionComponent = () => (
           <DrawerContentBody>{drawerContent}</DrawerContentBody>
         </DrawerContent>
       </Drawer>
+      <Pagination
+        itemCount={100}
+        widgetId="pagination-options-menu-bottom"
+        variant={PaginationVariant.bottom}
+      />
     </PageSection>
   </Page>
 )
