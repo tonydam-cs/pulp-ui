@@ -63,6 +63,7 @@ import {
 } from "@patternfly/react-core";
 import { Table, TableHeader, TableBody, textCenter } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
+import {ToolbarComponentMangedToggleGroup} from './Toolbar'
 
 import * as PulpCoreClient from '@app/pulpcore-client';
 //import { Configuration } from '@app/js-client/configuration';
@@ -80,6 +81,9 @@ import HistoryIcon from "@patternfly/react-icons/dist/js/icons/history-icon";
 const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'password', basePath: 'http://localhost:9000' });
 const statusAPI = new PulpCoreClient.StatusApi({ configuration: configuration });
 const resp = statusAPI.statusRead();
+
+const PageToolbar = new ToolbarComponentMangedToggleGroup(Toolbar)
+const PageToolbarContent = PageToolbar.render()
 
 const userDropdownItems = [
   <DropdownItem>Link</DropdownItem>,
@@ -134,6 +138,7 @@ const panelContent = (
 
 const drawerContent = (
   <React.Fragment>
+    {PageToolbarContent}
     <DataList
       aria-label="data list"
       selectedDataListItemId=""
