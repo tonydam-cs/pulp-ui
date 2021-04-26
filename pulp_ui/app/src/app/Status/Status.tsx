@@ -67,11 +67,14 @@ import {
     CardHeader
 } from "@patternfly/react-core";
 
-//import * as PulpCoreClient from '@app/pulpcore-client';
-//import { Configuration } from '@app/js-client/configuration';
-//import { StatusApi } from '@app/js-client/api';
+import * as PulpCoreClient from '@app/pulpcore-client';
+const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:8080'});
+const statusAPI = new PulpCoreClient.StatusApi({configuration: configuration});
+const resp = statusAPI.statusRead();
 
-const Status: React.FunctionComponent = () => (
+const Status: React.FunctionComponent = () => {
+    resp.then((d) => console.log(d));
+    return (  
     <Page>
         <PageSection variant={PageSectionVariants.light}>
             <TextContent>
@@ -105,6 +108,8 @@ const Status: React.FunctionComponent = () => (
             </TextContent>
         </PageSection>
     </Page >
-)
+    )
+}
+
 
 export { Status };

@@ -78,7 +78,7 @@ import TimesCircleIcon from "@patternfly/react-icons/dist/js/icons/times-circle-
 import HistoryIcon from "@patternfly/react-icons/dist/js/icons/history-icon";
 
 //const params = PulpCoreClient.ConfigurationParameters();
-const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'password', basePath: 'http://localhost:9000' });
+const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'password', basePath: 'http://localhost:8080' });
 const statusAPI = new PulpCoreClient.StatusApi({ configuration: configuration });
 const resp = statusAPI.statusRead();
 
