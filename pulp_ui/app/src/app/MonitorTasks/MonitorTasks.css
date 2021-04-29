@@ -1,0 +1,29 @@
+/*
+table {
+    margin: 30px;
+    padding: 200px;
+    color: red;
+    border: 1px black solid;
+    border-spacing: 5px;
+    border: 1px solid black;
+}
+
+td {
+    margin: 10px;
+    overflow-x: hidden;
+}
+
+*/
+
+table {
+    border-collapse: separate;
+    border-spacing: 50px 0;
+    width:100%;
+  }
+  
+  td tr {
+    padding: 10px 0;
+    border: 1px solid #ddd;
+  }
+
+  tr:nth-child(even) {background-color: #DCDCDC;}
