@@ -210,6 +210,7 @@ const drawerContent = (
 );
 
 const Dashboard: React.FunctionComponent = () => (
+  <React.Fragment>
   <Page
     breadcrumb={PageBreadcrumb}
   >
@@ -230,6 +231,7 @@ const Dashboard: React.FunctionComponent = () => (
       />
     </PageSection>
   </Page>
+  </React.Fragment>
 )
 
 export { Dashboard };
