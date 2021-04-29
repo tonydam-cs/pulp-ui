@@ -1,6 +1,7 @@
+/*
 import * as React from 'react';
 import { PageSection, Title, Button } from '@patternfly/react-core';
-import { Table, TableHeader, TableBody, textCenter, } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody, textCenter,TextInput } from '@patternfly/react-table';
 import { Card, CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 //import { Dropdown } from 'semantic-ui-react';
 import {SimpleDropdown} from './drop';
@@ -72,7 +73,7 @@ import React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
 // import { DataToolbar , DataToolbarItem, DataToolbarContent } from '@patternfly/react-core';
 import {
-  Button,
+  
   ButtonVariant,
   Bullseye,
   Toolbar,
@@ -86,7 +87,7 @@ import {
   DropdownPosition,
   DropdownToggle,
   InputGroup,
-  Title,
+  
   Select,
   SelectOption,
   SelectVariant,
@@ -103,7 +104,7 @@ class MonitorTasks extends React.Component {
     super(props);
     this.state = {
       filters: {
-        location: [],
+        location: ['Boston'],
         name: [],
         status: []
       },
@@ -430,6 +431,140 @@ class MonitorTasks extends React.Component {
     );
   }
 }
+
+import React from 'react';
+import { CubeIcon } from '@patternfly/react-icons';
+import { Select, SelectOption, SelectVariant, Checkbox } from '@patternfly/react-core';
+import { TextInput } from '@patternfly/react-core';
+
+class SingleSelectInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.options = [
+      { value: 'Choose...', disabled: false, isPlaceholder: true },
+      { value: 'Mr', disabled: false },
+      { value: 'Miss', disabled: false },
+      { value: 'Mrs', disabled: false },
+      { value: 'Ms', disabled: false },
+      { value: 'Dr', disabled: false },
+      { value: 'Other', disabled: false }
+    ];
+
+    this.state = {
+      isToggleIcon: false,
+      isExpanded: false,
+      selected: null,
+      isDisabled: false,
+      direction: SelectDirection.down
+    };
+
+    this.onToggle = isExpanded => {
+      this.setState({
+        isExpanded
+      });
+    };
+
+    this.onSelect = (event, selection, isPlaceholder) => {
+      if (isPlaceholder) this.clearSelection();
+      else {
+        this.setState({
+          selected: selection,
+          isExpanded: false
+        });
+        console.log('selected:', selection);
+      }
+    };
+
+    this.clearSelection = () => {
+      this.setState({
+        selected: null,
+        isExpanded: false
+      });
+    };
+
+    this.toggleDisabled = checked => {
+      this.setState({
+        isDisabled: checked
+      });
+    };
+
+    this.setIcon = checked => {
+      this.setState({
+        isToggleIcon: checked
+      });
+    };
+
+    this.toggleDirection = () => {
+      if (this.state.direction === SelectDirection.up) {
+        this.setState({
+          direction: SelectDirection.down
+        });
+      } else {
+        this.setState({
+          direction: SelectDirection.up
+        });
+      }
+    };
+  }
+
+  render() {
+    const { isExpanded, selected, isDisabled, direction, isToggleIcon } = this.state;
+    const titleId = 'title-id';
+    return (
+      <div>
+        <span id={titleId} hidden>
+          Title
+        </span>
+        <Select
+          toggleIcon={isToggleIcon && <CubeIcon />}
+          variant={SelectVariant.single}
+          aria-label="Select Input"
+          onToggle={this.onToggle}
+          onSelect={this.onSelect}
+          selections={selected}
+          isExpanded={isExpanded}
+          ariaLabelledBy={titleId}
+          isDisabled={isDisabled}
+          direction={direction}
+        >
+          {this.options.map((option, index) => (
+            <SelectOption
+              isDisabled={option.disabled}
+              key={index}
+              value={option.value}
+              isPlaceholder={option.isPlaceholder}
+            />
+          ))}
+        </Select>
+        <Checkbox
+          label="isDisabled"
+          isChecked={this.state.isDisabled}
+          onChange={this.toggleDisabled}
+          aria-label="disabled checkbox"
+          id="toggle-disabled"
+          name="toggle-disabled"
+        />
+        <Checkbox
+          label="Expands up"
+          isChecked={direction === SelectDirection.up}
+          onChange={this.toggleDirection}
+          aria-label="direction checkbox"
+          id="toggle-direction"
+          name="toggle-direction"
+        />
+        <Checkbox
+          label="Show icon"
+          isChecked={isToggleIcon}
+          onChange={this.setIcon}
+          aria-label="show icon checkbox"
+          id="toggle-icon"
+          name="toggle-icon"
+        />
+      </div>
+    );
+  }
+}
+
 
 export{MonitorTasks}
 
@@ -860,4 +995,276 @@ class MonitorTasks extends React.Component {
 export{MonitorTasks}
 
 
+
+{/*
+import React, { Component } from 'react'
+
+import TaskData from './data.js'
+
+class MonitorTasks extends React.Component {
+  /*
+   constructor(props) {
+      super(props) //since we are extending class Table so we have to use super in order to override Component class constructor
+      this.state = { //state is by default an object
+         tasks: [{"pulp_href":"/pulp/api/v3/tasks/d159fdc9-0fc0-48d8-8ef9-9633229a634c/",
+         
+         "pulp_created":"2021-04-19T14:59:57.470596Z",
+         "state":"completed",
+         "name":"pulpcore.app.tasks.base.general_delete",
+         "logging_cid":"7a6d7d6de7d04b8ea8aee791ee7afb1e",
+         "started_at":"2021-04-19T14:59:57.849885Z",
+         "finished_at":"2021-04-19T14:59:58.025496Z",
+         "error":null,
+         "worker":"/pulp/api/v3/workers/5ceeb724-4e4a-4d15-9e4f-12780c5e513c/",
+         "parent_task":null,
+         "child_tasks":[],
+         "task_group":null,
+         "progress_reports":[],
+         "created_resources":[],
+      }
+        ]
+      }
+    }
+      
+    
+    */
+   
+  
+/*
+  render() {
+    //return this.state.tasks.map((tasks, index) => {
+      // const { logging_cid, started_at, finished_at, state} = tasks //destructuring
+       return (
+        
+        <div>
+          <h1> Hello</h1>
+        
+          <tr>
+    <th>ID</th>
+    <th>Started At</th>
+    <th>Finished At</th>
+    <th>State</th>
+  </tr>
+     
+        {TaskData.map((task, index) => {
+          return <div>
+  
+ 
+          <td>{task.logging_cid}</td>
+             <td>{task.started_at}</td>
+             <td>{task.finished_at}</td>
+             <td>{task.state}</td>
+     
+           
+          </div>
+          
+        })}
+</div>
+       )
+      }
+      
+
+      }
+        
+     
+        
+
+        
+       
+      
+    
+ 
+
+
+
+export  {MonitorTasks}
+
 */
+  
+
+
+
+import React, { Component } from 'react'
+
+import TaskApi from './data';
+
+import './MonitorTasks.css';
+
+interface IProps {
+}
+
+interface IState {
+  tasks: Array<any>;
+}
+
+class MonitorTasks extends React.Component<IProps, IState> {
+  
+   constructor(props) {
+      super(props) //since we are extending class Table so we have to use super in order to override Component class constructor
+      this.state = { //state is by default an object
+         tasks: []
+      }
+    }
+     
+    async componentDidMount() {
+      const tasks = await TaskApi.findAll();
+      this.setState({tasks})
+    }
+    
+  render() {
+    //return this.state.tasks.map((tasks, index) => {
+    // const { logging_cid, started_at, finished_at, state} = tasks //destructuring
+    console.log('state', this.state)
+    return (
+      <div>
+        <h1> Monitor Tasks</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Started At</th>
+              <th>Finished At</th>
+              <th>State</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              this.state.tasks.map((task, index) => (
+                <tr>
+                  <td>{task.logging_cid}</td>
+                  <td>{task.started_at}</td>
+                  <td>{task.finished_at}</td>
+                  <td>{task.state}</td>
+                </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+}
+        
+     
+        
+      
+       
+      
+    
+ 
+
+
+
+export  {MonitorTasks}
+/*
+
+import TaskData  from './data.js'
+import React from 'react';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  sortable,
+  SortByDirection
+} from '@patternfly/react-table';
+
+class MonitorTasks extends React.Component {
+
+  
+  constructor(props) {
+
+    
+    super(props);
+
+   
+
+    var population = JSON.parse(TaskData);
+    alert(population[0][1]);
+
+
+    
+    this.state = {
+      columns: [
+        { title: 'Repositories', transforms: [sortable] },
+        'Branches',
+        { title: 'Pull requests', transforms: [sortable] },
+        'Workspaces',
+        
+      ],
+      rows: population,
+     // rows: [['one', 'two', 'a', 'four', 'five'], ['a', 'two', 'k', 'four', 'five'], ['p', 'two', 'b', 'four', 'five']],
+      sortBy: {}
+    };
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(_event, index, direction) {
+    const sortedRows = this.state.rows.sort((a, b) => (a[index] < b[index] ? -1 : a[index] > b[index] ? 1 : 0));
+    this.setState({
+      sortBy: {
+        index,
+        direction
+      },
+      rows: direction === SortByDirection.asc ? sortedRows : sortedRows.reverse()
+    });
+  }
+
+  render() {
+    const { columns, rows, sortBy } = this.state;
+
+    return (
+      <Table aria-label="Sortable Table" sortBy={sortBy} onSort={this.onSort} cells={columns} rows={rows}>
+        <TableHeader />
+        <TableBody />
+      </Table>
+    );
+  }
+}
+
+export  {MonitorTasks}
+
+
+
+
+
+import React, { Component } from 'react'
+class MonitorTasks extends Component {
+  constructor(props) {
+     super(props) //since we are extending class Table so we have to use super in order to override Component class constructor
+  
+    
+     this.state = { //state is by default an object
+     
+    students: [
+           { id: 1, name: 'Wasif', age: 21, email: 'wasif@email.com' },
+           { id: 2, name: 'Ali', age: 19, email: 'ali@email.com' },
+           { id: 3, name: 'Saad', age: 16, email: 'saad@email.com' },
+           { id: 4, name: 'Asad', age: 25, email: 'asad@email.com' }
+        ]
+     }
+  }
+
+  renderTableHeader() {
+    let students : Array<any>;
+    let header = Object.keys(this.state.students[0])
+    return header.map((key, index) => {
+       return <th key={index}>{key.toUpperCase()}</th>
+    })
+ }
+
+ render() {
+    return (
+       <div>
+          <h1 id='title'>React Dynamic Table</h1>
+          <table id='students'>
+             <tbody>
+                <tr>{this.renderTableHeader()}</tr>
+                {this.renderTableData()}
+             </tbody>
+          </table>
+       </div>
+    )
+ }
+}
+ export  {MonitorTasks}//exporting a component make it reusable and this is the beauty of react
+
+ */
