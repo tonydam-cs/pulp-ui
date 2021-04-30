@@ -143,6 +143,10 @@ class ToolbarComponentMangedToggleGroup extends React.Component<{}, any> {
             </Select>
           </ToolbarItem>
         </ToolbarGroup>
+        <ToolbarItem variant="separator"></ToolbarItem>
+        <ToolbarItem>
+            <Button variant="primary">Create New</Button>
+        </ToolbarItem>
       </React.Fragment>
     );
 
