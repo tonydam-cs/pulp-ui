@@ -78,9 +78,9 @@ import TimesCircleIcon from "@patternfly/react-icons/dist/js/icons/times-circle-
 import HistoryIcon from "@patternfly/react-icons/dist/js/icons/history-icon";
 
 //const params = PulpCoreClient.ConfigurationParameters();
-const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'password', basePath: 'http://localhost:8080' });
-const statusAPI = new PulpCoreClient.StatusApi({ configuration: configuration });
-const resp = statusAPI.statusRead();
+const configuration = new PulpCoreClient.Configuration({ username: 'admin', password: 'd6e8e584dd228640dd6faafe1a6316cfcb9296c42b4590652f756bdf80638be4', basePath: 'http://localhost:8080' });
+const statusAPI = new PulpCoreClient.RepositoriesApi({ configuration: configuration });
+const resp = statusAPI.list();
 
 const PageToolbar = new ToolbarComponentMangedToggleGroup(Toolbar)
 const PageToolbarContent = PageToolbar.render()
@@ -209,29 +209,31 @@ const drawerContent = (
   </React.Fragment>
 );
 
-const Dashboard: React.FunctionComponent = () => (
-  <React.Fragment>
-  <Page
-    breadcrumb={PageBreadcrumb}
-  >
-    <PageSection variant={PageSectionVariants.light}>
-      <TextContent>
-        <Text component="h1">Your Dashboard</Text>
-      </TextContent>
-      <Divider component="div" />
-      <Drawer>
-        <DrawerContent panelContent={panelContent}>
-          <DrawerContentBody>{drawerContent}</DrawerContentBody>
-        </DrawerContent>
-      </Drawer>
-      <Pagination
-        itemCount={100}
-        widgetId="pagination-options-menu-bottom"
-        variant={PaginationVariant.bottom}
-      />
-    </PageSection>
-  </Page>
-  </React.Fragment>
-)
-
+const Dashboard: React.FunctionComponent = () => {
+  resp.then((d) => console.log(d));
+  return(
+    <React.Fragment>
+    <Page
+      breadcrumb={PageBreadcrumb}
+    >
+      <PageSection variant={PageSectionVariants.light}>
+        <TextContent>
+          <Text component="h1">Your Dashboard</Text>
+        </TextContent>
+        <Divider component="div" />
+        <Drawer>
+          <DrawerContent panelContent={panelContent}>
+            <DrawerContentBody>{drawerContent}</DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+        <Pagination
+          itemCount={100}
+          widgetId="pagination-options-menu-bottom"
+          variant={PaginationVariant.bottom}
+        />
+      </PageSection>
+    </Page>
+    </React.Fragment>
+  )
+}
 export { Dashboard };
