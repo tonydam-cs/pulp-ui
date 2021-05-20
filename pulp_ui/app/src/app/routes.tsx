@@ -4,11 +4,16 @@ import { Alert, PageSection } from '@patternfly/react-core';
 import { DynamicImport } from '@app/DynamicImport';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { Dashboard } from '@app/Dashboard/Dashboard';
+import { ViewRepo } from '@app/ViewRepo/ViewRepo';
+import { MonitorTasks } from '@app/MonitorTasks/MonitorTasks';
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
+import { TasksIconConfig } from '@patternfly/react-icons';
+import { Contacts } from './Contacts/Contacts';
+import { Status } from './Status/Status';
 
 let routeFocusTimer: number;
 
@@ -64,7 +69,20 @@ const routes: AppRouteConfig[] = [
     exact: true,
     label: 'Dashboard',
     path: '/',
-    title: 'PatternFly Seed | Main Dashboard',
+    title: 'Pulp 3 | Main Dashboard',
+  },
+  {
+    component: ViewRepo,
+    exact: true,
+    path: '/ViewRepo',
+    title: 'Pulp 3 | Content Page'
+  },
+  {
+    component: MonitorTasks,
+    exact: true,
+    label: 'Monitor Tasks',
+    path: '/monitor',
+    title: "Pulp 3 | Monitor Tasks"
   },
   {
     component: Support,
@@ -72,7 +90,7 @@ const routes: AppRouteConfig[] = [
     isAsync: true,
     label: 'Support',
     path: '/support',
-    title: 'PatternFly Seed | Support Page',
+    title: 'Pulp 3 | Support Page',
   },
   {
     label: 'Settings',
@@ -82,17 +100,33 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'General',
         path: '/settings/general',
-        title: 'PatternFly Seed | General Settings',
+        title: 'Pulp 3 | General Settings',
       },
       {
         component: ProfileSettings,
         exact: true,
         label: 'Profile',
         path: '/settings/profile',
-        title: 'PatternFly Seed | Profile Settings',
+        title: 'Pulp 3 | Profile Settings',
       },
     ],
   },
+  {
+    component: Contacts,
+    exact: true,
+    isAsync: true,
+    label: 'Contacts',
+    path: '/Contacts',
+    title: 'Pulp 3 | Contacts Page'
+  },
+  {
+    component: Status,
+    exact: true,
+    isAsync: true,
+    label: 'Status',
+    path: '/Status',
+    title: 'Pulp 3 | Status Page'
+  }
 ];
 
 // a custom hook for sending focus to the primary content container
