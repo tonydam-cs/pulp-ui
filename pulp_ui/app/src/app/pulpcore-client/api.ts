@@ -17,6 +17,8 @@ import { Configuration } from './configuration';
 import globalAxios, { AxiosPromise, AxiosInstance } from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
+import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
@@ -212,6 +214,31 @@ export interface ContentGuardResponse {
     description?: string | null;
 }
 /**
+ * Serializer for the RepositoryVersion content summary
+ * @export
+ * @interface ContentSummaryResponse
+ */
+export interface ContentSummaryResponse {
+    /**
+     * 
+     * @type {{ [key: string]: object; }}
+     * @memberof ContentSummaryResponse
+     */
+    added: { [key: string]: object; };
+    /**
+     * 
+     * @type {{ [key: string]: object; }}
+     * @memberof ContentSummaryResponse
+     */
+    removed: { [key: string]: object; };
+    /**
+     * 
+     * @type {{ [key: string]: object; }}
+     * @memberof ContentSummaryResponse
+     */
+    present: { [key: string]: object; };
+}
+/**
  * Serializer for the database connection information
  * @export
  * @interface DatabaseConnectionResponse
@@ -248,6 +275,130 @@ export interface EvaluationResponse {
      * @memberof EvaluationResponse
      */
     messages: Array<string>;
+}
+/**
+ * Serializer for FilesystemExports.
+ * @export
+ * @interface FilesystemExport
+ */
+export interface FilesystemExport {
+    /**
+     * A URI of the task that ran the Export.
+     * @type {string}
+     * @memberof FilesystemExport
+     */
+    task?: string | null;
+    /**
+     * A URI of the publication to be exported.
+     * @type {string}
+     * @memberof FilesystemExport
+     */
+    publication?: string;
+    /**
+     * A URI of the repository version export.
+     * @type {string}
+     * @memberof FilesystemExport
+     */
+    repository_version?: string;
+}
+/**
+ * Serializer for FilesystemExports.
+ * @export
+ * @interface FilesystemExportResponse
+ */
+export interface FilesystemExportResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof FilesystemExportResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof FilesystemExportResponse
+     */
+    pulp_created?: string;
+    /**
+     * A URI of the task that ran the Export.
+     * @type {string}
+     * @memberof FilesystemExportResponse
+     */
+    task?: string | null;
+    /**
+     * Resources that were exported.
+     * @type {Array<string>}
+     * @memberof FilesystemExportResponse
+     */
+    exported_resources?: Array<string>;
+    /**
+     * Any additional parameters that were used to create the export.
+     * @type {object}
+     * @memberof FilesystemExportResponse
+     */
+    params?: object;
+}
+/**
+ * Serializer for FilesystemExporters.
+ * @export
+ * @interface FilesystemExporter
+ */
+export interface FilesystemExporter {
+    /**
+     * Unique name of the file system exporter.
+     * @type {string}
+     * @memberof FilesystemExporter
+     */
+    name: string;
+    /**
+     * File system location to export to.
+     * @type {string}
+     * @memberof FilesystemExporter
+     */
+    path: string;
+    /**
+     * Method of exporting
+     * @type {MethodEnum}
+     * @memberof FilesystemExporter
+     */
+    method?: MethodEnum;
+}
+/**
+ * Serializer for FilesystemExporters.
+ * @export
+ * @interface FilesystemExporterResponse
+ */
+export interface FilesystemExporterResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof FilesystemExporterResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof FilesystemExporterResponse
+     */
+    pulp_created?: string;
+    /**
+     * Unique name of the file system exporter.
+     * @type {string}
+     * @memberof FilesystemExporterResponse
+     */
+    name: string;
+    /**
+     * File system location to export to.
+     * @type {string}
+     * @memberof FilesystemExporterResponse
+     */
+    path: string;
+    /**
+     * Method of exporting
+     * @type {MethodEnum}
+     * @memberof FilesystemExporterResponse
+     */
+    method?: MethodEnum;
 }
 /**
  * Serializer for Group.
@@ -388,6 +539,67 @@ export interface ImportResponse {
     params: object;
 }
 /**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export enum MethodEnum {
+    Write = 'write',
+    Hardlink = 'hardlink',
+    Symlink = 'symlink'
+}
+
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface MinimalTaskResponse
+ */
+export interface MinimalTaskResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    pulp_created?: string;
+    /**
+     * The name of task.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    name: string;
+    /**
+     * The current state of the task. The possible values include: \'waiting\', \'skipped\', \'running\', \'completed\', \'failed\', \'canceled\' and \'canceling\'.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    state?: string;
+    /**
+     * Timestamp of the when this task started execution.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    started_at?: string;
+    /**
+     * Timestamp of the when this task stopped execution.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    finished_at?: string;
+    /**
+     * The worker associated with this task. This field is empty if a worker is not yet assigned.
+     * @type {string}
+     * @memberof MinimalTaskResponse
+     */
+    worker?: string;
+}
+/**
  * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
  * @export
  * @interface MultipleArtifactContentResponse
@@ -411,6 +623,25 @@ export interface MultipleArtifactContentResponse {
      * @memberof MultipleArtifactContentResponse
      */
     artifacts: object;
+}
+/**
+ * 
+ * @export
+ * @interface OrphansCleanup
+ */
+export interface OrphansCleanup {
+    /**
+     * Will delete specified content and associated Artifacts if they are orphans.
+     * @type {Array<any>}
+     * @memberof OrphansCleanup
+     */
+    content_hrefs?: Array<any>;
+    /**
+     * The time in minutes for how long Pulp will hold orphan Content and Artifacts before they become candidates for deletion by this orphan cleanup task. This should ideally be longer than your longest running task otherwise any content created during that task could be cleaned up before the task finishes. If not specified, default is used from settings which is 1440 minutes (24 hours)
+     * @type {number}
+     * @memberof OrphansCleanup
+     */
+    orphan_protection_time?: number | null;
 }
 /**
  * 
@@ -504,6 +735,68 @@ export interface PaginatedContentGuardResponseList {
      * @memberof PaginatedContentGuardResponseList
      */
     results?: Array<ContentGuardResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedFilesystemExportResponseList
+ */
+export interface PaginatedFilesystemExportResponseList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedFilesystemExportResponseList
+     */
+    count?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedFilesystemExportResponseList
+     */
+    next?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedFilesystemExportResponseList
+     */
+    previous?: string | null;
+    /**
+     * 
+     * @type {Array<FilesystemExportResponse>}
+     * @memberof PaginatedFilesystemExportResponseList
+     */
+    results?: Array<FilesystemExportResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedFilesystemExporterResponseList
+ */
+export interface PaginatedFilesystemExporterResponseList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedFilesystemExporterResponseList
+     */
+    count?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedFilesystemExporterResponseList
+     */
+    next?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedFilesystemExporterResponseList
+     */
+    previous?: string | null;
+    /**
+     * 
+     * @type {Array<FilesystemExporterResponse>}
+     * @memberof PaginatedFilesystemExporterResponseList
+     */
+    results?: Array<FilesystemExporterResponse>;
 }
 /**
  * 
@@ -663,6 +956,37 @@ export interface PaginatedPermissionResponseList {
 /**
  * 
  * @export
+ * @interface PaginatedPublicationResponseList
+ */
+export interface PaginatedPublicationResponseList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedPublicationResponseList
+     */
+    count?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicationResponseList
+     */
+    next?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedPublicationResponseList
+     */
+    previous?: string | null;
+    /**
+     * 
+     * @type {Array<PublicationResponse>}
+     * @memberof PaginatedPublicationResponseList
+     */
+    results?: Array<PublicationResponse>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedPulpExportResponseList
  */
 export interface PaginatedPulpExportResponseList {
@@ -756,6 +1080,37 @@ export interface PaginatedPulpImporterResponseList {
 /**
  * 
  * @export
+ * @interface PaginatedRBACContentGuardResponseList
+ */
+export interface PaginatedRBACContentGuardResponseList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedRBACContentGuardResponseList
+     */
+    count?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedRBACContentGuardResponseList
+     */
+    next?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedRBACContentGuardResponseList
+     */
+    previous?: string | null;
+    /**
+     * 
+     * @type {Array<RBACContentGuardResponse>}
+     * @memberof PaginatedRBACContentGuardResponseList
+     */
+    results?: Array<RBACContentGuardResponse>;
+}
+/**
+ * 
+ * @export
  * @interface PaginatedRepositoryResponseList
  */
 export interface PaginatedRepositoryResponseList {
@@ -783,6 +1138,37 @@ export interface PaginatedRepositoryResponseList {
      * @memberof PaginatedRepositoryResponseList
      */
     results?: Array<RepositoryResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface PaginatedRepositoryVersionResponseList
+ */
+export interface PaginatedRepositoryVersionResponseList {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaginatedRepositoryVersionResponseList
+     */
+    count?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedRepositoryVersionResponseList
+     */
+    next?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaginatedRepositoryVersionResponseList
+     */
+    previous?: string | null;
+    /**
+     * 
+     * @type {Array<RepositoryVersionResponse>}
+     * @memberof PaginatedRepositoryVersionResponseList
+     */
+    results?: Array<RepositoryVersionResponse>;
 }
 /**
  * 
@@ -990,6 +1376,31 @@ export interface PatchedAccessPolicy {
     statements?: Array<object>;
 }
 /**
+ * Serializer for FilesystemExporters.
+ * @export
+ * @interface PatchedFilesystemExporter
+ */
+export interface PatchedFilesystemExporter {
+    /**
+     * Unique name of the file system exporter.
+     * @type {string}
+     * @memberof PatchedFilesystemExporter
+     */
+    name?: string;
+    /**
+     * File system location to export to.
+     * @type {string}
+     * @memberof PatchedFilesystemExporter
+     */
+    path?: string;
+    /**
+     * Method of exporting
+     * @type {MethodEnum}
+     * @memberof PatchedFilesystemExporter
+     */
+    method?: MethodEnum;
+}
+/**
  * Serializer for Group.
  * @export
  * @interface PatchedGroup
@@ -1047,10 +1458,29 @@ export interface PatchedPulpImporter {
     name?: string;
     /**
      * Mapping of repo names in an export file to the repo names in Pulp. For example, if the export has a repo named \'foo\' and the repo to import content into was \'bar\', the mapping would be \"{\'foo\': \'bar\'}\".
-     * @type {object}
+     * @type {{ [key: string]: string; }}
      * @memberof PatchedPulpImporter
      */
-    repo_mapping?: object;
+    repo_mapping?: { [key: string]: string; };
+}
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface PatchedRBACContentGuard
+ */
+export interface PatchedRBACContentGuard {
+    /**
+     * The unique name.
+     * @type {string}
+     * @memberof PatchedRBACContentGuard
+     */
+    name?: string;
+    /**
+     * An optional description.
+     * @type {string}
+     * @memberof PatchedRBACContentGuard
+     */
+    description?: string | null;
 }
 /**
  * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
@@ -1115,7 +1545,7 @@ export interface ProgressReportResponse {
      */
     code?: string;
     /**
-     * The current state of the progress report. The possible values are: \'waiting\', \'skipped\', \'running\', \'completed\', \'failed\' and \'canceled\'. The default is \'waiting\'.
+     * The current state of the progress report. The possible values are: \'waiting\', \'skipped\', \'running\', \'completed\', \'failed\', \'canceled\' and \'canceling\'. The default is \'waiting\'.
      * @type {string}
      * @memberof ProgressReportResponse
      */
@@ -1138,6 +1568,37 @@ export interface ProgressReportResponse {
      * @memberof ProgressReportResponse
      */
     suffix?: string | null;
+}
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface PublicationResponse
+ */
+export interface PublicationResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicationResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof PublicationResponse
+     */
+    pulp_created?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PublicationResponse
+     */
+    repository_version?: string;
+    /**
+     * A URI of the repository to be published.
+     * @type {string}
+     * @memberof PublicationResponse
+     */
+    repository?: string;
 }
 /**
  * Serializer for PulpExports.
@@ -1170,7 +1631,7 @@ export interface PulpExport {
      */
     versions?: Array<string>;
     /**
-     * Chunk export-tarfile into pieces of chunk_size bytes.Recognizes units of B/KB/MB/GB/TB.
+     * Chunk export-tarfile into pieces of chunk_size bytes. Recognizes units of B/KB/MB/GB/TB. A chunk has a maximum size of 1TB.
      * @type {string}
      * @memberof PulpExport
      */
@@ -1208,10 +1669,10 @@ export interface PulpExportResponse {
     task?: string | null;
     /**
      * Resources that were exported.
-     * @type {Array<any>}
+     * @type {Array<string>}
      * @memberof PulpExportResponse
      */
-    exported_resources?: Array<any>;
+    exported_resources?: Array<string>;
     /**
      * Any additional parameters that were used to create the export.
      * @type {object}
@@ -1388,10 +1849,10 @@ export interface PulpImporter {
     name: string;
     /**
      * Mapping of repo names in an export file to the repo names in Pulp. For example, if the export has a repo named \'foo\' and the repo to import content into was \'bar\', the mapping would be \"{\'foo\': \'bar\'}\".
-     * @type {object}
+     * @type {{ [key: string]: string; }}
      * @memberof PulpImporter
      */
-    repo_mapping?: object;
+    repo_mapping?: { [key: string]: string; };
 }
 /**
  * Serializer for PulpImporters.
@@ -1419,10 +1880,110 @@ export interface PulpImporterResponse {
     name: string;
     /**
      * Mapping of repo names in an export file to the repo names in Pulp. For example, if the export has a repo named \'foo\' and the repo to import content into was \'bar\', the mapping would be \"{\'foo\': \'bar\'}\".
-     * @type {object}
+     * @type {{ [key: string]: string; }}
      * @memberof PulpImporterResponse
      */
-    repo_mapping?: object;
+    repo_mapping?: { [key: string]: string; };
+}
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface RBACContentGuard
+ */
+export interface RBACContentGuard {
+    /**
+     * The unique name.
+     * @type {string}
+     * @memberof RBACContentGuard
+     */
+    name: string;
+    /**
+     * An optional description.
+     * @type {string}
+     * @memberof RBACContentGuard
+     */
+    description?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface RBACContentGuardPermission
+ */
+export interface RBACContentGuardPermission {
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof RBACContentGuardPermission
+     */
+    usernames?: Array<any>;
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof RBACContentGuardPermission
+     */
+    groupnames?: Array<any>;
+}
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface RBACContentGuardResponse
+ */
+export interface RBACContentGuardResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    pulp_created?: string;
+    /**
+     * The unique name.
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    name: string;
+    /**
+     * An optional description.
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    description?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    users?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RBACContentGuardResponse
+     */
+    groups?: string;
+}
+/**
+ * Serializer for reclaim disk space operation.
+ * @export
+ * @interface ReclaimSpace
+ */
+export interface ReclaimSpace {
+    /**
+     * Will reclaim space for the specified list of repos.
+     * @type {Array<any>}
+     * @memberof ReclaimSpace
+     */
+    repo_hrefs: Array<any>;
+    /**
+     * Will exclude repo versions from space reclaim.
+     * @type {Array<string>}
+     * @memberof ReclaimSpace
+     */
+    repo_versions_keeplist?: Array<string>;
 }
 /**
  * Serializer for information about the Redis connection
@@ -1436,6 +1997,19 @@ export interface RedisConnectionResponse {
      * @memberof RedisConnectionResponse
      */
     connected: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface Repair
+ */
+export interface Repair {
+    /**
+     * Will verify that the checksum of all stored files matches what saved in the database. Otherwise only the existence of the files will be checked. Enabled by default
+     * @type {boolean}
+     * @memberof Repair
+     */
+    verify_checksums?: boolean;
 }
 /**
  * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
@@ -1486,11 +2060,60 @@ export interface RepositoryResponse {
      */
     description?: string | null;
     /**
-     * 
+     * Retain X versions of the repository. Default is null which retains all versions. This is provided as a tech preview in Pulp 3 and may change in the future.
+     * @type {number}
+     * @memberof RepositoryResponse
+     */
+    retain_repo_versions?: number | null;
+    /**
+     * An optional remote to use by default when syncing.
      * @type {string}
      * @memberof RepositoryResponse
      */
     remote?: string | null;
+}
+/**
+ * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
+ * @export
+ * @interface RepositoryVersionResponse
+ */
+export interface RepositoryVersionResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof RepositoryVersionResponse
+     */
+    pulp_href?: string;
+    /**
+     * Timestamp of creation.
+     * @type {string}
+     * @memberof RepositoryVersionResponse
+     */
+    pulp_created?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof RepositoryVersionResponse
+     */
+    number?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof RepositoryVersionResponse
+     */
+    repository?: string;
+    /**
+     * A repository version whose content was used as the initial set of content for this repository version
+     * @type {string}
+     * @memberof RepositoryVersionResponse
+     */
+    base_version?: string;
+    /**
+     * Various count summaries of the content in the version and the HREF to view them.
+     * @type {ContentSummaryResponse}
+     * @memberof RepositoryVersionResponse
+     */
+    content_summary?: ContentSummaryResponse;
 }
 /**
  * A serializer for the model declaring a signing service.
@@ -1570,7 +2193,7 @@ export interface StatusResponse {
      * @type {RedisConnectionResponse}
      * @memberof StatusResponse
      */
-    redis_connection: RedisConnectionResponse;
+    redis_connection?: RedisConnectionResponse;
     /**
      * Storage information
      * @type {StorageResponse}
@@ -1664,11 +2287,23 @@ export interface TaskGroupResponse {
      */
     failed?: number;
     /**
+     * Number of tasks in the \'canceling\' state
+     * @type {number}
+     * @memberof TaskGroupResponse
+     */
+    canceling?: number;
+    /**
      * 
      * @type {Array<GroupProgressReportResponse>}
      * @memberof TaskGroupResponse
      */
     group_progress_reports?: Array<GroupProgressReportResponse>;
+    /**
+     * 
+     * @type {Array<MinimalTaskResponse>}
+     * @memberof TaskGroupResponse
+     */
+    tasks?: Array<MinimalTaskResponse>;
 }
 /**
  * Base serializer for use with :class:`pulpcore.app.models.Model`  This ensures that all Serializers provide values for the \'pulp_href` field.  The class provides a default for the ``ref_name`` attribute in the ModelSerializers\'s ``Meta`` class. This ensures that the OpenAPI definitions of plugins are namespaced properly.
@@ -1689,7 +2324,7 @@ export interface TaskResponse {
      */
     pulp_created?: string;
     /**
-     * The current state of the task. The possible values include: \'waiting\', \'skipped\', \'running\', \'completed\', \'failed\' and \'canceled\'.
+     * The current state of the task. The possible values include: \'waiting\', \'skipped\', \'running\', \'completed\', \'failed\', \'canceled\' and \'canceling\'.
      * @type {string}
      * @memberof TaskResponse
      */
@@ -1720,10 +2355,10 @@ export interface TaskResponse {
     finished_at?: string;
     /**
      * A JSON Object of a fatal error encountered during the execution of this task.
-     * @type {object}
+     * @type {{ [key: string]: object; }}
      * @memberof TaskResponse
      */
-    error?: object;
+    error?: { [key: string]: object; };
     /**
      * The worker associated with this task. This field is empty if a worker is not yet assigned.
      * @type {string}
@@ -1761,11 +2396,11 @@ export interface TaskResponse {
      */
     created_resources?: Array<string>;
     /**
-     * 
-     * @type {Array<object>}
+     * A list of resources required by that task.
+     * @type {Array<string>}
      * @memberof TaskResponse
      */
-    reserved_resources_record?: Array<object>;
+    reserved_resources_record?: Array<string>;
 }
 /**
  * Serializer for chunked uploads.
@@ -1992,17 +2627,17 @@ export interface VersionResponse {
  */
 export interface WorkerResponse {
     /**
-     * 
-     * @type {string}
-     * @memberof WorkerResponse
-     */
-    pulp_href?: string;
-    /**
      * Timestamp of creation.
      * @type {string}
      * @memberof WorkerResponse
      */
     pulp_created?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkerResponse
+     */
+    pulp_href?: string;
     /**
      * The name of the worker.
      * @type {string}
@@ -2026,24 +2661,24 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List access policys
-         * @param {string} [customized] customized
+         * @param {boolean} [customized] 
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [viewsetName] viewset_name
-         * @param {string} [viewsetNameContains] viewset_name__contains
-         * @param {string} [viewsetNameIcontains] viewset_name__icontains
-         * @param {string} [viewsetNameIn] viewset_name__in
-         * @param {string} [viewsetNameStartswith] viewset_name__startswith
+         * @param {string} [viewsetName] Filter results where viewset_name matches value
+         * @param {string} [viewsetNameContains] Filter results where viewset_name contains value
+         * @param {string} [viewsetNameIcontains] Filter results where viewset_name contains value
+         * @param {Array<string>} [viewsetNameIn] Filter results where viewset_name is in a comma-separated list of values
+         * @param {string} [viewsetNameStartswith] Filter results where viewset_name starts with value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (customized?: string, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: string, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (customized?: boolean, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: Array<string>, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/access_policies/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2055,9 +2690,7 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2089,8 +2722,8 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['viewset_name__icontains'] = viewsetNameIcontains;
             }
 
-            if (viewsetNameIn !== undefined) {
-                localVarQueryParameter['viewset_name__in'] = viewsetNameIn;
+            if (viewsetNameIn) {
+                localVarQueryParameter['viewset_name__in'] = viewsetNameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (viewsetNameStartswith !== undefined) {
@@ -2107,19 +2740,12 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2133,17 +2759,13 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
          */
         partialUpdate: async (accessPolicyHref: string, patchedAccessPolicy: PatchedAccessPolicy, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'accessPolicyHref' is not null or undefined
-            if (accessPolicyHref === null || accessPolicyHref === undefined) {
-                throw new RequiredError('accessPolicyHref','Required parameter accessPolicyHref was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'accessPolicyHref', accessPolicyHref)
             // verify required parameter 'patchedAccessPolicy' is not null or undefined
-            if (patchedAccessPolicy === null || patchedAccessPolicy === undefined) {
-                throw new RequiredError('patchedAccessPolicy','Required parameter patchedAccessPolicy was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'patchedAccessPolicy', patchedAccessPolicy)
             const localVarPath = `{access_policy_href}`
-                .replace(`{${"access_policy_href"}}`, encodeURIComponent(String(accessPolicyHref)));
+                .replace(`{${"access_policy_href"}}`, String(accessPolicyHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2155,9 +2777,7 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2165,26 +2785,13 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof patchedAccessPolicy !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(patchedAccessPolicy !== undefined ? patchedAccessPolicy : {})
-                : (patchedAccessPolicy || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedAccessPolicy, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2199,13 +2806,11 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
          */
         read: async (accessPolicyHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'accessPolicyHref' is not null or undefined
-            if (accessPolicyHref === null || accessPolicyHref === undefined) {
-                throw new RequiredError('accessPolicyHref','Required parameter accessPolicyHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'accessPolicyHref', accessPolicyHref)
             const localVarPath = `{access_policy_href}`
-                .replace(`{${"access_policy_href"}}`, encodeURIComponent(String(accessPolicyHref)));
+                .replace(`{${"access_policy_href"}}`, String(accessPolicyHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2217,9 +2822,7 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2233,19 +2836,12 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2259,17 +2855,13 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
          */
         update: async (accessPolicyHref: string, accessPolicy: AccessPolicy, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'accessPolicyHref' is not null or undefined
-            if (accessPolicyHref === null || accessPolicyHref === undefined) {
-                throw new RequiredError('accessPolicyHref','Required parameter accessPolicyHref was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'accessPolicyHref', accessPolicyHref)
             // verify required parameter 'accessPolicy' is not null or undefined
-            if (accessPolicy === null || accessPolicy === undefined) {
-                throw new RequiredError('accessPolicy','Required parameter accessPolicy was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'accessPolicy', accessPolicy)
             const localVarPath = `{access_policy_href}`
-                .replace(`{${"access_policy_href"}}`, encodeURIComponent(String(accessPolicyHref)));
+                .replace(`{${"access_policy_href"}}`, String(accessPolicyHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2281,9 +2873,7 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2291,26 +2881,13 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof accessPolicy !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(accessPolicy !== undefined ? accessPolicy : {})
-                : (accessPolicy || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(accessPolicy, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2322,30 +2899,28 @@ export const AccessPoliciesApiAxiosParamCreator = function (configuration?: Conf
  * @export
  */
 export const AccessPoliciesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AccessPoliciesApiAxiosParamCreator(configuration)
     return {
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List access policys
-         * @param {string} [customized] customized
+         * @param {boolean} [customized] 
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [viewsetName] viewset_name
-         * @param {string} [viewsetNameContains] viewset_name__contains
-         * @param {string} [viewsetNameIcontains] viewset_name__icontains
-         * @param {string} [viewsetNameIn] viewset_name__in
-         * @param {string} [viewsetNameStartswith] viewset_name__startswith
+         * @param {string} [viewsetName] Filter results where viewset_name matches value
+         * @param {string} [viewsetNameContains] Filter results where viewset_name contains value
+         * @param {string} [viewsetNameIcontains] Filter results where viewset_name contains value
+         * @param {Array<string>} [viewsetNameIn] Filter results where viewset_name is in a comma-separated list of values
+         * @param {string} [viewsetNameStartswith] Filter results where viewset_name starts with value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(customized?: string, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: string, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAccessPolicyResponseList>> {
-            const localVarAxiosArgs = await AccessPoliciesApiAxiosParamCreator(configuration).list(customized, limit, offset, ordering, viewsetName, viewsetNameContains, viewsetNameIcontains, viewsetNameIn, viewsetNameStartswith, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(customized?: boolean, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: Array<string>, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedAccessPolicyResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(customized, limit, offset, ordering, viewsetName, viewsetNameContains, viewsetNameIcontains, viewsetNameIn, viewsetNameStartswith, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2356,11 +2931,8 @@ export const AccessPoliciesApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async partialUpdate(accessPolicyHref: string, patchedAccessPolicy: PatchedAccessPolicy, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessPolicyResponse>> {
-            const localVarAxiosArgs = await AccessPoliciesApiAxiosParamCreator(configuration).partialUpdate(accessPolicyHref, patchedAccessPolicy, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(accessPolicyHref, patchedAccessPolicy, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2372,11 +2944,8 @@ export const AccessPoliciesApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(accessPolicyHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessPolicyResponse>> {
-            const localVarAxiosArgs = await AccessPoliciesApiAxiosParamCreator(configuration).read(accessPolicyHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(accessPolicyHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2387,11 +2956,8 @@ export const AccessPoliciesApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async update(accessPolicyHref: string, accessPolicy: AccessPolicy, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessPolicyResponse>> {
-            const localVarAxiosArgs = await AccessPoliciesApiAxiosParamCreator(configuration).update(accessPolicyHref, accessPolicy, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(accessPolicyHref, accessPolicy, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -2401,26 +2967,27 @@ export const AccessPoliciesApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const AccessPoliciesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AccessPoliciesApiFp(configuration)
     return {
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List access policys
-         * @param {string} [customized] customized
+         * @param {boolean} [customized] 
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [viewsetName] viewset_name
-         * @param {string} [viewsetNameContains] viewset_name__contains
-         * @param {string} [viewsetNameIcontains] viewset_name__icontains
-         * @param {string} [viewsetNameIn] viewset_name__in
-         * @param {string} [viewsetNameStartswith] viewset_name__startswith
+         * @param {string} [viewsetName] Filter results where viewset_name matches value
+         * @param {string} [viewsetNameContains] Filter results where viewset_name contains value
+         * @param {string} [viewsetNameIcontains] Filter results where viewset_name contains value
+         * @param {Array<string>} [viewsetNameIn] Filter results where viewset_name is in a comma-separated list of values
+         * @param {string} [viewsetNameStartswith] Filter results where viewset_name starts with value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(customized?: string, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: string, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedAccessPolicyResponseList> {
-            return AccessPoliciesApiFp(configuration).list(customized, limit, offset, ordering, viewsetName, viewsetNameContains, viewsetNameIcontains, viewsetNameIn, viewsetNameStartswith, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(customized?: boolean, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: Array<string>, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedAccessPolicyResponseList> {
+            return localVarFp.list(customized, limit, offset, ordering, viewsetName, viewsetNameContains, viewsetNameIcontains, viewsetNameIn, viewsetNameStartswith, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2431,7 +2998,7 @@ export const AccessPoliciesApiFactory = function (configuration?: Configuration,
          * @throws {RequiredError}
          */
         partialUpdate(accessPolicyHref: string, patchedAccessPolicy: PatchedAccessPolicy, options?: any): AxiosPromise<AccessPolicyResponse> {
-            return AccessPoliciesApiFp(configuration).partialUpdate(accessPolicyHref, patchedAccessPolicy, options).then((request) => request(axios, basePath));
+            return localVarFp.partialUpdate(accessPolicyHref, patchedAccessPolicy, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2443,7 +3010,7 @@ export const AccessPoliciesApiFactory = function (configuration?: Configuration,
          * @throws {RequiredError}
          */
         read(accessPolicyHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<AccessPolicyResponse> {
-            return AccessPoliciesApiFp(configuration).read(accessPolicyHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(accessPolicyHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -2454,7 +3021,7 @@ export const AccessPoliciesApiFactory = function (configuration?: Configuration,
          * @throws {RequiredError}
          */
         update(accessPolicyHref: string, accessPolicy: AccessPolicy, options?: any): AxiosPromise<AccessPolicyResponse> {
-            return AccessPoliciesApiFp(configuration).update(accessPolicyHref, accessPolicy, options).then((request) => request(axios, basePath));
+            return localVarFp.update(accessPolicyHref, accessPolicy, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2469,22 +3036,22 @@ export class AccessPoliciesApi extends BaseAPI {
     /**
      * ViewSet for AccessPolicy.  NOTE: This API endpoint is in \"tech preview\" and subject to change
      * @summary List access policys
-     * @param {string} [customized] customized
+     * @param {boolean} [customized] 
      * @param {number} [limit] Number of results to return per page.
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [viewsetName] viewset_name
-     * @param {string} [viewsetNameContains] viewset_name__contains
-     * @param {string} [viewsetNameIcontains] viewset_name__icontains
-     * @param {string} [viewsetNameIn] viewset_name__in
-     * @param {string} [viewsetNameStartswith] viewset_name__startswith
+     * @param {string} [viewsetName] Filter results where viewset_name matches value
+     * @param {string} [viewsetNameContains] Filter results where viewset_name contains value
+     * @param {string} [viewsetNameIcontains] Filter results where viewset_name contains value
+     * @param {Array<string>} [viewsetNameIn] Filter results where viewset_name is in a comma-separated list of values
+     * @param {string} [viewsetNameStartswith] Filter results where viewset_name starts with value
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AccessPoliciesApi
      */
-    public list(customized?: string, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: string, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(customized?: boolean, limit?: number, offset?: number, ordering?: string, viewsetName?: string, viewsetNameContains?: string, viewsetNameIcontains?: string, viewsetNameIn?: Array<string>, viewsetNameStartswith?: string, fields?: string, excludeFields?: string, options?: any) {
         return AccessPoliciesApiFp(this.configuration).list(customized, limit, offset, ordering, viewsetName, viewsetNameContains, viewsetNameIcontains, viewsetNameIn, viewsetNameStartswith, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2530,6 +3097,7 @@ export class AccessPoliciesApi extends BaseAPI {
 }
 
 
+
 /**
  * ArtifactsApi - axios parameter creator
  * @export
@@ -2545,13 +3113,11 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
          */
         _delete: async (artifactHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'artifactHref' is not null or undefined
-            if (artifactHref === null || artifactHref === undefined) {
-                throw new RequiredError('artifactHref','Required parameter artifactHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'artifactHref', artifactHref)
             const localVarPath = `{artifact_href}`
-                .replace(`{${"artifact_href"}}`, encodeURIComponent(String(artifactHref)));
+                .replace(`{${"artifact_href"}}`, String(artifactHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2563,27 +3129,18 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2603,12 +3160,10 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
          */
         create: async (file: any, size?: number, md5?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'file' is not null or undefined
-            if (file === null || file === undefined) {
-                throw new RequiredError('file','Required parameter file was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'file', file)
             const localVarPath = `/pulp/api/v3/artifacts/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2621,9 +3176,7 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2663,20 +3216,13 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
     
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = localVarFormParams;
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2684,15 +3230,15 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List artifacts
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [md5] md5
+         * @param {string} [md5] Filter results where md5 matches value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [sha1] sha1
-         * @param {string} [sha224] sha224
-         * @param {string} [sha256] sha256
-         * @param {string} [sha384] sha384
-         * @param {string} [sha512] sha512
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [sha1] Filter results where sha1 matches value
+         * @param {string} [sha224] Filter results where sha224 matches value
+         * @param {string} [sha256] Filter results where sha256 matches value
+         * @param {string} [sha384] Filter results where sha384 matches value
+         * @param {string} [sha512] Filter results where sha512 matches value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
@@ -2701,7 +3247,7 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
         list: async (limit?: number, md5?: string, offset?: number, ordering?: string, repositoryVersion?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/artifacts/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2713,9 +3259,7 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2769,19 +3313,12 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2796,13 +3333,11 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
          */
         read: async (artifactHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'artifactHref' is not null or undefined
-            if (artifactHref === null || artifactHref === undefined) {
-                throw new RequiredError('artifactHref','Required parameter artifactHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'artifactHref', artifactHref)
             const localVarPath = `{artifact_href}`
-                .replace(`{${"artifact_href"}}`, encodeURIComponent(String(artifactHref)));
+                .replace(`{${"artifact_href"}}`, String(artifactHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -2814,9 +3349,7 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -2830,19 +3363,12 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2854,6 +3380,7 @@ export const ArtifactsApiAxiosParamCreator = function (configuration?: Configura
  * @export
  */
 export const ArtifactsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ArtifactsApiAxiosParamCreator(configuration)
     return {
         /**
          * Remove Artifact only if it is not associated with any Content.
@@ -2863,11 +3390,8 @@ export const ArtifactsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(artifactHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ArtifactsApiAxiosParamCreator(configuration)._delete(artifactHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(artifactHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -2884,36 +3408,30 @@ export const ArtifactsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(file: any, size?: number, md5?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtifactResponse>> {
-            const localVarAxiosArgs = await ArtifactsApiAxiosParamCreator(configuration).create(file, size, md5, sha1, sha224, sha256, sha384, sha512, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(file, size, md5, sha1, sha224, sha256, sha384, sha512, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List artifacts
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [md5] md5
+         * @param {string} [md5] Filter results where md5 matches value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [sha1] sha1
-         * @param {string} [sha224] sha224
-         * @param {string} [sha256] sha256
-         * @param {string} [sha384] sha384
-         * @param {string} [sha512] sha512
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [sha1] Filter results where sha1 matches value
+         * @param {string} [sha224] Filter results where sha224 matches value
+         * @param {string} [sha256] Filter results where sha256 matches value
+         * @param {string} [sha384] Filter results where sha384 matches value
+         * @param {string} [sha512] Filter results where sha512 matches value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async list(limit?: number, md5?: string, offset?: number, ordering?: string, repositoryVersion?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedArtifactResponseList>> {
-            const localVarAxiosArgs = await ArtifactsApiAxiosParamCreator(configuration).list(limit, md5, offset, ordering, repositoryVersion, sha1, sha224, sha256, sha384, sha512, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, md5, offset, ordering, repositoryVersion, sha1, sha224, sha256, sha384, sha512, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -2925,11 +3443,8 @@ export const ArtifactsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(artifactHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtifactResponse>> {
-            const localVarAxiosArgs = await ArtifactsApiAxiosParamCreator(configuration).read(artifactHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(artifactHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -2939,6 +3454,7 @@ export const ArtifactsApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const ArtifactsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ArtifactsApiFp(configuration)
     return {
         /**
          * Remove Artifact only if it is not associated with any Content.
@@ -2948,7 +3464,7 @@ export const ArtifactsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         _delete(artifactHref: string, options?: any): AxiosPromise<void> {
-            return ArtifactsApiFp(configuration)._delete(artifactHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(artifactHref, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -2965,28 +3481,28 @@ export const ArtifactsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         create(file: any, size?: number, md5?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, options?: any): AxiosPromise<ArtifactResponse> {
-            return ArtifactsApiFp(configuration).create(file, size, md5, sha1, sha224, sha256, sha384, sha512, options).then((request) => request(axios, basePath));
+            return localVarFp.create(file, size, md5, sha1, sha224, sha256, sha384, sha512, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List artifacts
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [md5] md5
+         * @param {string} [md5] Filter results where md5 matches value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [sha1] sha1
-         * @param {string} [sha224] sha224
-         * @param {string} [sha256] sha256
-         * @param {string} [sha384] sha384
-         * @param {string} [sha512] sha512
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [sha1] Filter results where sha1 matches value
+         * @param {string} [sha224] Filter results where sha224 matches value
+         * @param {string} [sha256] Filter results where sha256 matches value
+         * @param {string} [sha384] Filter results where sha384 matches value
+         * @param {string} [sha512] Filter results where sha512 matches value
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         list(limit?: number, md5?: string, offset?: number, ordering?: string, repositoryVersion?: string, sha1?: string, sha224?: string, sha256?: string, sha384?: string, sha512?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedArtifactResponseList> {
-            return ArtifactsApiFp(configuration).list(limit, md5, offset, ordering, repositoryVersion, sha1, sha224, sha256, sha384, sha512, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(limit, md5, offset, ordering, repositoryVersion, sha1, sha224, sha256, sha384, sha512, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -2998,7 +3514,7 @@ export const ArtifactsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         read(artifactHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<ArtifactResponse> {
-            return ArtifactsApiFp(configuration).read(artifactHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(artifactHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3045,15 +3561,15 @@ export class ArtifactsApi extends BaseAPI {
      * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
      * @summary List artifacts
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [md5] md5
+     * @param {string} [md5] Filter results where md5 matches value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [repositoryVersion] repository_version
-     * @param {string} [sha1] sha1
-     * @param {string} [sha224] sha224
-     * @param {string} [sha256] sha256
-     * @param {string} [sha384] sha384
-     * @param {string} [sha512] sha512
+     * @param {string} [repositoryVersion] Repository Version referenced by HREF
+     * @param {string} [sha1] Filter results where sha1 matches value
+     * @param {string} [sha224] Filter results where sha224 matches value
+     * @param {string} [sha256] Filter results where sha256 matches value
+     * @param {string} [sha384] Filter results where sha384 matches value
+     * @param {string} [sha512] Filter results where sha512 matches value
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
@@ -3080,6 +3596,7 @@ export class ArtifactsApi extends BaseAPI {
 }
 
 
+
 /**
  * ContentApi - axios parameter creator
  * @export
@@ -3092,9 +3609,9 @@ export const ContentApiAxiosParamCreator = function (configuration?: Configurati
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [repositoryVersionAdded] repository_version_added
-         * @param {string} [repositoryVersionRemoved] repository_version_removed
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionAdded] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionRemoved] Repository Version referenced by HREF
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
@@ -3103,7 +3620,7 @@ export const ContentApiAxiosParamCreator = function (configuration?: Configurati
         list: async (limit?: number, offset?: number, ordering?: string, repositoryVersion?: string, repositoryVersionAdded?: string, repositoryVersionRemoved?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/content/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3115,9 +3632,7 @@ export const ContentApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -3155,19 +3670,12 @@ export const ContentApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -3179,6 +3687,7 @@ export const ContentApiAxiosParamCreator = function (configuration?: Configurati
  * @export
  */
 export const ContentApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContentApiAxiosParamCreator(configuration)
     return {
         /**
          * Endpoint to list all content.
@@ -3186,20 +3695,17 @@ export const ContentApiFp = function(configuration?: Configuration) {
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [repositoryVersionAdded] repository_version_added
-         * @param {string} [repositoryVersionRemoved] repository_version_removed
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionAdded] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionRemoved] Repository Version referenced by HREF
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async list(limit?: number, offset?: number, ordering?: string, repositoryVersion?: string, repositoryVersionAdded?: string, repositoryVersionRemoved?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMultipleArtifactContentResponseList>> {
-            const localVarAxiosArgs = await ContentApiAxiosParamCreator(configuration).list(limit, offset, ordering, repositoryVersion, repositoryVersionAdded, repositoryVersionRemoved, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, offset, ordering, repositoryVersion, repositoryVersionAdded, repositoryVersionRemoved, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -3209,6 +3715,7 @@ export const ContentApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const ContentApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContentApiFp(configuration)
     return {
         /**
          * Endpoint to list all content.
@@ -3216,16 +3723,16 @@ export const ContentApiFactory = function (configuration?: Configuration, basePa
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [repositoryVersion] repository_version
-         * @param {string} [repositoryVersionAdded] repository_version_added
-         * @param {string} [repositoryVersionRemoved] repository_version_removed
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionAdded] Repository Version referenced by HREF
+         * @param {string} [repositoryVersionRemoved] Repository Version referenced by HREF
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         list(limit?: number, offset?: number, ordering?: string, repositoryVersion?: string, repositoryVersionAdded?: string, repositoryVersionRemoved?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedMultipleArtifactContentResponseList> {
-            return ContentApiFp(configuration).list(limit, offset, ordering, repositoryVersion, repositoryVersionAdded, repositoryVersionRemoved, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(limit, offset, ordering, repositoryVersion, repositoryVersionAdded, repositoryVersionRemoved, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3243,9 +3750,9 @@ export class ContentApi extends BaseAPI {
      * @param {number} [limit] Number of results to return per page.
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [repositoryVersion] repository_version
-     * @param {string} [repositoryVersionAdded] repository_version_added
-     * @param {string} [repositoryVersionRemoved] repository_version_removed
+     * @param {string} [repositoryVersion] Repository Version referenced by HREF
+     * @param {string} [repositoryVersionAdded] Repository Version referenced by HREF
+     * @param {string} [repositoryVersionRemoved] Repository Version referenced by HREF
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
@@ -3258,21 +3765,22 @@ export class ContentApi extends BaseAPI {
 }
 
 
+
 /**
- * ContentGuardsApi - axios parameter creator
+ * ContentguardsApi - axios parameter creator
  * @export
  */
-export const ContentGuardsApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ContentguardsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Endpoint to list all content_guards.
+         * Endpoint to list all contentguards.
          * @summary List content guards
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3280,10 +3788,10 @@ export const ContentGuardsApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/pulp/api/v3/content_guards/`;
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/contentguards/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3295,9 +3803,7 @@ export const ContentGuardsApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -3317,8 +3823,8 @@ export const ContentGuardsApiAxiosParamCreator = function (configuration?: Confi
                 localVarQueryParameter['name__icontains'] = nameIcontains;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (nameStartswith !== undefined) {
@@ -3343,19 +3849,12 @@ export const ContentGuardsApiAxiosParamCreator = function (configuration?: Confi
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -3363,20 +3862,21 @@ export const ContentGuardsApiAxiosParamCreator = function (configuration?: Confi
 };
 
 /**
- * ContentGuardsApi - functional programming interface
+ * ContentguardsApi - functional programming interface
  * @export
  */
-export const ContentGuardsApiFp = function(configuration?: Configuration) {
+export const ContentguardsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContentguardsApiAxiosParamCreator(configuration)
     return {
         /**
-         * Endpoint to list all content_guards.
+         * Endpoint to list all contentguards.
          * @summary List content guards
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3384,31 +3884,29 @@ export const ContentGuardsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedContentGuardResponseList>> {
-            const localVarAxiosArgs = await ContentGuardsApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedContentGuardResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
 
 /**
- * ContentGuardsApi - factory interface
+ * ContentguardsApi - factory interface
  * @export
  */
-export const ContentGuardsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const ContentguardsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContentguardsApiFp(configuration)
     return {
         /**
-         * Endpoint to list all content_guards.
+         * Endpoint to list all contentguards.
          * @summary List content guards
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3416,64 +3914,63 @@ export const ContentGuardsApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedContentGuardResponseList> {
-            return ContentGuardsApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedContentGuardResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * ContentGuardsApi - object-oriented interface
+ * ContentguardsApi - object-oriented interface
  * @export
- * @class ContentGuardsApi
+ * @class ContentguardsApi
  * @extends {BaseAPI}
  */
-export class ContentGuardsApi extends BaseAPI {
+export class ContentguardsApi extends BaseAPI {
     /**
-     * Endpoint to list all content_guards.
+     * Endpoint to list all contentguards.
      * @summary List content guards
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIn] name__in
-     * @param {string} [nameStartswith] name__startswith
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentGuardsApi
+     * @memberof ContentguardsApi
      */
-    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return ContentGuardsApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ContentguardsApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
 
+
 /**
- * ExportersCoreExportsApi - axios parameter creator
+ * ContentguardsRbacApi - axios parameter creator
  * @export
  */
-export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ContentguardsRbacApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Delete a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Delete a rbac content guard
+         * @param {string} rBACContentGuardHref 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        _delete: async (pulpPulpExportHref: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpPulpExportHref' is not null or undefined
-            if (pulpPulpExportHref === null || pulpPulpExportHref === undefined) {
-                throw new RequiredError('pulpPulpExportHref','Required parameter pulpPulpExportHref was null or undefined when calling _delete.');
-            }
-            const localVarPath = `{pulp_pulp_export_href}`
-                .replace(`{${"pulp_pulp_export_href"}}`, encodeURIComponent(String(pulpPulpExportHref)));
+        _delete: async (rBACContentGuardHref: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('_delete', 'rBACContentGuardHref', rBACContentGuardHref)
+            const localVarPath = `{r_b_a_c_content_guard_href}`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3485,51 +3982,38 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Trigger an asynchronous task to export a set of repositories
-         * @summary Create a pulp export
-         * @param {string} pulpExporterHref 
-         * @param {PulpExport} pulpExport 
+         * Give users and groups the `download` permission
+         * @summary Add download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (pulpExporterHref: string, pulpExport: PulpExport, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling create.');
-            }
-            // verify required parameter 'pulpExport' is not null or undefined
-            if (pulpExport === null || pulpExport === undefined) {
-                throw new RequiredError('pulpExport','Required parameter pulpExport was null or undefined when calling create.');
-            }
-            const localVarPath = `{pulp_exporter_href}exports/`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+        assignPermission: async (rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('assignPermission', 'rBACContentGuardHref', rBACContentGuardHref)
+            // verify required parameter 'rBACContentGuardPermission' is not null or undefined
+            assertParamExists('assignPermission', 'rBACContentGuardPermission', rBACContentGuardPermission)
+            const localVarPath = `{r_b_a_c_content_guard_href}assign_permission/`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3541,9 +4025,7 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -3551,34 +4033,67 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpExport !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpExport !== undefined ? pulpExport : {})
-                : (pulpExport || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(rBACContentGuardPermission, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary List pulp exports
-         * @param {string} pulpExporterHref 
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Create a rbac content guard
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (rBACContentGuard: RBACContentGuard, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuard' is not null or undefined
+            assertParamExists('create', 'rBACContentGuard', rBACContentGuard)
+            const localVarPath = `/pulp/api/v3/contentguards/core/rbac/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(rBACContentGuard, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary List rbac content guards
          * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -3586,15 +4101,10 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling list.');
-            }
-            const localVarPath = `{pulp_exporter_href}exports/`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/contentguards/core/rbac/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3606,9 +4116,1300 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
             }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {PatchedRBACContentGuard} patchedRBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdate: async (rBACContentGuardHref: string, patchedRBACContentGuard: PatchedRBACContentGuard, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('partialUpdate', 'rBACContentGuardHref', rBACContentGuardHref)
+            // verify required parameter 'patchedRBACContentGuard' is not null or undefined
+            assertParamExists('partialUpdate', 'patchedRBACContentGuard', patchedRBACContentGuard)
+            const localVarPath = `{r_b_a_c_content_guard_href}`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedRBACContentGuard, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Inspect a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read: async (rBACContentGuardHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('read', 'rBACContentGuardHref', rBACContentGuardHref)
+            const localVarPath = `{r_b_a_c_content_guard_href}`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Remove `download` permission from users and groups
+         * @summary Remove download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removePermission: async (rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('removePermission', 'rBACContentGuardHref', rBACContentGuardHref)
+            // verify required parameter 'rBACContentGuardPermission' is not null or undefined
+            assertParamExists('removePermission', 'rBACContentGuardPermission', rBACContentGuardPermission)
+            const localVarPath = `{r_b_a_c_content_guard_href}remove_permission/`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(rBACContentGuardPermission, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update: async (rBACContentGuardHref: string, rBACContentGuard: RBACContentGuard, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'rBACContentGuardHref' is not null or undefined
+            assertParamExists('update', 'rBACContentGuardHref', rBACContentGuardHref)
+            // verify required parameter 'rBACContentGuard' is not null or undefined
+            assertParamExists('update', 'rBACContentGuard', rBACContentGuard)
+            const localVarPath = `{r_b_a_c_content_guard_href}`
+                .replace(`{${"r_b_a_c_content_guard_href"}}`, String(rBACContentGuardHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(rBACContentGuard, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ContentguardsRbacApi - functional programming interface
+ * @export
+ */
+export const ContentguardsRbacApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContentguardsRbacApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Delete a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async _delete(rBACContentGuardHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(rBACContentGuardHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Give users and groups the `download` permission
+         * @summary Add download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async assignPermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.assignPermission(rBACContentGuardHref, rBACContentGuardPermission, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Create a rbac content guard
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(rBACContentGuard: RBACContentGuard, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(rBACContentGuard, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary List rbac content guards
+         * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedRBACContentGuardResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {PatchedRBACContentGuard} patchedRBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdate(rBACContentGuardHref: string, patchedRBACContentGuard: PatchedRBACContentGuard, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(rBACContentGuardHref, patchedRBACContentGuard, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Inspect a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async read(rBACContentGuardHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(rBACContentGuardHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Remove `download` permission from users and groups
+         * @summary Remove download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async removePermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removePermission(rBACContentGuardHref, rBACContentGuardPermission, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async update(rBACContentGuardHref: string, rBACContentGuard: RBACContentGuard, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RBACContentGuardResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(rBACContentGuardHref, rBACContentGuard, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ContentguardsRbacApi - factory interface
+ * @export
+ */
+export const ContentguardsRbacApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContentguardsRbacApiFp(configuration)
+    return {
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Delete a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete(rBACContentGuardHref: string, options?: any): AxiosPromise<void> {
+            return localVarFp._delete(rBACContentGuardHref, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Give users and groups the `download` permission
+         * @summary Add download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        assignPermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.assignPermission(rBACContentGuardHref, rBACContentGuardPermission, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Create a rbac content guard
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(rBACContentGuard: RBACContentGuard, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.create(rBACContentGuard, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary List rbac content guards
+         * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedRBACContentGuardResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {PatchedRBACContentGuard} patchedRBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdate(rBACContentGuardHref: string, patchedRBACContentGuard: PatchedRBACContentGuard, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.partialUpdate(rBACContentGuardHref, patchedRBACContentGuard, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Inspect a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read(rBACContentGuardHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.read(rBACContentGuardHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Remove `download` permission from users and groups
+         * @summary Remove download permission
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removePermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.removePermission(rBACContentGuardHref, rBACContentGuardPermission, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+         * @summary Update a rbac content guard
+         * @param {string} rBACContentGuardHref 
+         * @param {RBACContentGuard} rBACContentGuard 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update(rBACContentGuardHref: string, rBACContentGuard: RBACContentGuard, options?: any): AxiosPromise<RBACContentGuardResponse> {
+            return localVarFp.update(rBACContentGuardHref, rBACContentGuard, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ContentguardsRbacApi - object-oriented interface
+ * @export
+ * @class ContentguardsRbacApi
+ * @extends {BaseAPI}
+ */
+export class ContentguardsRbacApi extends BaseAPI {
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary Delete a rbac content guard
+     * @param {string} rBACContentGuardHref 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public _delete(rBACContentGuardHref: string, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration)._delete(rBACContentGuardHref, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Give users and groups the `download` permission
+     * @summary Add download permission
+     * @param {string} rBACContentGuardHref 
+     * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public assignPermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).assignPermission(rBACContentGuardHref, rBACContentGuardPermission, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary Create a rbac content guard
+     * @param {RBACContentGuard} rBACContentGuard 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public create(rBACContentGuard: RBACContentGuard, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).create(rBACContentGuard, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary List rbac content guards
+     * @param {number} [limit] Number of results to return per page.
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary Update a rbac content guard
+     * @param {string} rBACContentGuardHref 
+     * @param {PatchedRBACContentGuard} patchedRBACContentGuard 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public partialUpdate(rBACContentGuardHref: string, patchedRBACContentGuard: PatchedRBACContentGuard, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).partialUpdate(rBACContentGuardHref, patchedRBACContentGuard, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary Inspect a rbac content guard
+     * @param {string} rBACContentGuardHref 
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public read(rBACContentGuardHref: string, fields?: string, excludeFields?: string, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).read(rBACContentGuardHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Remove `download` permission from users and groups
+     * @summary Remove download permission
+     * @param {string} rBACContentGuardHref 
+     * @param {RBACContentGuardPermission} rBACContentGuardPermission 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public removePermission(rBACContentGuardHref: string, rBACContentGuardPermission: RBACContentGuardPermission, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).removePermission(rBACContentGuardHref, rBACContentGuardPermission, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Viewset for creating contentguards that use RBAC to protect content. Has add and remove actions for managing permission for users and groups to download content protected by this guard.
+     * @summary Update a rbac content guard
+     * @param {string} rBACContentGuardHref 
+     * @param {RBACContentGuard} rBACContentGuard 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentguardsRbacApi
+     */
+    public update(rBACContentGuardHref: string, rBACContentGuard: RBACContentGuard, options?: any) {
+        return ContentguardsRbacApiFp(this.configuration).update(rBACContentGuardHref, rBACContentGuard, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ExportersFilesystemApi - axios parameter creator
+ * @export
+ */
+export const ExportersFilesystemApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Trigger an asynchronous delete task
+         * @summary Delete a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete: async (filesystemExporterHref: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('_delete', 'filesystemExporterHref', filesystemExporterHref)
+            const localVarPath = `{filesystem_exporter_href}`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Create a filesystem exporter
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (filesystemExporter: FilesystemExporter, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporter' is not null or undefined
+            assertParamExists('create', 'filesystemExporter', filesystemExporter)
+            const localVarPath = `/pulp/api/v3/exporters/core/filesystem/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(filesystemExporter, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary List filesystem exporters
+         * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/exporters/core/filesystem/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
+
+            if (nameContains !== undefined) {
+                localVarQueryParameter['name__contains'] = nameContains;
+            }
+
+            if (nameIcontains !== undefined) {
+                localVarQueryParameter['name__icontains'] = nameIcontains;
+            }
+
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (nameStartswith !== undefined) {
+                localVarQueryParameter['name__startswith'] = nameStartswith;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Trigger an asynchronous partial update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {PatchedFilesystemExporter} patchedFilesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdate: async (filesystemExporterHref: string, patchedFilesystemExporter: PatchedFilesystemExporter, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('partialUpdate', 'filesystemExporterHref', filesystemExporterHref)
+            // verify required parameter 'patchedFilesystemExporter' is not null or undefined
+            assertParamExists('partialUpdate', 'patchedFilesystemExporter', patchedFilesystemExporter)
+            const localVarPath = `{filesystem_exporter_href}`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedFilesystemExporter, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Inspect a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read: async (filesystemExporterHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('read', 'filesystemExporterHref', filesystemExporterHref)
+            const localVarPath = `{filesystem_exporter_href}`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Trigger an asynchronous update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update: async (filesystemExporterHref: string, filesystemExporter: FilesystemExporter, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('update', 'filesystemExporterHref', filesystemExporterHref)
+            // verify required parameter 'filesystemExporter' is not null or undefined
+            assertParamExists('update', 'filesystemExporter', filesystemExporter)
+            const localVarPath = `{filesystem_exporter_href}`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(filesystemExporter, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ExportersFilesystemApi - functional programming interface
+ * @export
+ */
+export const ExportersFilesystemApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ExportersFilesystemApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Trigger an asynchronous delete task
+         * @summary Delete a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async _delete(filesystemExporterHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(filesystemExporterHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Create a filesystem exporter
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(filesystemExporter: FilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FilesystemExporterResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(filesystemExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary List filesystem exporters
+         * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedFilesystemExporterResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Trigger an asynchronous partial update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {PatchedFilesystemExporter} patchedFilesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdate(filesystemExporterHref: string, patchedFilesystemExporter: PatchedFilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(filesystemExporterHref, patchedFilesystemExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Inspect a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async read(filesystemExporterHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FilesystemExporterResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(filesystemExporterHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Trigger an asynchronous update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async update(filesystemExporterHref: string, filesystemExporter: FilesystemExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(filesystemExporterHref, filesystemExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ExportersFilesystemApi - factory interface
+ * @export
+ */
+export const ExportersFilesystemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ExportersFilesystemApiFp(configuration)
+    return {
+        /**
+         * Trigger an asynchronous delete task
+         * @summary Delete a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete(filesystemExporterHref: string, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp._delete(filesystemExporterHref, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Create a filesystem exporter
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(filesystemExporter: FilesystemExporter, options?: any): AxiosPromise<FilesystemExporterResponse> {
+            return localVarFp.create(filesystemExporter, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary List filesystem exporters
+         * @param {number} [limit] Number of results to return per page.
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedFilesystemExporterResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Trigger an asynchronous partial update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {PatchedFilesystemExporter} patchedFilesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdate(filesystemExporterHref: string, patchedFilesystemExporter: PatchedFilesystemExporter, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.partialUpdate(filesystemExporterHref, patchedFilesystemExporter, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+         * @summary Inspect a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read(filesystemExporterHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<FilesystemExporterResponse> {
+            return localVarFp.read(filesystemExporterHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Trigger an asynchronous update task
+         * @summary Update a filesystem exporter
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExporter} filesystemExporter 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update(filesystemExporterHref: string, filesystemExporter: FilesystemExporter, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.update(filesystemExporterHref, filesystemExporter, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ExportersFilesystemApi - object-oriented interface
+ * @export
+ * @class ExportersFilesystemApi
+ * @extends {BaseAPI}
+ */
+export class ExportersFilesystemApi extends BaseAPI {
+    /**
+     * Trigger an asynchronous delete task
+     * @summary Delete a filesystem exporter
+     * @param {string} filesystemExporterHref 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public _delete(filesystemExporterHref: string, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration)._delete(filesystemExporterHref, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+     * @summary Create a filesystem exporter
+     * @param {FilesystemExporter} filesystemExporter 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public create(filesystemExporter: FilesystemExporter, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).create(filesystemExporter, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+     * @summary List filesystem exporters
+     * @param {number} [limit] Number of results to return per page.
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Trigger an asynchronous partial update task
+     * @summary Update a filesystem exporter
+     * @param {string} filesystemExporterHref 
+     * @param {PatchedFilesystemExporter} patchedFilesystemExporter 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public partialUpdate(filesystemExporterHref: string, patchedFilesystemExporter: PatchedFilesystemExporter, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).partialUpdate(filesystemExporterHref, patchedFilesystemExporter, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Endpoint for managing FilesystemExporters. FilesystemExporters are provided as a tech preview.
+     * @summary Inspect a filesystem exporter
+     * @param {string} filesystemExporterHref 
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public read(filesystemExporterHref: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).read(filesystemExporterHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Trigger an asynchronous update task
+     * @summary Update a filesystem exporter
+     * @param {string} filesystemExporterHref 
+     * @param {FilesystemExporter} filesystemExporter 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersFilesystemApi
+     */
+    public update(filesystemExporterHref: string, filesystemExporter: FilesystemExporter, options?: any) {
+        return ExportersFilesystemApiFp(this.configuration).update(filesystemExporterHref, filesystemExporter, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ExportersFilesystemExportsApi - axios parameter creator
+ * @export
+ */
+export const ExportersFilesystemExportsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Delete a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete: async (filesystemFilesystemExportHref: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemFilesystemExportHref' is not null or undefined
+            assertParamExists('_delete', 'filesystemFilesystemExportHref', filesystemFilesystemExportHref)
+            const localVarPath = `{filesystem_filesystem_export_href}`
+                .replace(`{${"filesystem_filesystem_export_href"}}`, String(filesystemFilesystemExportHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Trigger an asynchronous task to export files to the filesystem
+         * @summary Create a filesystem export
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExport} filesystemExport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (filesystemExporterHref: string, filesystemExport: FilesystemExport, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('create', 'filesystemExporterHref', filesystemExporterHref)
+            // verify required parameter 'filesystemExport' is not null or undefined
+            assertParamExists('create', 'filesystemExport', filesystemExport)
+            const localVarPath = `{filesystem_exporter_href}exports/`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(filesystemExport, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary List filesystem exports
+         * @param {string} filesystemExporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (filesystemExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemExporterHref' is not null or undefined
+            assertParamExists('list', 'filesystemExporterHref', filesystemExporterHref)
+            const localVarPath = `{filesystem_exporter_href}exports/`
+                .replace(`{${"filesystem_exporter_href"}}`, String(filesystemExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -3634,40 +5435,31 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Inspect a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Inspect a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        read: async (pulpPulpExportHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpPulpExportHref' is not null or undefined
-            if (pulpPulpExportHref === null || pulpPulpExportHref === undefined) {
-                throw new RequiredError('pulpPulpExportHref','Required parameter pulpPulpExportHref was null or undefined when calling read.');
-            }
-            const localVarPath = `{pulp_pulp_export_href}`
-                .replace(`{${"pulp_pulp_export_href"}}`, encodeURIComponent(String(pulpPulpExportHref)));
+        read: async (filesystemFilesystemExportHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'filesystemFilesystemExportHref' is not null or undefined
+            assertParamExists('read', 'filesystemFilesystemExportHref', filesystemFilesystemExportHref)
+            const localVarPath = `{filesystem_filesystem_export_href}`
+                .replace(`{${"filesystem_filesystem_export_href"}}`, String(filesystemFilesystemExportHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3679,9 +5471,7 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -3695,19 +5485,12 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -3715,44 +5498,39 @@ export const ExportersCoreExportsApiAxiosParamCreator = function (configuration?
 };
 
 /**
- * ExportersCoreExportsApi - functional programming interface
+ * ExportersFilesystemExportsApi - functional programming interface
  * @export
  */
-export const ExportersCoreExportsApiFp = function(configuration?: Configuration) {
+export const ExportersFilesystemExportsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ExportersFilesystemExportsApiAxiosParamCreator(configuration)
     return {
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Delete a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Delete a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async _delete(pulpPulpExportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ExportersCoreExportsApiAxiosParamCreator(configuration)._delete(pulpPulpExportHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async _delete(filesystemFilesystemExportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(filesystemFilesystemExportHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Trigger an asynchronous task to export a set of repositories
-         * @summary Create a pulp export
-         * @param {string} pulpExporterHref 
-         * @param {PulpExport} pulpExport 
+         * Trigger an asynchronous task to export files to the filesystem
+         * @summary Create a filesystem export
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExport} filesystemExport 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(pulpExporterHref: string, pulpExport: PulpExport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await ExportersCoreExportsApiAxiosParamCreator(configuration).create(pulpExporterHref, pulpExport, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async create(filesystemExporterHref: string, filesystemExport: FilesystemExport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(filesystemExporterHref, filesystemExport, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary List pulp exports
-         * @param {string} pulpExporterHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary List filesystem exports
+         * @param {string} filesystemExporterHref 
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -3761,63 +5539,58 @@ export const ExportersCoreExportsApiFp = function(configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpExportResponseList>> {
-            const localVarAxiosArgs = await ExportersCoreExportsApiAxiosParamCreator(configuration).list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(filesystemExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedFilesystemExportResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(filesystemExporterHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Inspect a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Inspect a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExportResponse>> {
-            const localVarAxiosArgs = await ExportersCoreExportsApiAxiosParamCreator(configuration).read(pulpPulpExportHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async read(filesystemFilesystemExportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FilesystemExportResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(filesystemFilesystemExportHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
 
 /**
- * ExportersCoreExportsApi - factory interface
+ * ExportersFilesystemExportsApi - factory interface
  * @export
  */
-export const ExportersCoreExportsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const ExportersFilesystemExportsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ExportersFilesystemExportsApiFp(configuration)
     return {
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Delete a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Delete a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        _delete(pulpPulpExportHref: string, options?: any): AxiosPromise<void> {
-            return ExportersCoreExportsApiFp(configuration)._delete(pulpPulpExportHref, options).then((request) => request(axios, basePath));
+        _delete(filesystemFilesystemExportHref: string, options?: any): AxiosPromise<void> {
+            return localVarFp._delete(filesystemFilesystemExportHref, options).then((request) => request(axios, basePath));
         },
         /**
-         * Trigger an asynchronous task to export a set of repositories
-         * @summary Create a pulp export
-         * @param {string} pulpExporterHref 
-         * @param {PulpExport} pulpExport 
+         * Trigger an asynchronous task to export files to the filesystem
+         * @summary Create a filesystem export
+         * @param {string} filesystemExporterHref 
+         * @param {FilesystemExport} filesystemExport 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create(pulpExporterHref: string, pulpExport: PulpExport, options?: any): AxiosPromise<AsyncOperationResponse> {
-            return ExportersCoreExportsApiFp(configuration).create(pulpExporterHref, pulpExport, options).then((request) => request(axios, basePath));
+        create(filesystemExporterHref: string, filesystemExport: FilesystemExport, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.create(filesystemExporterHref, filesystemExport, options).then((request) => request(axios, basePath));
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary List pulp exports
-         * @param {string} pulpExporterHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary List filesystem exports
+         * @param {string} filesystemExporterHref 
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
@@ -3826,60 +5599,60 @@ export const ExportersCoreExportsApiFactory = function (configuration?: Configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpExportResponseList> {
-            return ExportersCoreExportsApiFp(configuration).list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(filesystemExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedFilesystemExportResponseList> {
+            return localVarFp.list(filesystemExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
-         * ViewSet for viewing exports from a PulpExporter.
-         * @summary Inspect a pulp export
-         * @param {string} pulpPulpExportHref 
+         * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+         * @summary Inspect a filesystem export
+         * @param {string} filesystemFilesystemExportHref 
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PulpExportResponse> {
-            return ExportersCoreExportsApiFp(configuration).read(pulpPulpExportHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+        read(filesystemFilesystemExportHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<FilesystemExportResponse> {
+            return localVarFp.read(filesystemFilesystemExportHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * ExportersCoreExportsApi - object-oriented interface
+ * ExportersFilesystemExportsApi - object-oriented interface
  * @export
- * @class ExportersCoreExportsApi
+ * @class ExportersFilesystemExportsApi
  * @extends {BaseAPI}
  */
-export class ExportersCoreExportsApi extends BaseAPI {
+export class ExportersFilesystemExportsApi extends BaseAPI {
     /**
-     * ViewSet for viewing exports from a PulpExporter.
-     * @summary Delete a pulp export
-     * @param {string} pulpPulpExportHref 
+     * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+     * @summary Delete a filesystem export
+     * @param {string} filesystemFilesystemExportHref 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ExportersCoreExportsApi
+     * @memberof ExportersFilesystemExportsApi
      */
-    public _delete(pulpPulpExportHref: string, options?: any) {
-        return ExportersCoreExportsApiFp(this.configuration)._delete(pulpPulpExportHref, options).then((request) => request(this.axios, this.basePath));
+    public _delete(filesystemFilesystemExportHref: string, options?: any) {
+        return ExportersFilesystemExportsApiFp(this.configuration)._delete(filesystemFilesystemExportHref, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Trigger an asynchronous task to export a set of repositories
-     * @summary Create a pulp export
-     * @param {string} pulpExporterHref 
-     * @param {PulpExport} pulpExport 
+     * Trigger an asynchronous task to export files to the filesystem
+     * @summary Create a filesystem export
+     * @param {string} filesystemExporterHref 
+     * @param {FilesystemExport} filesystemExport 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ExportersCoreExportsApi
+     * @memberof ExportersFilesystemExportsApi
      */
-    public create(pulpExporterHref: string, pulpExport: PulpExport, options?: any) {
-        return ExportersCoreExportsApiFp(this.configuration).create(pulpExporterHref, pulpExport, options).then((request) => request(this.axios, this.basePath));
+    public create(filesystemExporterHref: string, filesystemExport: FilesystemExport, options?: any) {
+        return ExportersFilesystemExportsApiFp(this.configuration).create(filesystemExporterHref, filesystemExport, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * ViewSet for viewing exports from a PulpExporter.
-     * @summary List pulp exports
-     * @param {string} pulpExporterHref 
+     * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+     * @summary List filesystem exports
+     * @param {string} filesystemExporterHref 
      * @param {number} [limit] Number of results to return per page.
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
@@ -3887,26 +5660,27 @@ export class ExportersCoreExportsApi extends BaseAPI {
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ExportersCoreExportsApi
+     * @memberof ExportersFilesystemExportsApi
      */
-    public list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return ExportersCoreExportsApiFp(this.configuration).list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(filesystemExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersFilesystemExportsApiFp(this.configuration).list(filesystemExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * ViewSet for viewing exports from a PulpExporter.
-     * @summary Inspect a pulp export
-     * @param {string} pulpPulpExportHref 
+     * Endpoint for managing FilesystemExports. This endpoint is provided as a tech preview.
+     * @summary Inspect a filesystem export
+     * @param {string} filesystemFilesystemExportHref 
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ExportersCoreExportsApi
+     * @memberof ExportersFilesystemExportsApi
      */
-    public read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any) {
-        return ExportersCoreExportsApiFp(this.configuration).read(pulpPulpExportHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public read(filesystemFilesystemExportHref: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersFilesystemExportsApiFp(this.configuration).read(filesystemFilesystemExportHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
 /**
@@ -3916,7 +5690,7 @@ export class ExportersCoreExportsApi extends BaseAPI {
 export const ExportersPulpApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous delete task
          * @summary Delete a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {*} [options] Override http request option.
@@ -3924,13 +5698,11 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         _delete: async (pulpExporterHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'pulpExporterHref', pulpExporterHref)
             const localVarPath = `{pulp_exporter_href}`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3942,27 +5714,18 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -3975,12 +5738,10 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         create: async (pulpExporter: PulpExporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpExporter' is not null or undefined
-            if (pulpExporter === null || pulpExporter === undefined) {
-                throw new RequiredError('pulpExporter','Required parameter pulpExporter was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'pulpExporter', pulpExporter)
             const localVarPath = `/pulp/api/v3/exporters/core/pulp/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -3992,9 +5753,7 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4002,26 +5761,13 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpExporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpExporter !== undefined ? pulpExporter : {})
-                : (pulpExporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpExporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4029,11 +5775,11 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          * ViewSet for viewing PulpExporters.
          * @summary List pulp exporters
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -4041,10 +5787,10 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/exporters/core/pulp/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4056,9 +5802,7 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4078,8 +5822,8 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
                 localVarQueryParameter['name__icontains'] = nameIcontains;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (nameStartswith !== undefined) {
@@ -4104,24 +5848,17 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous partial update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PatchedPulpExporter} patchedPulpExporter 
@@ -4130,17 +5867,13 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         partialUpdate: async (pulpExporterHref: string, patchedPulpExporter: PatchedPulpExporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'pulpExporterHref', pulpExporterHref)
             // verify required parameter 'patchedPulpExporter' is not null or undefined
-            if (patchedPulpExporter === null || patchedPulpExporter === undefined) {
-                throw new RequiredError('patchedPulpExporter','Required parameter patchedPulpExporter was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'patchedPulpExporter', patchedPulpExporter)
             const localVarPath = `{pulp_exporter_href}`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4152,9 +5885,7 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4162,26 +5893,13 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof patchedPulpExporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(patchedPulpExporter !== undefined ? patchedPulpExporter : {})
-                : (patchedPulpExporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedPulpExporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4196,13 +5914,11 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         read: async (pulpExporterHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'pulpExporterHref', pulpExporterHref)
             const localVarPath = `{pulp_exporter_href}`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4214,9 +5930,7 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4230,24 +5944,17 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PulpExporter} pulpExporter 
@@ -4256,17 +5963,13 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         update: async (pulpExporterHref: string, pulpExporter: PulpExporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpExporterHref' is not null or undefined
-            if (pulpExporterHref === null || pulpExporterHref === undefined) {
-                throw new RequiredError('pulpExporterHref','Required parameter pulpExporterHref was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'pulpExporterHref', pulpExporterHref)
             // verify required parameter 'pulpExporter' is not null or undefined
-            if (pulpExporter === null || pulpExporter === undefined) {
-                throw new RequiredError('pulpExporter','Required parameter pulpExporter was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'pulpExporter', pulpExporter)
             const localVarPath = `{pulp_exporter_href}`
-                .replace(`{${"pulp_exporter_href"}}`, encodeURIComponent(String(pulpExporterHref)));
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4278,9 +5981,7 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4288,26 +5989,13 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpExporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpExporter !== undefined ? pulpExporter : {})
-                : (pulpExporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpExporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4319,20 +6007,18 @@ export const ExportersPulpApiAxiosParamCreator = function (configuration?: Confi
  * @export
  */
 export const ExportersPulpApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ExportersPulpApiAxiosParamCreator(configuration)
     return {
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous delete task
          * @summary Delete a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async _delete(pulpExporterHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration)._delete(pulpExporterHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async _delete(pulpExporterHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(pulpExporterHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for viewing PulpExporters.
@@ -4342,21 +6028,18 @@ export const ExportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(pulpExporter: PulpExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExporterResponse>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration).create(pulpExporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(pulpExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for viewing PulpExporters.
          * @summary List pulp exporters
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -4364,27 +6047,21 @@ export const ExportersPulpApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpExporterResponseList>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpExporterResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous partial update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PatchedPulpExporter} patchedPulpExporter 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async partialUpdate(pulpExporterHref: string, patchedPulpExporter: PatchedPulpExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExporterResponse>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration).partialUpdate(pulpExporterHref, patchedPulpExporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async partialUpdate(pulpExporterHref: string, patchedPulpExporter: PatchedPulpExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(pulpExporterHref, patchedPulpExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for viewing PulpExporters.
@@ -4396,26 +6073,20 @@ export const ExportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(pulpExporterHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExporterResponse>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration).read(pulpExporterHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(pulpExporterHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PulpExporter} pulpExporter 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(pulpExporterHref: string, pulpExporter: PulpExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExporterResponse>> {
-            const localVarAxiosArgs = await ExportersPulpApiAxiosParamCreator(configuration).update(pulpExporterHref, pulpExporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async update(pulpExporterHref: string, pulpExporter: PulpExporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(pulpExporterHref, pulpExporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -4425,16 +6096,17 @@ export const ExportersPulpApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const ExportersPulpApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ExportersPulpApiFp(configuration)
     return {
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous delete task
          * @summary Delete a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        _delete(pulpExporterHref: string, options?: any): AxiosPromise<void> {
-            return ExportersPulpApiFp(configuration)._delete(pulpExporterHref, options).then((request) => request(axios, basePath));
+        _delete(pulpExporterHref: string, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp._delete(pulpExporterHref, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for viewing PulpExporters.
@@ -4444,17 +6116,17 @@ export const ExportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         create(pulpExporter: PulpExporter, options?: any): AxiosPromise<PulpExporterResponse> {
-            return ExportersPulpApiFp(configuration).create(pulpExporter, options).then((request) => request(axios, basePath));
+            return localVarFp.create(pulpExporter, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for viewing PulpExporters.
          * @summary List pulp exporters
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -4462,19 +6134,19 @@ export const ExportersPulpApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpExporterResponseList> {
-            return ExportersPulpApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpExporterResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous partial update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PatchedPulpExporter} patchedPulpExporter 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        partialUpdate(pulpExporterHref: string, patchedPulpExporter: PatchedPulpExporter, options?: any): AxiosPromise<PulpExporterResponse> {
-            return ExportersPulpApiFp(configuration).partialUpdate(pulpExporterHref, patchedPulpExporter, options).then((request) => request(axios, basePath));
+        partialUpdate(pulpExporterHref: string, patchedPulpExporter: PatchedPulpExporter, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.partialUpdate(pulpExporterHref, patchedPulpExporter, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for viewing PulpExporters.
@@ -4486,18 +6158,18 @@ export const ExportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         read(pulpExporterHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PulpExporterResponse> {
-            return ExportersPulpApiFp(configuration).read(pulpExporterHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(pulpExporterHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
-         * ViewSet for viewing PulpExporters.
+         * Trigger an asynchronous update task
          * @summary Update a pulp exporter
          * @param {string} pulpExporterHref 
          * @param {PulpExporter} pulpExporter 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update(pulpExporterHref: string, pulpExporter: PulpExporter, options?: any): AxiosPromise<PulpExporterResponse> {
-            return ExportersPulpApiFp(configuration).update(pulpExporterHref, pulpExporter, options).then((request) => request(axios, basePath));
+        update(pulpExporterHref: string, pulpExporter: PulpExporter, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.update(pulpExporterHref, pulpExporter, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -4510,7 +6182,7 @@ export const ExportersPulpApiFactory = function (configuration?: Configuration, 
  */
 export class ExportersPulpApi extends BaseAPI {
     /**
-     * ViewSet for viewing PulpExporters.
+     * Trigger an asynchronous delete task
      * @summary Delete a pulp exporter
      * @param {string} pulpExporterHref 
      * @param {*} [options] Override http request option.
@@ -4537,11 +6209,11 @@ export class ExportersPulpApi extends BaseAPI {
      * ViewSet for viewing PulpExporters.
      * @summary List pulp exporters
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIn] name__in
-     * @param {string} [nameStartswith] name__startswith
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
@@ -4550,12 +6222,12 @@ export class ExportersPulpApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ExportersPulpApi
      */
-    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
         return ExportersPulpApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * ViewSet for viewing PulpExporters.
+     * Trigger an asynchronous partial update task
      * @summary Update a pulp exporter
      * @param {string} pulpExporterHref 
      * @param {PatchedPulpExporter} patchedPulpExporter 
@@ -4582,7 +6254,7 @@ export class ExportersPulpApi extends BaseAPI {
     }
 
     /**
-     * ViewSet for viewing PulpExporters.
+     * Trigger an asynchronous update task
      * @summary Update a pulp exporter
      * @param {string} pulpExporterHref 
      * @param {PulpExporter} pulpExporter 
@@ -4594,6 +6266,403 @@ export class ExportersPulpApi extends BaseAPI {
         return ExportersPulpApiFp(this.configuration).update(pulpExporterHref, pulpExporter, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
+
+
+/**
+ * ExportersPulpExportsApi - axios parameter creator
+ * @export
+ */
+export const ExportersPulpExportsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Delete a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete: async (pulpPulpExportHref: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpPulpExportHref' is not null or undefined
+            assertParamExists('_delete', 'pulpPulpExportHref', pulpPulpExportHref)
+            const localVarPath = `{pulp_pulp_export_href}`
+                .replace(`{${"pulp_pulp_export_href"}}`, String(pulpPulpExportHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Trigger an asynchronous task to export a set of repositories
+         * @summary Create a pulp export
+         * @param {string} pulpExporterHref 
+         * @param {PulpExport} pulpExport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (pulpExporterHref: string, pulpExport: PulpExport, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpExporterHref' is not null or undefined
+            assertParamExists('create', 'pulpExporterHref', pulpExporterHref)
+            // verify required parameter 'pulpExport' is not null or undefined
+            assertParamExists('create', 'pulpExport', pulpExport)
+            const localVarPath = `{pulp_exporter_href}exports/`
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpExport, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary List pulp exports
+         * @param {string} pulpExporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpExporterHref' is not null or undefined
+            assertParamExists('list', 'pulpExporterHref', pulpExporterHref)
+            const localVarPath = `{pulp_exporter_href}exports/`
+                .replace(`{${"pulp_exporter_href"}}`, String(pulpExporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Inspect a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read: async (pulpPulpExportHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpPulpExportHref' is not null or undefined
+            assertParamExists('read', 'pulpPulpExportHref', pulpPulpExportHref)
+            const localVarPath = `{pulp_pulp_export_href}`
+                .replace(`{${"pulp_pulp_export_href"}}`, String(pulpPulpExportHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ExportersPulpExportsApi - functional programming interface
+ * @export
+ */
+export const ExportersPulpExportsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ExportersPulpExportsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Delete a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async _delete(pulpPulpExportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(pulpPulpExportHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Trigger an asynchronous task to export a set of repositories
+         * @summary Create a pulp export
+         * @param {string} pulpExporterHref 
+         * @param {PulpExport} pulpExport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(pulpExporterHref: string, pulpExport: PulpExport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(pulpExporterHref, pulpExport, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary List pulp exports
+         * @param {string} pulpExporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpExportResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Inspect a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpExportResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(pulpPulpExportHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ExportersPulpExportsApi - factory interface
+ * @export
+ */
+export const ExportersPulpExportsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ExportersPulpExportsApiFp(configuration)
+    return {
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Delete a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete(pulpPulpExportHref: string, options?: any): AxiosPromise<void> {
+            return localVarFp._delete(pulpPulpExportHref, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Trigger an asynchronous task to export a set of repositories
+         * @summary Create a pulp export
+         * @param {string} pulpExporterHref 
+         * @param {PulpExport} pulpExport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(pulpExporterHref: string, pulpExport: PulpExport, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.create(pulpExporterHref, pulpExport, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary List pulp exports
+         * @param {string} pulpExporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpExportResponseList> {
+            return localVarFp.list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for viewing exports from a PulpExporter.
+         * @summary Inspect a pulp export
+         * @param {string} pulpPulpExportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PulpExportResponse> {
+            return localVarFp.read(pulpPulpExportHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ExportersPulpExportsApi - object-oriented interface
+ * @export
+ * @class ExportersPulpExportsApi
+ * @extends {BaseAPI}
+ */
+export class ExportersPulpExportsApi extends BaseAPI {
+    /**
+     * ViewSet for viewing exports from a PulpExporter.
+     * @summary Delete a pulp export
+     * @param {string} pulpPulpExportHref 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersPulpExportsApi
+     */
+    public _delete(pulpPulpExportHref: string, options?: any) {
+        return ExportersPulpExportsApiFp(this.configuration)._delete(pulpPulpExportHref, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Trigger an asynchronous task to export a set of repositories
+     * @summary Create a pulp export
+     * @param {string} pulpExporterHref 
+     * @param {PulpExport} pulpExport 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersPulpExportsApi
+     */
+    public create(pulpExporterHref: string, pulpExport: PulpExport, options?: any) {
+        return ExportersPulpExportsApiFp(this.configuration).create(pulpExporterHref, pulpExport, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for viewing exports from a PulpExporter.
+     * @summary List pulp exports
+     * @param {string} pulpExporterHref 
+     * @param {number} [limit] Number of results to return per page.
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersPulpExportsApi
+     */
+    public list(pulpExporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersPulpExportsApiFp(this.configuration).list(pulpExporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for viewing exports from a PulpExporter.
+     * @summary Inspect a pulp export
+     * @param {string} pulpPulpExportHref 
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ExportersPulpExportsApi
+     */
+    public read(pulpPulpExportHref: string, fields?: string, excludeFields?: string, options?: any) {
+        return ExportersPulpExportsApiFp(this.configuration).read(pulpPulpExportHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 
 /**
@@ -4611,13 +6680,11 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          */
         _delete: async (authGroupHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'authGroupHref', authGroupHref)
             const localVarPath = `{auth_group_href}`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4629,27 +6696,18 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4662,12 +6720,10 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          */
         create: async (group: Group, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'group' is not null or undefined
-            if (group === null || group === undefined) {
-                throw new RequiredError('group','Required parameter group was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'group', group)
             const localVarPath = `/pulp/api/v3/groups/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4679,9 +6735,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4689,40 +6743,27 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof group !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(group !== undefined ? group : {})
-                : (group || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(group, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List groups
-         * @param {string} [id] id
-         * @param {string} [idIn] id__in
+         * @param {number} [id] Filter results where id matches value
+         * @param {Array<number>} [idIn] Filter results where id is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIexact] name__iexact
-         * @param {string} [nameIn] name__in
+         * @param {string} [name] Filter results where name matches value
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {string} [nameIexact] Filter results where name matches value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -4730,10 +6771,10 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (id?: string, idIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (id?: number, idIn?: Array<number>, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: Array<string>, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/groups/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4745,9 +6786,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4755,8 +6794,8 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
                 localVarQueryParameter['id'] = id;
             }
 
-            if (idIn !== undefined) {
-                localVarQueryParameter['id__in'] = idIn;
+            if (idIn) {
+                localVarQueryParameter['id__in'] = idIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (limit !== undefined) {
@@ -4779,8 +6818,8 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
                 localVarQueryParameter['name__iexact'] = nameIexact;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (offset !== undefined) {
@@ -4801,19 +6840,12 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4827,17 +6859,13 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          */
         partialUpdate: async (authGroupHref: string, patchedGroup: PatchedGroup, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'authGroupHref', authGroupHref)
             // verify required parameter 'patchedGroup' is not null or undefined
-            if (patchedGroup === null || patchedGroup === undefined) {
-                throw new RequiredError('patchedGroup','Required parameter patchedGroup was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'patchedGroup', patchedGroup)
             const localVarPath = `{auth_group_href}`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4849,9 +6877,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4859,26 +6885,13 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof patchedGroup !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(patchedGroup !== undefined ? patchedGroup : {})
-                : (patchedGroup || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedGroup, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4893,13 +6906,11 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          */
         read: async (authGroupHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'authGroupHref', authGroupHref)
             const localVarPath = `{auth_group_href}`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4911,9 +6922,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4927,19 +6936,12 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -4953,17 +6955,13 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
          */
         update: async (authGroupHref: string, group: Group, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'authGroupHref', authGroupHref)
             // verify required parameter 'group' is not null or undefined
-            if (group === null || group === undefined) {
-                throw new RequiredError('group','Required parameter group was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'group', group)
             const localVarPath = `{auth_group_href}`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -4975,9 +6973,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -4985,26 +6981,13 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof group !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(group !== undefined ? group : {})
-                : (group || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(group, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5016,6 +6999,7 @@ export const GroupsApiAxiosParamCreator = function (configuration?: Configuratio
  * @export
  */
 export const GroupsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GroupsApiAxiosParamCreator(configuration)
     return {
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5025,11 +7009,8 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(authGroupHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration)._delete(authGroupHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(authGroupHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5039,23 +7020,20 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(group: Group, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GroupResponse>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration).create(group, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(group, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List groups
-         * @param {string} [id] id
-         * @param {string} [idIn] id__in
+         * @param {number} [id] Filter results where id matches value
+         * @param {Array<number>} [idIn] Filter results where id is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIexact] name__iexact
-         * @param {string} [nameIn] name__in
+         * @param {string} [name] Filter results where name matches value
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {string} [nameIexact] Filter results where name matches value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -5063,12 +7041,9 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(id?: string, idIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedGroupResponseList>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration).list(id, idIn, limit, name, nameContains, nameIcontains, nameIexact, nameIn, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(id?: number, idIn?: Array<number>, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: Array<string>, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedGroupResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(id, idIn, limit, name, nameContains, nameIcontains, nameIexact, nameIn, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5079,11 +7054,8 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async partialUpdate(authGroupHref: string, patchedGroup: PatchedGroup, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GroupResponse>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration).partialUpdate(authGroupHref, patchedGroup, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(authGroupHref, patchedGroup, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5095,11 +7067,8 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(authGroupHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GroupResponse>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration).read(authGroupHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(authGroupHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5110,11 +7079,8 @@ export const GroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async update(authGroupHref: string, group: Group, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GroupResponse>> {
-            const localVarAxiosArgs = await GroupsApiAxiosParamCreator(configuration).update(authGroupHref, group, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(authGroupHref, group, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -5124,6 +7090,7 @@ export const GroupsApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const GroupsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GroupsApiFp(configuration)
     return {
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5133,7 +7100,7 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         _delete(authGroupHref: string, options?: any): AxiosPromise<void> {
-            return GroupsApiFp(configuration)._delete(authGroupHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(authGroupHref, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5143,19 +7110,19 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         create(group: Group, options?: any): AxiosPromise<GroupResponse> {
-            return GroupsApiFp(configuration).create(group, options).then((request) => request(axios, basePath));
+            return localVarFp.create(group, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List groups
-         * @param {string} [id] id
-         * @param {string} [idIn] id__in
+         * @param {number} [id] Filter results where id matches value
+         * @param {Array<number>} [idIn] Filter results where id is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIexact] name__iexact
-         * @param {string} [nameIn] name__in
+         * @param {string} [name] Filter results where name matches value
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {string} [nameIexact] Filter results where name matches value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -5163,8 +7130,8 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(id?: string, idIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedGroupResponseList> {
-            return GroupsApiFp(configuration).list(id, idIn, limit, name, nameContains, nameIcontains, nameIexact, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(id?: number, idIn?: Array<number>, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: Array<string>, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedGroupResponseList> {
+            return localVarFp.list(id, idIn, limit, name, nameContains, nameIcontains, nameIexact, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5175,7 +7142,7 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         partialUpdate(authGroupHref: string, patchedGroup: PatchedGroup, options?: any): AxiosPromise<GroupResponse> {
-            return GroupsApiFp(configuration).partialUpdate(authGroupHref, patchedGroup, options).then((request) => request(axios, basePath));
+            return localVarFp.partialUpdate(authGroupHref, patchedGroup, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5187,7 +7154,7 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         read(authGroupHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<GroupResponse> {
-            return GroupsApiFp(configuration).read(authGroupHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(authGroupHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -5198,7 +7165,7 @@ export const GroupsApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         update(authGroupHref: string, group: Group, options?: any): AxiosPromise<GroupResponse> {
-            return GroupsApiFp(configuration).update(authGroupHref, group, options).then((request) => request(axios, basePath));
+            return localVarFp.update(authGroupHref, group, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5237,14 +7204,14 @@ export class GroupsApi extends BaseAPI {
     /**
      * ViewSet for Group.  NOTE: This API endpoint is in \"tech preview\" and subject to change
      * @summary List groups
-     * @param {string} [id] id
-     * @param {string} [idIn] id__in
+     * @param {number} [id] Filter results where id matches value
+     * @param {Array<number>} [idIn] Filter results where id is in a comma-separated list of values
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIexact] name__iexact
-     * @param {string} [nameIn] name__in
+     * @param {string} [name] Filter results where name matches value
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {string} [nameIexact] Filter results where name matches value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
@@ -5253,7 +7220,7 @@ export class GroupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof GroupsApi
      */
-    public list(id?: string, idIn?: string, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(id?: number, idIn?: Array<number>, limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIexact?: string, nameIn?: Array<string>, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
         return GroupsApiFp(this.configuration).list(id, idIn, limit, name, nameContains, nameIcontains, nameIexact, nameIn, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -5299,6 +7266,7 @@ export class GroupsApi extends BaseAPI {
 }
 
 
+
 /**
  * GroupsModelPermissionsApi - axios parameter creator
  * @export
@@ -5314,13 +7282,11 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
          */
         _delete: async (authGroupsModelPermissionHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupsModelPermissionHref' is not null or undefined
-            if (authGroupsModelPermissionHref === null || authGroupsModelPermissionHref === undefined) {
-                throw new RequiredError('authGroupsModelPermissionHref','Required parameter authGroupsModelPermissionHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'authGroupsModelPermissionHref', authGroupsModelPermissionHref)
             const localVarPath = `{auth_groups_model_permission_href}`
-                .replace(`{${"auth_groups_model_permission_href"}}`, encodeURIComponent(String(authGroupsModelPermissionHref)));
+                .replace(`{${"auth_groups_model_permission_href"}}`, String(authGroupsModelPermissionHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5332,27 +7298,18 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5366,17 +7323,13 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
          */
         create: async (authGroupHref: string, body: object, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'authGroupHref', authGroupHref)
             // verify required parameter 'body' is not null or undefined
-            if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'body', body)
             const localVarPath = `{auth_group_href}model_permissions/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5388,9 +7341,7 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5398,26 +7349,13 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof body !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(body !== undefined ? body : {})
-                : (body || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5435,13 +7373,11 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
          */
         list: async (authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling list.');
-            }
+            assertParamExists('list', 'authGroupHref', authGroupHref)
             const localVarPath = `{auth_group_href}model_permissions/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5453,9 +7389,7 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5481,19 +7415,12 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5508,13 +7435,11 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
          */
         read: async (authGroupsModelPermissionHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupsModelPermissionHref' is not null or undefined
-            if (authGroupsModelPermissionHref === null || authGroupsModelPermissionHref === undefined) {
-                throw new RequiredError('authGroupsModelPermissionHref','Required parameter authGroupsModelPermissionHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'authGroupsModelPermissionHref', authGroupsModelPermissionHref)
             const localVarPath = `{auth_groups_model_permission_href}`
-                .replace(`{${"auth_groups_model_permission_href"}}`, encodeURIComponent(String(authGroupsModelPermissionHref)));
+                .replace(`{${"auth_groups_model_permission_href"}}`, String(authGroupsModelPermissionHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5526,9 +7451,7 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5542,19 +7465,12 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5566,6 +7482,7 @@ export const GroupsModelPermissionsApiAxiosParamCreator = function (configuratio
  * @export
  */
 export const GroupsModelPermissionsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GroupsModelPermissionsApiAxiosParamCreator(configuration)
     return {
         /**
          * Remove a model permission from a group.
@@ -5575,11 +7492,8 @@ export const GroupsModelPermissionsApiFp = function(configuration?: Configuratio
          * @throws {RequiredError}
          */
         async _delete(authGroupsModelPermissionHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await GroupsModelPermissionsApiAxiosParamCreator(configuration)._delete(authGroupsModelPermissionHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(authGroupsModelPermissionHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Add a model permission to a group.
@@ -5590,11 +7504,8 @@ export const GroupsModelPermissionsApiFp = function(configuration?: Configuratio
          * @throws {RequiredError}
          */
         async create(authGroupHref: string, body: object, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PermissionResponse>> {
-            const localVarAxiosArgs = await GroupsModelPermissionsApiAxiosParamCreator(configuration).create(authGroupHref, body, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(authGroupHref, body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * List group permissions.
@@ -5609,11 +7520,8 @@ export const GroupsModelPermissionsApiFp = function(configuration?: Configuratio
          * @throws {RequiredError}
          */
         async list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPermissionResponseList>> {
-            const localVarAxiosArgs = await GroupsModelPermissionsApiAxiosParamCreator(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Retrieve a model permission from a group.
@@ -5625,11 +7533,8 @@ export const GroupsModelPermissionsApiFp = function(configuration?: Configuratio
          * @throws {RequiredError}
          */
         async read(authGroupsModelPermissionHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PermissionResponse>> {
-            const localVarAxiosArgs = await GroupsModelPermissionsApiAxiosParamCreator(configuration).read(authGroupsModelPermissionHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(authGroupsModelPermissionHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -5639,6 +7544,7 @@ export const GroupsModelPermissionsApiFp = function(configuration?: Configuratio
  * @export
  */
 export const GroupsModelPermissionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GroupsModelPermissionsApiFp(configuration)
     return {
         /**
          * Remove a model permission from a group.
@@ -5648,7 +7554,7 @@ export const GroupsModelPermissionsApiFactory = function (configuration?: Config
          * @throws {RequiredError}
          */
         _delete(authGroupsModelPermissionHref: string, options?: any): AxiosPromise<void> {
-            return GroupsModelPermissionsApiFp(configuration)._delete(authGroupsModelPermissionHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(authGroupsModelPermissionHref, options).then((request) => request(axios, basePath));
         },
         /**
          * Add a model permission to a group.
@@ -5659,7 +7565,7 @@ export const GroupsModelPermissionsApiFactory = function (configuration?: Config
          * @throws {RequiredError}
          */
         create(authGroupHref: string, body: object, options?: any): AxiosPromise<PermissionResponse> {
-            return GroupsModelPermissionsApiFp(configuration).create(authGroupHref, body, options).then((request) => request(axios, basePath));
+            return localVarFp.create(authGroupHref, body, options).then((request) => request(axios, basePath));
         },
         /**
          * List group permissions.
@@ -5674,7 +7580,7 @@ export const GroupsModelPermissionsApiFactory = function (configuration?: Config
          * @throws {RequiredError}
          */
         list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPermissionResponseList> {
-            return GroupsModelPermissionsApiFp(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a model permission from a group.
@@ -5686,7 +7592,7 @@ export const GroupsModelPermissionsApiFactory = function (configuration?: Config
          * @throws {RequiredError}
          */
         read(authGroupsModelPermissionHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PermissionResponse> {
-            return GroupsModelPermissionsApiFp(configuration).read(authGroupsModelPermissionHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(authGroupsModelPermissionHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5756,6 +7662,7 @@ export class GroupsModelPermissionsApi extends BaseAPI {
 }
 
 
+
 /**
  * GroupsObjectPermissionsApi - axios parameter creator
  * @export
@@ -5771,13 +7678,11 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
          */
         _delete: async (authGroupsObjectPermissionHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupsObjectPermissionHref' is not null or undefined
-            if (authGroupsObjectPermissionHref === null || authGroupsObjectPermissionHref === undefined) {
-                throw new RequiredError('authGroupsObjectPermissionHref','Required parameter authGroupsObjectPermissionHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'authGroupsObjectPermissionHref', authGroupsObjectPermissionHref)
             const localVarPath = `{auth_groups_object_permission_href}`
-                .replace(`{${"auth_groups_object_permission_href"}}`, encodeURIComponent(String(authGroupsObjectPermissionHref)));
+                .replace(`{${"auth_groups_object_permission_href"}}`, String(authGroupsObjectPermissionHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5789,27 +7694,18 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5823,17 +7719,13 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
          */
         create: async (authGroupHref: string, body: object, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'authGroupHref', authGroupHref)
             // verify required parameter 'body' is not null or undefined
-            if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'body', body)
             const localVarPath = `{auth_group_href}object_permissions/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5845,9 +7737,7 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5855,26 +7745,13 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof body !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(body !== undefined ? body : {})
-                : (body || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5892,13 +7769,11 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
          */
         list: async (authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling list.');
-            }
+            assertParamExists('list', 'authGroupHref', authGroupHref)
             const localVarPath = `{auth_group_href}object_permissions/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5910,9 +7785,7 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5938,19 +7811,12 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -5965,13 +7831,11 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
          */
         read: async (authGroupsObjectPermissionHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupsObjectPermissionHref' is not null or undefined
-            if (authGroupsObjectPermissionHref === null || authGroupsObjectPermissionHref === undefined) {
-                throw new RequiredError('authGroupsObjectPermissionHref','Required parameter authGroupsObjectPermissionHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'authGroupsObjectPermissionHref', authGroupsObjectPermissionHref)
             const localVarPath = `{auth_groups_object_permission_href}`
-                .replace(`{${"auth_groups_object_permission_href"}}`, encodeURIComponent(String(authGroupsObjectPermissionHref)));
+                .replace(`{${"auth_groups_object_permission_href"}}`, String(authGroupsObjectPermissionHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -5983,9 +7847,7 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -5999,19 +7861,12 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -6023,6 +7878,7 @@ export const GroupsObjectPermissionsApiAxiosParamCreator = function (configurati
  * @export
  */
 export const GroupsObjectPermissionsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GroupsObjectPermissionsApiAxiosParamCreator(configuration)
     return {
         /**
          * Remove an object permission from a group.
@@ -6032,11 +7888,8 @@ export const GroupsObjectPermissionsApiFp = function(configuration?: Configurati
          * @throws {RequiredError}
          */
         async _delete(authGroupsObjectPermissionHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await GroupsObjectPermissionsApiAxiosParamCreator(configuration)._delete(authGroupsObjectPermissionHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(authGroupsObjectPermissionHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Add an object permission to a group.
@@ -6047,11 +7900,8 @@ export const GroupsObjectPermissionsApiFp = function(configuration?: Configurati
          * @throws {RequiredError}
          */
         async create(authGroupHref: string, body: object, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PermissionResponse>> {
-            const localVarAxiosArgs = await GroupsObjectPermissionsApiAxiosParamCreator(configuration).create(authGroupHref, body, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(authGroupHref, body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * List group object permissions.
@@ -6066,11 +7916,8 @@ export const GroupsObjectPermissionsApiFp = function(configuration?: Configurati
          * @throws {RequiredError}
          */
         async list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPermissionResponseList>> {
-            const localVarAxiosArgs = await GroupsObjectPermissionsApiAxiosParamCreator(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Retrieve a model permission from a group.
@@ -6082,11 +7929,8 @@ export const GroupsObjectPermissionsApiFp = function(configuration?: Configurati
          * @throws {RequiredError}
          */
         async read(authGroupsObjectPermissionHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PermissionResponse>> {
-            const localVarAxiosArgs = await GroupsObjectPermissionsApiAxiosParamCreator(configuration).read(authGroupsObjectPermissionHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(authGroupsObjectPermissionHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -6096,6 +7940,7 @@ export const GroupsObjectPermissionsApiFp = function(configuration?: Configurati
  * @export
  */
 export const GroupsObjectPermissionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GroupsObjectPermissionsApiFp(configuration)
     return {
         /**
          * Remove an object permission from a group.
@@ -6105,7 +7950,7 @@ export const GroupsObjectPermissionsApiFactory = function (configuration?: Confi
          * @throws {RequiredError}
          */
         _delete(authGroupsObjectPermissionHref: string, options?: any): AxiosPromise<void> {
-            return GroupsObjectPermissionsApiFp(configuration)._delete(authGroupsObjectPermissionHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(authGroupsObjectPermissionHref, options).then((request) => request(axios, basePath));
         },
         /**
          * Add an object permission to a group.
@@ -6116,7 +7961,7 @@ export const GroupsObjectPermissionsApiFactory = function (configuration?: Confi
          * @throws {RequiredError}
          */
         create(authGroupHref: string, body: object, options?: any): AxiosPromise<PermissionResponse> {
-            return GroupsObjectPermissionsApiFp(configuration).create(authGroupHref, body, options).then((request) => request(axios, basePath));
+            return localVarFp.create(authGroupHref, body, options).then((request) => request(axios, basePath));
         },
         /**
          * List group object permissions.
@@ -6131,7 +7976,7 @@ export const GroupsObjectPermissionsApiFactory = function (configuration?: Confi
          * @throws {RequiredError}
          */
         list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPermissionResponseList> {
-            return GroupsObjectPermissionsApiFp(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a model permission from a group.
@@ -6143,7 +7988,7 @@ export const GroupsObjectPermissionsApiFactory = function (configuration?: Confi
          * @throws {RequiredError}
          */
         read(authGroupsObjectPermissionHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PermissionResponse> {
-            return GroupsObjectPermissionsApiFp(configuration).read(authGroupsObjectPermissionHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(authGroupsObjectPermissionHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -6213,6 +8058,7 @@ export class GroupsObjectPermissionsApi extends BaseAPI {
 }
 
 
+
 /**
  * GroupsUsersApi - axios parameter creator
  * @export
@@ -6228,13 +8074,11 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
          */
         _delete: async (authGroupsUserHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupsUserHref' is not null or undefined
-            if (authGroupsUserHref === null || authGroupsUserHref === undefined) {
-                throw new RequiredError('authGroupsUserHref','Required parameter authGroupsUserHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'authGroupsUserHref', authGroupsUserHref)
             const localVarPath = `{auth_groups_user_href}`
-                .replace(`{${"auth_groups_user_href"}}`, encodeURIComponent(String(authGroupsUserHref)));
+                .replace(`{${"auth_groups_user_href"}}`, String(authGroupsUserHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -6246,27 +8090,18 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -6280,17 +8115,13 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
          */
         create: async (authGroupHref: string, groupUser: GroupUser, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'authGroupHref', authGroupHref)
             // verify required parameter 'groupUser' is not null or undefined
-            if (groupUser === null || groupUser === undefined) {
-                throw new RequiredError('groupUser','Required parameter groupUser was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'groupUser', groupUser)
             const localVarPath = `{auth_group_href}users/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -6302,9 +8133,7 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -6312,26 +8141,13 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof groupUser !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(groupUser !== undefined ? groupUser : {})
-                : (groupUser || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(groupUser, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -6349,13 +8165,11 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
          */
         list: async (authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authGroupHref' is not null or undefined
-            if (authGroupHref === null || authGroupHref === undefined) {
-                throw new RequiredError('authGroupHref','Required parameter authGroupHref was null or undefined when calling list.');
-            }
+            assertParamExists('list', 'authGroupHref', authGroupHref)
             const localVarPath = `{auth_group_href}users/`
-                .replace(`{${"auth_group_href"}}`, encodeURIComponent(String(authGroupHref)));
+                .replace(`{${"auth_group_href"}}`, String(authGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -6367,9 +8181,7 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -6395,19 +8207,12 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -6419,6 +8224,7 @@ export const GroupsUsersApiAxiosParamCreator = function (configuration?: Configu
  * @export
  */
 export const GroupsUsersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GroupsUsersApiAxiosParamCreator(configuration)
     return {
         /**
          * Remove a user from a group.
@@ -6428,11 +8234,8 @@ export const GroupsUsersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(authGroupsUserHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await GroupsUsersApiAxiosParamCreator(configuration)._delete(authGroupsUserHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(authGroupsUserHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Add a user to a group.
@@ -6443,11 +8246,8 @@ export const GroupsUsersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(authGroupHref: string, groupUser: GroupUser, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GroupUserResponse>> {
-            const localVarAxiosArgs = await GroupsUsersApiAxiosParamCreator(configuration).create(authGroupHref, groupUser, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(authGroupHref, groupUser, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * List group users.
@@ -6462,11 +8262,8 @@ export const GroupsUsersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedGroupUserResponseList>> {
-            const localVarAxiosArgs = await GroupsUsersApiAxiosParamCreator(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -6476,6 +8273,7 @@ export const GroupsUsersApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const GroupsUsersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GroupsUsersApiFp(configuration)
     return {
         /**
          * Remove a user from a group.
@@ -6485,7 +8283,7 @@ export const GroupsUsersApiFactory = function (configuration?: Configuration, ba
          * @throws {RequiredError}
          */
         _delete(authGroupsUserHref: string, options?: any): AxiosPromise<void> {
-            return GroupsUsersApiFp(configuration)._delete(authGroupsUserHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(authGroupsUserHref, options).then((request) => request(axios, basePath));
         },
         /**
          * Add a user to a group.
@@ -6496,7 +8294,7 @@ export const GroupsUsersApiFactory = function (configuration?: Configuration, ba
          * @throws {RequiredError}
          */
         create(authGroupHref: string, groupUser: GroupUser, options?: any): AxiosPromise<GroupUserResponse> {
-            return GroupsUsersApiFp(configuration).create(authGroupHref, groupUser, options).then((request) => request(axios, basePath));
+            return localVarFp.create(authGroupHref, groupUser, options).then((request) => request(axios, basePath));
         },
         /**
          * List group users.
@@ -6511,7 +8309,7 @@ export const GroupsUsersApiFactory = function (configuration?: Configuration, ba
          * @throws {RequiredError}
          */
         list(authGroupHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedGroupUserResponseList> {
-            return GroupsUsersApiFp(configuration).list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(authGroupHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -6567,593 +8365,6 @@ export class GroupsUsersApi extends BaseAPI {
 }
 
 
-/**
- * ImportersCoreImportCheckApi - axios parameter creator
- * @export
- */
-export const ImportersCoreImportCheckApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
-         * @summary Validate the parameters to be used for a PulpImport call
-         * @param {PulpImportCheck} pulpImportCheck 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        pulpImportCheckPost: async (pulpImportCheck: PulpImportCheck, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpImportCheck' is not null or undefined
-            if (pulpImportCheck === null || pulpImportCheck === undefined) {
-                throw new RequiredError('pulpImportCheck','Required parameter pulpImportCheck was null or undefined when calling pulpImportCheckPost.');
-            }
-            const localVarPath = `/pulp/api/v3/importers/core/pulp/import-check/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
-
-            // authentication cookieAuth required
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpImportCheck !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpImportCheck !== undefined ? pulpImportCheck : {})
-                : (pulpImportCheck || "");
-
-            return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * ImportersCoreImportCheckApi - functional programming interface
- * @export
- */
-export const ImportersCoreImportCheckApiFp = function(configuration?: Configuration) {
-    return {
-        /**
-         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
-         * @summary Validate the parameters to be used for a PulpImport call
-         * @param {PulpImportCheck} pulpImportCheck 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImportCheckResponse>> {
-            const localVarAxiosArgs = await ImportersCoreImportCheckApiAxiosParamCreator(configuration).pulpImportCheckPost(pulpImportCheck, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
-        },
-    }
-};
-
-/**
- * ImportersCoreImportCheckApi - factory interface
- * @export
- */
-export const ImportersCoreImportCheckApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    return {
-        /**
-         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
-         * @summary Validate the parameters to be used for a PulpImport call
-         * @param {PulpImportCheck} pulpImportCheck 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any): AxiosPromise<PulpImportCheckResponse> {
-            return ImportersCoreImportCheckApiFp(configuration).pulpImportCheckPost(pulpImportCheck, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * ImportersCoreImportCheckApi - object-oriented interface
- * @export
- * @class ImportersCoreImportCheckApi
- * @extends {BaseAPI}
- */
-export class ImportersCoreImportCheckApi extends BaseAPI {
-    /**
-     * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
-     * @summary Validate the parameters to be used for a PulpImport call
-     * @param {PulpImportCheck} pulpImportCheck 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ImportersCoreImportCheckApi
-     */
-    public pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any) {
-        return ImportersCoreImportCheckApiFp(this.configuration).pulpImportCheckPost(pulpImportCheck, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-/**
- * ImportersCoreImportsApi - axios parameter creator
- * @export
- */
-export const ImportersCoreImportsApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * ViewSet for PulpImports.
-         * @summary Delete a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        _delete: async (pulpPulpImportHref: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpPulpImportHref' is not null or undefined
-            if (pulpPulpImportHref === null || pulpPulpImportHref === undefined) {
-                throw new RequiredError('pulpPulpImportHref','Required parameter pulpPulpImportHref was null or undefined when calling _delete.');
-            }
-            const localVarPath = `{pulp_pulp_import_href}`
-                .replace(`{${"pulp_pulp_import_href"}}`, encodeURIComponent(String(pulpPulpImportHref)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
-
-            // authentication cookieAuth required
-
-
-    
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Trigger an asynchronous task to import a Pulp export.
-         * @summary Create a pulp import
-         * @param {string} pulpImporterHref 
-         * @param {PulpImport} pulpImport 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create: async (pulpImporterHref: string, pulpImport: PulpImport, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling create.');
-            }
-            // verify required parameter 'pulpImport' is not null or undefined
-            if (pulpImport === null || pulpImport === undefined) {
-                throw new RequiredError('pulpImport','Required parameter pulpImport was null or undefined when calling create.');
-            }
-            const localVarPath = `{pulp_importer_href}imports/`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
-
-            // authentication cookieAuth required
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpImport !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpImport !== undefined ? pulpImport : {})
-                : (pulpImport || "");
-
-            return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary List pulp imports
-         * @param {string} pulpImporterHref 
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list: async (pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling list.');
-            }
-            const localVarPath = `{pulp_importer_href}imports/`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
-
-            // authentication cookieAuth required
-
-            if (limit !== undefined) {
-                localVarQueryParameter['limit'] = limit;
-            }
-
-            if (offset !== undefined) {
-                localVarQueryParameter['offset'] = offset;
-            }
-
-            if (ordering !== undefined) {
-                localVarQueryParameter['ordering'] = ordering;
-            }
-
-            if (fields !== undefined) {
-                localVarQueryParameter['fields'] = fields;
-            }
-
-            if (excludeFields !== undefined) {
-                localVarQueryParameter['exclude_fields'] = excludeFields;
-            }
-
-
-    
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary Inspect a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        read: async (pulpPulpImportHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'pulpPulpImportHref' is not null or undefined
-            if (pulpPulpImportHref === null || pulpPulpImportHref === undefined) {
-                throw new RequiredError('pulpPulpImportHref','Required parameter pulpPulpImportHref was null or undefined when calling read.');
-            }
-            const localVarPath = `{pulp_pulp_import_href}`
-                .replace(`{${"pulp_pulp_import_href"}}`, encodeURIComponent(String(pulpPulpImportHref)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication basicAuth required
-            // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
-
-            // authentication cookieAuth required
-
-            if (fields !== undefined) {
-                localVarQueryParameter['fields'] = fields;
-            }
-
-            if (excludeFields !== undefined) {
-                localVarQueryParameter['exclude_fields'] = excludeFields;
-            }
-
-
-    
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * ImportersCoreImportsApi - functional programming interface
- * @export
- */
-export const ImportersCoreImportsApiFp = function(configuration?: Configuration) {
-    return {
-        /**
-         * ViewSet for PulpImports.
-         * @summary Delete a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async _delete(pulpPulpImportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ImportersCoreImportsApiAxiosParamCreator(configuration)._delete(pulpPulpImportHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
-        },
-        /**
-         * Trigger an asynchronous task to import a Pulp export.
-         * @summary Create a pulp import
-         * @param {string} pulpImporterHref 
-         * @param {PulpImport} pulpImport 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async create(pulpImporterHref: string, pulpImport: PulpImport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await ImportersCoreImportsApiAxiosParamCreator(configuration).create(pulpImporterHref, pulpImport, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary List pulp imports
-         * @param {string} pulpImporterHref 
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedImportResponseList>> {
-            const localVarAxiosArgs = await ImportersCoreImportsApiAxiosParamCreator(configuration).list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary Inspect a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ImportResponse>> {
-            const localVarAxiosArgs = await ImportersCoreImportsApiAxiosParamCreator(configuration).read(pulpPulpImportHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
-        },
-    }
-};
-
-/**
- * ImportersCoreImportsApi - factory interface
- * @export
- */
-export const ImportersCoreImportsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    return {
-        /**
-         * ViewSet for PulpImports.
-         * @summary Delete a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        _delete(pulpPulpImportHref: string, options?: any): AxiosPromise<void> {
-            return ImportersCoreImportsApiFp(configuration)._delete(pulpPulpImportHref, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Trigger an asynchronous task to import a Pulp export.
-         * @summary Create a pulp import
-         * @param {string} pulpImporterHref 
-         * @param {PulpImport} pulpImport 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create(pulpImporterHref: string, pulpImport: PulpImport, options?: any): AxiosPromise<AsyncOperationResponse> {
-            return ImportersCoreImportsApiFp(configuration).create(pulpImporterHref, pulpImport, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary List pulp imports
-         * @param {string} pulpImporterHref 
-         * @param {number} [limit] Number of results to return per page.
-         * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedImportResponseList> {
-            return ImportersCoreImportsApiFp(configuration).list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * ViewSet for PulpImports.
-         * @summary Inspect a pulp import
-         * @param {string} pulpPulpImportHref 
-         * @param {string} [fields] A list of fields to include in the response.
-         * @param {string} [excludeFields] A list of fields to exclude from the response.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<ImportResponse> {
-            return ImportersCoreImportsApiFp(configuration).read(pulpPulpImportHref, fields, excludeFields, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * ImportersCoreImportsApi - object-oriented interface
- * @export
- * @class ImportersCoreImportsApi
- * @extends {BaseAPI}
- */
-export class ImportersCoreImportsApi extends BaseAPI {
-    /**
-     * ViewSet for PulpImports.
-     * @summary Delete a pulp import
-     * @param {string} pulpPulpImportHref 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ImportersCoreImportsApi
-     */
-    public _delete(pulpPulpImportHref: string, options?: any) {
-        return ImportersCoreImportsApiFp(this.configuration)._delete(pulpPulpImportHref, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Trigger an asynchronous task to import a Pulp export.
-     * @summary Create a pulp import
-     * @param {string} pulpImporterHref 
-     * @param {PulpImport} pulpImport 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ImportersCoreImportsApi
-     */
-    public create(pulpImporterHref: string, pulpImport: PulpImport, options?: any) {
-        return ImportersCoreImportsApiFp(this.configuration).create(pulpImporterHref, pulpImport, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * ViewSet for PulpImports.
-     * @summary List pulp imports
-     * @param {string} pulpImporterHref 
-     * @param {number} [limit] Number of results to return per page.
-     * @param {number} [offset] The initial index from which to return the results.
-     * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [fields] A list of fields to include in the response.
-     * @param {string} [excludeFields] A list of fields to exclude from the response.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ImportersCoreImportsApi
-     */
-    public list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
-        return ImportersCoreImportsApiFp(this.configuration).list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * ViewSet for PulpImports.
-     * @summary Inspect a pulp import
-     * @param {string} pulpPulpImportHref 
-     * @param {string} [fields] A list of fields to include in the response.
-     * @param {string} [excludeFields] A list of fields to exclude from the response.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof ImportersCoreImportsApi
-     */
-    public read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any) {
-        return ImportersCoreImportsApiFp(this.configuration).read(pulpPulpImportHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
 
 /**
  * ImportersPulpApi - axios parameter creator
@@ -7170,13 +8381,11 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         _delete: async (pulpImporterHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'pulpImporterHref', pulpImporterHref)
             const localVarPath = `{pulp_importer_href}`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7188,27 +8397,18 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7221,12 +8421,10 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         create: async (pulpImporter: PulpImporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpImporter' is not null or undefined
-            if (pulpImporter === null || pulpImporter === undefined) {
-                throw new RequiredError('pulpImporter','Required parameter pulpImporter was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'pulpImporter', pulpImporter)
             const localVarPath = `/pulp/api/v3/importers/core/pulp/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7238,9 +8436,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -7248,26 +8444,13 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpImporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpImporter !== undefined ? pulpImporter : {})
-                : (pulpImporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpImporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7275,11 +8458,11 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          * ViewSet for PulpImporters.
          * @summary List pulp importers
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -7287,10 +8470,10 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/importers/core/pulp/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7302,9 +8485,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -7324,8 +8505,8 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
                 localVarQueryParameter['name__icontains'] = nameIcontains;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (nameStartswith !== undefined) {
@@ -7350,19 +8531,12 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7376,17 +8550,13 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         partialUpdate: async (pulpImporterHref: string, patchedPulpImporter: PatchedPulpImporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'pulpImporterHref', pulpImporterHref)
             // verify required parameter 'patchedPulpImporter' is not null or undefined
-            if (patchedPulpImporter === null || patchedPulpImporter === undefined) {
-                throw new RequiredError('patchedPulpImporter','Required parameter patchedPulpImporter was null or undefined when calling partialUpdate.');
-            }
+            assertParamExists('partialUpdate', 'patchedPulpImporter', patchedPulpImporter)
             const localVarPath = `{pulp_importer_href}`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7398,9 +8568,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -7408,26 +8576,13 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof patchedPulpImporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(patchedPulpImporter !== undefined ? patchedPulpImporter : {})
-                : (patchedPulpImporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedPulpImporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7442,13 +8597,11 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         read: async (pulpImporterHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'pulpImporterHref', pulpImporterHref)
             const localVarPath = `{pulp_importer_href}`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7460,9 +8613,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -7476,19 +8627,12 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7502,17 +8646,13 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
          */
         update: async (pulpImporterHref: string, pulpImporter: PulpImporter, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'pulpImporterHref' is not null or undefined
-            if (pulpImporterHref === null || pulpImporterHref === undefined) {
-                throw new RequiredError('pulpImporterHref','Required parameter pulpImporterHref was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'pulpImporterHref', pulpImporterHref)
             // verify required parameter 'pulpImporter' is not null or undefined
-            if (pulpImporter === null || pulpImporter === undefined) {
-                throw new RequiredError('pulpImporter','Required parameter pulpImporter was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'pulpImporter', pulpImporter)
             const localVarPath = `{pulp_importer_href}`
-                .replace(`{${"pulp_importer_href"}}`, encodeURIComponent(String(pulpImporterHref)));
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7524,9 +8664,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -7534,26 +8672,13 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof pulpImporter !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(pulpImporter !== undefined ? pulpImporter : {})
-                : (pulpImporter || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpImporter, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7565,6 +8690,7 @@ export const ImportersPulpApiAxiosParamCreator = function (configuration?: Confi
  * @export
  */
 export const ImportersPulpApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ImportersPulpApiAxiosParamCreator(configuration)
     return {
         /**
          * ViewSet for PulpImporters.
@@ -7574,11 +8700,8 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(pulpImporterHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration)._delete(pulpImporterHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(pulpImporterHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for PulpImporters.
@@ -7588,21 +8711,18 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(pulpImporter: PulpImporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImporterResponse>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration).create(pulpImporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(pulpImporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for PulpImporters.
          * @summary List pulp importers
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -7610,12 +8730,9 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpImporterResponseList>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPulpImporterResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for PulpImporters.
@@ -7626,11 +8743,8 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async partialUpdate(pulpImporterHref: string, patchedPulpImporter: PatchedPulpImporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImporterResponse>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration).partialUpdate(pulpImporterHref, patchedPulpImporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdate(pulpImporterHref, patchedPulpImporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for PulpImporters.
@@ -7642,11 +8756,8 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(pulpImporterHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImporterResponse>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration).read(pulpImporterHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(pulpImporterHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for PulpImporters.
@@ -7657,11 +8768,8 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async update(pulpImporterHref: string, pulpImporter: PulpImporter, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImporterResponse>> {
-            const localVarAxiosArgs = await ImportersPulpApiAxiosParamCreator(configuration).update(pulpImporterHref, pulpImporter, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(pulpImporterHref, pulpImporter, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -7671,6 +8779,7 @@ export const ImportersPulpApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const ImportersPulpApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ImportersPulpApiFp(configuration)
     return {
         /**
          * ViewSet for PulpImporters.
@@ -7680,7 +8789,7 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         _delete(pulpImporterHref: string, options?: any): AxiosPromise<void> {
-            return ImportersPulpApiFp(configuration)._delete(pulpImporterHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(pulpImporterHref, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for PulpImporters.
@@ -7690,17 +8799,17 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         create(pulpImporter: PulpImporter, options?: any): AxiosPromise<PulpImporterResponse> {
-            return ImportersPulpApiFp(configuration).create(pulpImporter, options).then((request) => request(axios, basePath));
+            return localVarFp.create(pulpImporter, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for PulpImporters.
          * @summary List pulp importers
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -7708,8 +8817,8 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpImporterResponseList> {
-            return ImportersPulpApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPulpImporterResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for PulpImporters.
@@ -7720,7 +8829,7 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         partialUpdate(pulpImporterHref: string, patchedPulpImporter: PatchedPulpImporter, options?: any): AxiosPromise<PulpImporterResponse> {
-            return ImportersPulpApiFp(configuration).partialUpdate(pulpImporterHref, patchedPulpImporter, options).then((request) => request(axios, basePath));
+            return localVarFp.partialUpdate(pulpImporterHref, patchedPulpImporter, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for PulpImporters.
@@ -7732,7 +8841,7 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         read(pulpImporterHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PulpImporterResponse> {
-            return ImportersPulpApiFp(configuration).read(pulpImporterHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(pulpImporterHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for PulpImporters.
@@ -7743,7 +8852,7 @@ export const ImportersPulpApiFactory = function (configuration?: Configuration, 
          * @throws {RequiredError}
          */
         update(pulpImporterHref: string, pulpImporter: PulpImporter, options?: any): AxiosPromise<PulpImporterResponse> {
-            return ImportersPulpApiFp(configuration).update(pulpImporterHref, pulpImporter, options).then((request) => request(axios, basePath));
+            return localVarFp.update(pulpImporterHref, pulpImporter, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -7783,11 +8892,11 @@ export class ImportersPulpApi extends BaseAPI {
      * ViewSet for PulpImporters.
      * @summary List pulp importers
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIn] name__in
-     * @param {string} [nameStartswith] name__startswith
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
@@ -7796,7 +8905,7 @@ export class ImportersPulpApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ImportersPulpApi
      */
-    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
         return ImportersPulpApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -7842,22 +8951,141 @@ export class ImportersPulpApi extends BaseAPI {
 }
 
 
+
 /**
- * OrphansApi - axios parameter creator
+ * ImportersPulpImportCheckApi - axios parameter creator
  * @export
  */
-export const OrphansApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ImportersPulpImportCheckApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Trigger an asynchronous task that deletes allorphaned content and artifacts.
-         * @summary Delete orphans
+         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
+         * @summary Validate the parameters to be used for a PulpImport call
+         * @param {PulpImportCheck} pulpImportCheck 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        _delete: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/pulp/api/v3/orphans/`;
+        pulpImportCheckPost: async (pulpImportCheck: PulpImportCheck, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpImportCheck' is not null or undefined
+            assertParamExists('pulpImportCheckPost', 'pulpImportCheck', pulpImportCheck)
+            const localVarPath = `/pulp/api/v3/importers/core/pulp/import-check/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpImportCheck, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ImportersPulpImportCheckApi - functional programming interface
+ * @export
+ */
+export const ImportersPulpImportCheckApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ImportersPulpImportCheckApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
+         * @summary Validate the parameters to be used for a PulpImport call
+         * @param {PulpImportCheck} pulpImportCheck 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PulpImportCheckResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.pulpImportCheckPost(pulpImportCheck, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ImportersPulpImportCheckApi - factory interface
+ * @export
+ */
+export const ImportersPulpImportCheckApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ImportersPulpImportCheckApiFp(configuration)
+    return {
+        /**
+         * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
+         * @summary Validate the parameters to be used for a PulpImport call
+         * @param {PulpImportCheck} pulpImportCheck 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any): AxiosPromise<PulpImportCheckResponse> {
+            return localVarFp.pulpImportCheckPost(pulpImportCheck, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ImportersPulpImportCheckApi - object-oriented interface
+ * @export
+ * @class ImportersPulpImportCheckApi
+ * @extends {BaseAPI}
+ */
+export class ImportersPulpImportCheckApi extends BaseAPI {
+    /**
+     * Evaluates validity of proposed PulpImport parameters \'toc\', \'path\', and \'repo_mapping\'.  * Checks that toc, path are in ALLOWED_IMPORT_PATHS * if ALLOWED:   * Checks that toc, path exist and are readable   * If toc specified, checks that containing dir is writeable * Checks that repo_mapping is valid JSON
+     * @summary Validate the parameters to be used for a PulpImport call
+     * @param {PulpImportCheck} pulpImportCheck 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImportersPulpImportCheckApi
+     */
+    public pulpImportCheckPost(pulpImportCheck: PulpImportCheck, options?: any) {
+        return ImportersPulpImportCheckApiFp(this.configuration).pulpImportCheckPost(pulpImportCheck, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ImportersPulpImportsApi - axios parameter creator
+ * @export
+ */
+export const ImportersPulpImportsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * ViewSet for PulpImports.
+         * @summary Delete a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete: async (pulpPulpImportHref: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpPulpImportHref' is not null or undefined
+            assertParamExists('_delete', 'pulpPulpImportHref', pulpPulpImportHref)
+            const localVarPath = `{pulp_pulp_import_href}`
+                .replace(`{${"pulp_pulp_import_href"}}`, String(pulpPulpImportHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7869,27 +9097,410 @@ export const OrphansApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Trigger an asynchronous task to import a Pulp export.
+         * @summary Create a pulp import
+         * @param {string} pulpImporterHref 
+         * @param {PulpImport} pulpImport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (pulpImporterHref: string, pulpImport: PulpImport, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpImporterHref' is not null or undefined
+            assertParamExists('create', 'pulpImporterHref', pulpImporterHref)
+            // verify required parameter 'pulpImport' is not null or undefined
+            assertParamExists('create', 'pulpImport', pulpImport)
+            const localVarPath = `{pulp_importer_href}imports/`
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(pulpImport, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary List pulp imports
+         * @param {string} pulpImporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpImporterHref' is not null or undefined
+            assertParamExists('list', 'pulpImporterHref', pulpImporterHref)
+            const localVarPath = `{pulp_importer_href}imports/`
+                .replace(`{${"pulp_importer_href"}}`, String(pulpImporterHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary Inspect a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read: async (pulpPulpImportHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pulpPulpImportHref' is not null or undefined
+            assertParamExists('read', 'pulpPulpImportHref', pulpPulpImportHref)
+            const localVarPath = `{pulp_pulp_import_href}`
+                .replace(`{${"pulp_pulp_import_href"}}`, String(pulpPulpImportHref));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ImportersPulpImportsApi - functional programming interface
+ * @export
+ */
+export const ImportersPulpImportsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ImportersPulpImportsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * ViewSet for PulpImports.
+         * @summary Delete a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async _delete(pulpPulpImportHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(pulpPulpImportHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Trigger an asynchronous task to import a Pulp export.
+         * @summary Create a pulp import
+         * @param {string} pulpImporterHref 
+         * @param {PulpImport} pulpImport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(pulpImporterHref: string, pulpImport: PulpImport, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(pulpImporterHref, pulpImport, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary List pulp imports
+         * @param {string} pulpImporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedImportResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary Inspect a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ImportResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(pulpPulpImportHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ImportersPulpImportsApi - factory interface
+ * @export
+ */
+export const ImportersPulpImportsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ImportersPulpImportsApiFp(configuration)
+    return {
+        /**
+         * ViewSet for PulpImports.
+         * @summary Delete a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete(pulpPulpImportHref: string, options?: any): AxiosPromise<void> {
+            return localVarFp._delete(pulpPulpImportHref, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Trigger an asynchronous task to import a Pulp export.
+         * @summary Create a pulp import
+         * @param {string} pulpImporterHref 
+         * @param {PulpImport} pulpImport 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(pulpImporterHref: string, pulpImport: PulpImport, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.create(pulpImporterHref, pulpImport, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary List pulp imports
+         * @param {string} pulpImporterHref 
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedImportResponseList> {
+            return localVarFp.list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * ViewSet for PulpImports.
+         * @summary Inspect a pulp import
+         * @param {string} pulpPulpImportHref 
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<ImportResponse> {
+            return localVarFp.read(pulpPulpImportHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ImportersPulpImportsApi - object-oriented interface
+ * @export
+ * @class ImportersPulpImportsApi
+ * @extends {BaseAPI}
+ */
+export class ImportersPulpImportsApi extends BaseAPI {
+    /**
+     * ViewSet for PulpImports.
+     * @summary Delete a pulp import
+     * @param {string} pulpPulpImportHref 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImportersPulpImportsApi
+     */
+    public _delete(pulpPulpImportHref: string, options?: any) {
+        return ImportersPulpImportsApiFp(this.configuration)._delete(pulpPulpImportHref, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Trigger an asynchronous task to import a Pulp export.
+     * @summary Create a pulp import
+     * @param {string} pulpImporterHref 
+     * @param {PulpImport} pulpImport 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImportersPulpImportsApi
+     */
+    public create(pulpImporterHref: string, pulpImport: PulpImport, options?: any) {
+        return ImportersPulpImportsApiFp(this.configuration).create(pulpImporterHref, pulpImport, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for PulpImports.
+     * @summary List pulp imports
+     * @param {string} pulpImporterHref 
+     * @param {number} [limit] Number of results to return per page.
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImportersPulpImportsApi
+     */
+    public list(pulpImporterHref: string, limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+        return ImportersPulpImportsApiFp(this.configuration).list(pulpImporterHref, limit, offset, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * ViewSet for PulpImports.
+     * @summary Inspect a pulp import
+     * @param {string} pulpPulpImportHref 
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ImportersPulpImportsApi
+     */
+    public read(pulpPulpImportHref: string, fields?: string, excludeFields?: string, options?: any) {
+        return ImportersPulpImportsApiFp(this.configuration).read(pulpPulpImportHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * OrphansApi - axios parameter creator
+ * @export
+ */
+export const OrphansApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * DEPRECATED! Trigger an asynchronous task that deletes all orphaned content and artifacts. Use the `POST /pulp/api/v3/orphans/cleanup/` call instead.
+         * @summary Delete orphans
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        _delete: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/orphans/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -7901,19 +9512,17 @@ export const OrphansApiAxiosParamCreator = function (configuration?: Configurati
  * @export
  */
 export const OrphansApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = OrphansApiAxiosParamCreator(configuration)
     return {
         /**
-         * Trigger an asynchronous task that deletes allorphaned content and artifacts.
+         * DEPRECATED! Trigger an asynchronous task that deletes all orphaned content and artifacts. Use the `POST /pulp/api/v3/orphans/cleanup/` call instead.
          * @summary Delete orphans
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async _delete(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await OrphansApiAxiosParamCreator(configuration)._delete(options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -7923,15 +9532,16 @@ export const OrphansApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const OrphansApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = OrphansApiFp(configuration)
     return {
         /**
-         * Trigger an asynchronous task that deletes allorphaned content and artifacts.
+         * DEPRECATED! Trigger an asynchronous task that deletes all orphaned content and artifacts. Use the `POST /pulp/api/v3/orphans/cleanup/` call instead.
          * @summary Delete orphans
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         _delete(options?: any): AxiosPromise<AsyncOperationResponse> {
-            return OrphansApiFp(configuration)._delete(options).then((request) => request(axios, basePath));
+            return localVarFp._delete(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -7944,7 +9554,7 @@ export const OrphansApiFactory = function (configuration?: Configuration, basePa
  */
 export class OrphansApi extends BaseAPI {
     /**
-     * Trigger an asynchronous task that deletes allorphaned content and artifacts.
+     * DEPRECATED! Trigger an asynchronous task that deletes all orphaned content and artifacts. Use the `POST /pulp/api/v3/orphans/cleanup/` call instead.
      * @summary Delete orphans
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7956,22 +9566,25 @@ export class OrphansApi extends BaseAPI {
 }
 
 
+
 /**
- * RepairApi - axios parameter creator
+ * OrphansCleanupApi - axios parameter creator
  * @export
  */
-export const RepairApiAxiosParamCreator = function (configuration?: Configuration) {
+export const OrphansCleanupApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Trigger an asynchronous task that checks for missing or corrupted artifacts, and attempts to redownload them.
-         * @summary Repair Artifact Storage
+         * Trigger an asynchronous orphan cleanup operation.
+         * @param {OrphansCleanup} orphansCleanup 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        post: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/pulp/api/v3/repair/`;
+        cleanup: async (orphansCleanup: OrphansCleanup, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'orphansCleanup' is not null or undefined
+            assertParamExists('cleanup', 'orphansCleanup', orphansCleanup)
+            const localVarPath = `/pulp/api/v3/orphans/cleanup/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -7983,27 +9596,359 @@ export const RepairApiAxiosParamCreator = function (configuration?: Configuratio
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(orphansCleanup, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * OrphansCleanupApi - functional programming interface
+ * @export
+ */
+export const OrphansCleanupApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = OrphansCleanupApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Trigger an asynchronous orphan cleanup operation.
+         * @param {OrphansCleanup} orphansCleanup 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async cleanup(orphansCleanup: OrphansCleanup, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cleanup(orphansCleanup, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * OrphansCleanupApi - factory interface
+ * @export
+ */
+export const OrphansCleanupApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = OrphansCleanupApiFp(configuration)
+    return {
+        /**
+         * Trigger an asynchronous orphan cleanup operation.
+         * @param {OrphansCleanup} orphansCleanup 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cleanup(orphansCleanup: OrphansCleanup, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.cleanup(orphansCleanup, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * OrphansCleanupApi - object-oriented interface
+ * @export
+ * @class OrphansCleanupApi
+ * @extends {BaseAPI}
+ */
+export class OrphansCleanupApi extends BaseAPI {
+    /**
+     * Trigger an asynchronous orphan cleanup operation.
+     * @param {OrphansCleanup} orphansCleanup 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof OrphansCleanupApi
+     */
+    public cleanup(orphansCleanup: OrphansCleanup, options?: any) {
+        return OrphansCleanupApiFp(this.configuration).cleanup(orphansCleanup, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * PublicationsApi - axios parameter creator
+ * @export
+ */
+export const PublicationsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
+         * @summary List publications
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (content?: string, contentIn?: string, limit?: number, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, repositoryVersion?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/publications/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
             }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (content !== undefined) {
+                localVarQueryParameter['content'] = content;
             }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+
+            if (contentIn !== undefined) {
+                localVarQueryParameter['content__in'] = contentIn;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (ordering !== undefined) {
+                localVarQueryParameter['ordering'] = ordering;
+            }
+
+            if (pulpCreated !== undefined) {
+                localVarQueryParameter['pulp_created'] = (pulpCreated as any instanceof Date) ?
+                    (pulpCreated as any).toISOString() :
+                    pulpCreated;
+            }
+
+            if (pulpCreatedGt !== undefined) {
+                localVarQueryParameter['pulp_created__gt'] = (pulpCreatedGt as any instanceof Date) ?
+                    (pulpCreatedGt as any).toISOString() :
+                    pulpCreatedGt;
+            }
+
+            if (pulpCreatedGte !== undefined) {
+                localVarQueryParameter['pulp_created__gte'] = (pulpCreatedGte as any instanceof Date) ?
+                    (pulpCreatedGte as any).toISOString() :
+                    pulpCreatedGte;
+            }
+
+            if (pulpCreatedLt !== undefined) {
+                localVarQueryParameter['pulp_created__lt'] = (pulpCreatedLt as any instanceof Date) ?
+                    (pulpCreatedLt as any).toISOString() :
+                    pulpCreatedLt;
+            }
+
+            if (pulpCreatedLte !== undefined) {
+                localVarQueryParameter['pulp_created__lte'] = (pulpCreatedLte as any instanceof Date) ?
+                    (pulpCreatedLte as any).toISOString() :
+                    pulpCreatedLte;
+            }
+
+            if (pulpCreatedRange) {
+                localVarQueryParameter['pulp_created__range'] = pulpCreatedRange.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (repositoryVersion !== undefined) {
+                localVarQueryParameter['repository_version'] = repositoryVersion;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * PublicationsApi - functional programming interface
+ * @export
+ */
+export const PublicationsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = PublicationsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
+         * @summary List publications
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(content?: string, contentIn?: string, limit?: number, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, repositoryVersion?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedPublicationResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(content, contentIn, limit, offset, ordering, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, repositoryVersion, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * PublicationsApi - factory interface
+ * @export
+ */
+export const PublicationsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = PublicationsApiFp(configuration)
+    return {
+        /**
+         * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
+         * @summary List publications
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [ordering] Which field to use when ordering the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [repositoryVersion] Repository Version referenced by HREF
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(content?: string, contentIn?: string, limit?: number, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, repositoryVersion?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedPublicationResponseList> {
+            return localVarFp.list(content, contentIn, limit, offset, ordering, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, repositoryVersion, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * PublicationsApi - object-oriented interface
+ * @export
+ * @class PublicationsApi
+ * @extends {BaseAPI}
+ */
+export class PublicationsApi extends BaseAPI {
+    /**
+     * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
+     * @summary List publications
+     * @param {string} [content] Content Unit referenced by HREF
+     * @param {string} [contentIn] Content Unit referenced by HREF
+     * @param {number} [limit] Number of results to return per page.
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [ordering] Which field to use when ordering the results.
+     * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+     * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+     * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+     * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+     * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+     * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+     * @param {string} [repositoryVersion] Repository Version referenced by HREF
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof PublicationsApi
+     */
+    public list(content?: string, contentIn?: string, limit?: number, offset?: number, ordering?: string, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, repositoryVersion?: string, fields?: string, excludeFields?: string, options?: any) {
+        return PublicationsApiFp(this.configuration).list(content, contentIn, limit, offset, ordering, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, repositoryVersion, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * RepairApi - axios parameter creator
+ * @export
+ */
+export const RepairApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Trigger an asynchronous task that checks for missing or corrupted artifacts, and attempts to redownload them.
+         * @summary Repair Artifact Storage
+         * @param {Repair} repair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        post: async (repair: Repair, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'repair' is not null or undefined
+            assertParamExists('post', 'repair', repair)
+            const localVarPath = `/pulp/api/v3/repair/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(repair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8015,19 +9960,18 @@ export const RepairApiAxiosParamCreator = function (configuration?: Configuratio
  * @export
  */
 export const RepairApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RepairApiAxiosParamCreator(configuration)
     return {
         /**
          * Trigger an asynchronous task that checks for missing or corrupted artifacts, and attempts to redownload them.
          * @summary Repair Artifact Storage
+         * @param {Repair} repair 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async post(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await RepairApiAxiosParamCreator(configuration).post(options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async post(repair: Repair, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.post(repair, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -8037,15 +9981,17 @@ export const RepairApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const RepairApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RepairApiFp(configuration)
     return {
         /**
          * Trigger an asynchronous task that checks for missing or corrupted artifacts, and attempts to redownload them.
          * @summary Repair Artifact Storage
+         * @param {Repair} repair 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        post(options?: any): AxiosPromise<AsyncOperationResponse> {
-            return RepairApiFp(configuration).post(options).then((request) => request(axios, basePath));
+        post(repair: Repair, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.post(repair, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8060,14 +10006,16 @@ export class RepairApi extends BaseAPI {
     /**
      * Trigger an asynchronous task that checks for missing or corrupted artifacts, and attempts to redownload them.
      * @summary Repair Artifact Storage
+     * @param {Repair} repair 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RepairApi
      */
-    public post(options?: any) {
-        return RepairApiFp(this.configuration).post(options).then((request) => request(this.axios, this.basePath));
+    public post(repair: Repair, options?: any) {
+        return RepairApiFp(this.configuration).post(repair, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
 /**
@@ -8080,23 +10028,23 @@ export const RepositoriesApiAxiosParamCreator = function (configuration?: Config
          * Endpoint to list all repositories.
          * @summary List repositories
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [pulpLabelSelect] pulp_label_select
+         * @param {string} [pulpLabelSelect] Filter labels by search string
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/repositories/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8108,9 +10056,7 @@ export const RepositoriesApiAxiosParamCreator = function (configuration?: Config
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -8130,8 +10076,8 @@ export const RepositoriesApiAxiosParamCreator = function (configuration?: Config
                 localVarQueryParameter['name__icontains'] = nameIcontains;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (nameStartswith !== undefined) {
@@ -8160,19 +10106,12 @@ export const RepositoriesApiAxiosParamCreator = function (configuration?: Config
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8184,30 +10123,28 @@ export const RepositoriesApiAxiosParamCreator = function (configuration?: Config
  * @export
  */
 export const RepositoriesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RepositoriesApiAxiosParamCreator(configuration)
     return {
         /**
          * Endpoint to list all repositories.
          * @summary List repositories
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [pulpLabelSelect] pulp_label_select
+         * @param {string} [pulpLabelSelect] Filter labels by search string
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedRepositoryResponseList>> {
-            const localVarAxiosArgs = await RepositoriesApiAxiosParamCreator(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedRepositoryResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -8217,26 +10154,27 @@ export const RepositoriesApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const RepositoriesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RepositoriesApiFp(configuration)
     return {
         /**
          * Endpoint to list all repositories.
          * @summary List repositories
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [pulpLabelSelect] pulp_label_select
+         * @param {string} [pulpLabelSelect] Filter labels by search string
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedRepositoryResponseList> {
-            return RepositoriesApiFp(configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedRepositoryResponseList> {
+            return localVarFp.list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8252,24 +10190,394 @@ export class RepositoriesApi extends BaseAPI {
      * Endpoint to list all repositories.
      * @summary List repositories
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIn] name__in
-     * @param {string} [nameStartswith] name__startswith
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [pulpLabelSelect] pulp_label_select
+     * @param {string} [pulpLabelSelect] Filter labels by search string
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RepositoriesApi
      */
-    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(limit?: number, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, ordering?: string, pulpLabelSelect?: string, fields?: string, excludeFields?: string, options?: any) {
         return RepositoriesApiFp(this.configuration).list(limit, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, ordering, pulpLabelSelect, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
+
+
+/**
+ * RepositoriesReclaimSpaceApi - axios parameter creator
+ * @export
+ */
+export const RepositoriesReclaimSpaceApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Trigger an asynchronous space reclaim operation.
+         * @param {ReclaimSpace} reclaimSpace 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        reclaim: async (reclaimSpace: ReclaimSpace, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'reclaimSpace' is not null or undefined
+            assertParamExists('reclaim', 'reclaimSpace', reclaimSpace)
+            const localVarPath = `/pulp/api/v3/repositories/reclaim_space/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(reclaimSpace, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * RepositoriesReclaimSpaceApi - functional programming interface
+ * @export
+ */
+export const RepositoriesReclaimSpaceApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RepositoriesReclaimSpaceApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Trigger an asynchronous space reclaim operation.
+         * @param {ReclaimSpace} reclaimSpace 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async reclaim(reclaimSpace: ReclaimSpace, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.reclaim(reclaimSpace, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * RepositoriesReclaimSpaceApi - factory interface
+ * @export
+ */
+export const RepositoriesReclaimSpaceApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RepositoriesReclaimSpaceApiFp(configuration)
+    return {
+        /**
+         * Trigger an asynchronous space reclaim operation.
+         * @param {ReclaimSpace} reclaimSpace 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        reclaim(reclaimSpace: ReclaimSpace, options?: any): AxiosPromise<AsyncOperationResponse> {
+            return localVarFp.reclaim(reclaimSpace, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * RepositoriesReclaimSpaceApi - object-oriented interface
+ * @export
+ * @class RepositoriesReclaimSpaceApi
+ * @extends {BaseAPI}
+ */
+export class RepositoriesReclaimSpaceApi extends BaseAPI {
+    /**
+     * Trigger an asynchronous space reclaim operation.
+     * @param {ReclaimSpace} reclaimSpace 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RepositoriesReclaimSpaceApi
+     */
+    public reclaim(reclaimSpace: ReclaimSpace, options?: any) {
+        return RepositoriesReclaimSpaceApiFp(this.configuration).reclaim(reclaimSpace, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * RepositoryVersionsApi - axios parameter creator
+ * @export
+ */
+export const RepositoryVersionsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary List repository versions
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [number] 
+         * @param {number} [numberGt] Filter results where number is greater than value
+         * @param {number} [numberGte] Filter results where number is greater than or equal to value
+         * @param {number} [numberLt] Filter results where number is less than value
+         * @param {number} [numberLte] Filter results where number is less than or equal to value
+         * @param {Array<number>} [numberRange] Filter results where number is between two comma separated values
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (content?: string, contentIn?: string, limit?: number, number?: number, numberGt?: number, numberGte?: number, numberLt?: number, numberLte?: number, numberRange?: Array<number>, offset?: number, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/pulp/api/v3/repository_versions/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication cookieAuth required
+
+            if (content !== undefined) {
+                localVarQueryParameter['content'] = content;
+            }
+
+            if (contentIn !== undefined) {
+                localVarQueryParameter['content__in'] = contentIn;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (number !== undefined) {
+                localVarQueryParameter['number'] = number;
+            }
+
+            if (numberGt !== undefined) {
+                localVarQueryParameter['number__gt'] = numberGt;
+            }
+
+            if (numberGte !== undefined) {
+                localVarQueryParameter['number__gte'] = numberGte;
+            }
+
+            if (numberLt !== undefined) {
+                localVarQueryParameter['number__lt'] = numberLt;
+            }
+
+            if (numberLte !== undefined) {
+                localVarQueryParameter['number__lte'] = numberLte;
+            }
+
+            if (numberRange) {
+                localVarQueryParameter['number__range'] = numberRange.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
+
+            if (pulpCreated !== undefined) {
+                localVarQueryParameter['pulp_created'] = (pulpCreated as any instanceof Date) ?
+                    (pulpCreated as any).toISOString() :
+                    pulpCreated;
+            }
+
+            if (pulpCreatedGt !== undefined) {
+                localVarQueryParameter['pulp_created__gt'] = (pulpCreatedGt as any instanceof Date) ?
+                    (pulpCreatedGt as any).toISOString() :
+                    pulpCreatedGt;
+            }
+
+            if (pulpCreatedGte !== undefined) {
+                localVarQueryParameter['pulp_created__gte'] = (pulpCreatedGte as any instanceof Date) ?
+                    (pulpCreatedGte as any).toISOString() :
+                    pulpCreatedGte;
+            }
+
+            if (pulpCreatedLt !== undefined) {
+                localVarQueryParameter['pulp_created__lt'] = (pulpCreatedLt as any instanceof Date) ?
+                    (pulpCreatedLt as any).toISOString() :
+                    pulpCreatedLt;
+            }
+
+            if (pulpCreatedLte !== undefined) {
+                localVarQueryParameter['pulp_created__lte'] = (pulpCreatedLte as any instanceof Date) ?
+                    (pulpCreatedLte as any).toISOString() :
+                    pulpCreatedLte;
+            }
+
+            if (pulpCreatedRange) {
+                localVarQueryParameter['pulp_created__range'] = pulpCreatedRange.join(COLLECTION_FORMATS.csv);
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (excludeFields !== undefined) {
+                localVarQueryParameter['exclude_fields'] = excludeFields;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * RepositoryVersionsApi - functional programming interface
+ * @export
+ */
+export const RepositoryVersionsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RepositoryVersionsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary List repository versions
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [number] 
+         * @param {number} [numberGt] Filter results where number is greater than value
+         * @param {number} [numberGte] Filter results where number is greater than or equal to value
+         * @param {number} [numberLt] Filter results where number is less than value
+         * @param {number} [numberLte] Filter results where number is less than or equal to value
+         * @param {Array<number>} [numberRange] Filter results where number is between two comma separated values
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(content?: string, contentIn?: string, limit?: number, number?: number, numberGt?: number, numberGte?: number, numberLt?: number, numberLte?: number, numberRange?: Array<number>, offset?: number, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedRepositoryVersionResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(content, contentIn, limit, number, numberGt, numberGte, numberLt, numberLte, numberRange, offset, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * RepositoryVersionsApi - factory interface
+ * @export
+ */
+export const RepositoryVersionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RepositoryVersionsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary List repository versions
+         * @param {string} [content] Content Unit referenced by HREF
+         * @param {string} [contentIn] Content Unit referenced by HREF
+         * @param {number} [limit] Number of results to return per page.
+         * @param {number} [number] 
+         * @param {number} [numberGt] Filter results where number is greater than value
+         * @param {number} [numberGte] Filter results where number is greater than or equal to value
+         * @param {number} [numberLt] Filter results where number is less than value
+         * @param {number} [numberLte] Filter results where number is less than or equal to value
+         * @param {Array<number>} [numberRange] Filter results where number is between two comma separated values
+         * @param {number} [offset] The initial index from which to return the results.
+         * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+         * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+         * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+         * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+         * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+         * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+         * @param {string} [fields] A list of fields to include in the response.
+         * @param {string} [excludeFields] A list of fields to exclude from the response.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(content?: string, contentIn?: string, limit?: number, number?: number, numberGt?: number, numberGte?: number, numberLt?: number, numberLte?: number, numberRange?: Array<number>, offset?: number, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedRepositoryVersionResponseList> {
+            return localVarFp.list(content, contentIn, limit, number, numberGt, numberGte, numberLt, numberLte, numberRange, offset, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, fields, excludeFields, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * RepositoryVersionsApi - object-oriented interface
+ * @export
+ * @class RepositoryVersionsApi
+ * @extends {BaseAPI}
+ */
+export class RepositoryVersionsApi extends BaseAPI {
+    /**
+     * 
+     * @summary List repository versions
+     * @param {string} [content] Content Unit referenced by HREF
+     * @param {string} [contentIn] Content Unit referenced by HREF
+     * @param {number} [limit] Number of results to return per page.
+     * @param {number} [number] 
+     * @param {number} [numberGt] Filter results where number is greater than value
+     * @param {number} [numberGte] Filter results where number is greater than or equal to value
+     * @param {number} [numberLt] Filter results where number is less than value
+     * @param {number} [numberLte] Filter results where number is less than or equal to value
+     * @param {Array<number>} [numberRange] Filter results where number is between two comma separated values
+     * @param {number} [offset] The initial index from which to return the results.
+     * @param {string} [pulpCreated] ISO 8601 formatted dates are supported
+     * @param {string} [pulpCreatedGt] Filter results where pulp_created is greater than value
+     * @param {string} [pulpCreatedGte] Filter results where pulp_created is greater than or equal to value
+     * @param {string} [pulpCreatedLt] Filter results where pulp_created is less than value
+     * @param {string} [pulpCreatedLte] Filter results where pulp_created is less than or equal to value
+     * @param {Array<string>} [pulpCreatedRange] Filter results where pulp_created is between two comma separated values
+     * @param {string} [fields] A list of fields to include in the response.
+     * @param {string} [excludeFields] A list of fields to exclude from the response.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RepositoryVersionsApi
+     */
+    public list(content?: string, contentIn?: string, limit?: number, number?: number, numberGt?: number, numberGte?: number, numberLt?: number, numberLte?: number, numberRange?: Array<number>, offset?: number, pulpCreated?: string, pulpCreatedGt?: string, pulpCreatedGte?: string, pulpCreatedLt?: string, pulpCreatedLte?: string, pulpCreatedRange?: Array<string>, fields?: string, excludeFields?: string, options?: any) {
+        return RepositoryVersionsApiFp(this.configuration).list(content, contentIn, limit, number, numberGt, numberGte, numberLt, numberLte, numberRange, offset, pulpCreated, pulpCreatedGt, pulpCreatedGte, pulpCreatedLt, pulpCreatedLte, pulpCreatedRange, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 
 /**
@@ -8282,7 +10590,7 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
          * A ViewSet that supports browsing of existing signing services.
          * @summary List signing services
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
+         * @param {string} [name] 
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -8293,7 +10601,7 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
         list: async (limit?: number, name?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/signing-services/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8305,9 +10613,7 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -8337,19 +10643,12 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8364,13 +10663,11 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
          */
         read: async (signingServiceHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'signingServiceHref' is not null or undefined
-            if (signingServiceHref === null || signingServiceHref === undefined) {
-                throw new RequiredError('signingServiceHref','Required parameter signingServiceHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'signingServiceHref', signingServiceHref)
             const localVarPath = `{signing_service_href}`
-                .replace(`{${"signing_service_href"}}`, encodeURIComponent(String(signingServiceHref)));
+                .replace(`{${"signing_service_href"}}`, String(signingServiceHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8382,9 +10679,7 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -8398,19 +10693,12 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8422,12 +10710,13 @@ export const SigningServicesApiAxiosParamCreator = function (configuration?: Con
  * @export
  */
 export const SigningServicesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = SigningServicesApiAxiosParamCreator(configuration)
     return {
         /**
          * A ViewSet that supports browsing of existing signing services.
          * @summary List signing services
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
+         * @param {string} [name] 
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -8436,11 +10725,8 @@ export const SigningServicesApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async list(limit?: number, name?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSigningServiceResponseList>> {
-            const localVarAxiosArgs = await SigningServicesApiAxiosParamCreator(configuration).list(limit, name, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, name, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A ViewSet that supports browsing of existing signing services.
@@ -8452,11 +10738,8 @@ export const SigningServicesApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(signingServiceHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SigningServiceResponse>> {
-            const localVarAxiosArgs = await SigningServicesApiAxiosParamCreator(configuration).read(signingServiceHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(signingServiceHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -8466,12 +10749,13 @@ export const SigningServicesApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const SigningServicesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = SigningServicesApiFp(configuration)
     return {
         /**
          * A ViewSet that supports browsing of existing signing services.
          * @summary List signing services
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
+         * @param {string} [name] 
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
@@ -8480,7 +10764,7 @@ export const SigningServicesApiFactory = function (configuration?: Configuration
          * @throws {RequiredError}
          */
         list(limit?: number, name?: string, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedSigningServiceResponseList> {
-            return SigningServicesApiFp(configuration).list(limit, name, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(limit, name, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * A ViewSet that supports browsing of existing signing services.
@@ -8492,7 +10776,7 @@ export const SigningServicesApiFactory = function (configuration?: Configuration
          * @throws {RequiredError}
          */
         read(signingServiceHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<SigningServiceResponse> {
-            return SigningServicesApiFp(configuration).read(signingServiceHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(signingServiceHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8508,7 +10792,7 @@ export class SigningServicesApi extends BaseAPI {
      * A ViewSet that supports browsing of existing signing services.
      * @summary List signing services
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
+     * @param {string} [name] 
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
@@ -8537,6 +10821,7 @@ export class SigningServicesApi extends BaseAPI {
 }
 
 
+
 /**
  * StatusApi - axios parameter creator
  * @export
@@ -8544,7 +10829,7 @@ export class SigningServicesApi extends BaseAPI {
 export const StatusApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Returns app information including the version of pulpcore and loaded pulp plugins, known workers, database connection status, and messaging connection status
+         * Returns status and app information about Pulp.  Information includes:  * version of pulpcore and loaded pulp plugins  * known workers  * known content apps  * database connection status  * redis connection status  * disk usage information
          * @summary Inspect status of Pulp
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8552,7 +10837,7 @@ export const StatusApiAxiosParamCreator = function (configuration?: Configuratio
         statusRead: async (options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/status/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8564,19 +10849,12 @@ export const StatusApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8588,19 +10866,17 @@ export const StatusApiAxiosParamCreator = function (configuration?: Configuratio
  * @export
  */
 export const StatusApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = StatusApiAxiosParamCreator(configuration)
     return {
         /**
-         * Returns app information including the version of pulpcore and loaded pulp plugins, known workers, database connection status, and messaging connection status
+         * Returns status and app information about Pulp.  Information includes:  * version of pulpcore and loaded pulp plugins  * known workers  * known content apps  * database connection status  * redis connection status  * disk usage information
          * @summary Inspect status of Pulp
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         async statusRead(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StatusResponse>> {
-            const localVarAxiosArgs = await StatusApiAxiosParamCreator(configuration).statusRead(options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.statusRead(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -8610,15 +10886,16 @@ export const StatusApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const StatusApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = StatusApiFp(configuration)
     return {
         /**
-         * Returns app information including the version of pulpcore and loaded pulp plugins, known workers, database connection status, and messaging connection status
+         * Returns status and app information about Pulp.  Information includes:  * version of pulpcore and loaded pulp plugins  * known workers  * known content apps  * database connection status  * redis connection status  * disk usage information
          * @summary Inspect status of Pulp
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         statusRead(options?: any): AxiosPromise<StatusResponse> {
-            return StatusApiFp(configuration).statusRead(options).then((request) => request(axios, basePath));
+            return localVarFp.statusRead(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8631,7 +10908,7 @@ export const StatusApiFactory = function (configuration?: Configuration, basePat
  */
 export class StatusApi extends BaseAPI {
     /**
-     * Returns app information including the version of pulpcore and loaded pulp plugins, known workers, database connection status, and messaging connection status
+     * Returns status and app information about Pulp.  Information includes:  * version of pulpcore and loaded pulp plugins  * known workers  * known content apps  * database connection status  * redis connection status  * disk usage information
      * @summary Inspect status of Pulp
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8641,6 +10918,7 @@ export class StatusApi extends BaseAPI {
         return StatusApiFp(this.configuration).statusRead(options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
 /**
@@ -8663,7 +10941,7 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
         list: async (limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/task-groups/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8675,9 +10953,7 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -8703,19 +10979,12 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8730,13 +10999,11 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
          */
         read: async (taskGroupHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'taskGroupHref' is not null or undefined
-            if (taskGroupHref === null || taskGroupHref === undefined) {
-                throw new RequiredError('taskGroupHref','Required parameter taskGroupHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'taskGroupHref', taskGroupHref)
             const localVarPath = `{task_group_href}`
-                .replace(`{${"task_group_href"}}`, encodeURIComponent(String(taskGroupHref)));
+                .replace(`{${"task_group_href"}}`, String(taskGroupHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8748,9 +11015,7 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -8764,19 +11029,12 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -8788,6 +11046,7 @@ export const TaskGroupsApiAxiosParamCreator = function (configuration?: Configur
  * @export
  */
 export const TaskGroupsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TaskGroupsApiAxiosParamCreator(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -8801,11 +11060,8 @@ export const TaskGroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async list(limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedTaskGroupResponseList>> {
-            const localVarAxiosArgs = await TaskGroupsApiAxiosParamCreator(configuration).list(limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -8817,11 +11073,8 @@ export const TaskGroupsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(taskGroupHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskGroupResponse>> {
-            const localVarAxiosArgs = await TaskGroupsApiAxiosParamCreator(configuration).read(taskGroupHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(taskGroupHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -8831,6 +11084,7 @@ export const TaskGroupsApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const TaskGroupsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TaskGroupsApiFp(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -8844,7 +11098,7 @@ export const TaskGroupsApiFactory = function (configuration?: Configuration, bas
          * @throws {RequiredError}
          */
         list(limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedTaskGroupResponseList> {
-            return TaskGroupsApiFp(configuration).list(limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -8856,7 +11110,7 @@ export const TaskGroupsApiFactory = function (configuration?: Configuration, bas
          * @throws {RequiredError}
          */
         read(taskGroupHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<TaskGroupResponse> {
-            return TaskGroupsApiFp(configuration).read(taskGroupHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(taskGroupHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -8900,6 +11154,7 @@ export class TaskGroupsApi extends BaseAPI {
 }
 
 
+
 /**
  * TasksApi - axios parameter creator
  * @export
@@ -8915,13 +11170,11 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
          */
         _delete: async (taskHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'taskHref' is not null or undefined
-            if (taskHref === null || taskHref === undefined) {
-                throw new RequiredError('taskHref','Required parameter taskHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'taskHref', taskHref)
             const localVarPath = `{task_href}`
-                .replace(`{${"task_href"}}`, encodeURIComponent(String(taskHref)));
+                .replace(`{${"task_href"}}`, String(taskHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -8933,68 +11186,61 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List tasks
-         * @param {string} [childTasks] child_tasks
-         * @param {string} [createdResources] created_resources
-         * @param {string} [finishedAt] finished_at
-         * @param {string} [finishedAtGt] finished_at__gt
-         * @param {string} [finishedAtGte] finished_at__gte
-         * @param {string} [finishedAtLt] finished_at__lt
-         * @param {string} [finishedAtLte] finished_at__lte
-         * @param {string} [finishedAtRange] finished_at__range
+         * @param {string} [childTasks] Foreign Key referenced by HREF
+         * @param {string} [createdResources] 
+         * @param {string} [finishedAt] ISO 8601 formatted dates are supported
+         * @param {string} [finishedAtGt] Filter results where finished_at is greater than value
+         * @param {string} [finishedAtGte] Filter results where finished_at is greater than or equal to value
+         * @param {string} [finishedAtLt] Filter results where finished_at is less than value
+         * @param {string} [finishedAtLte] Filter results where finished_at is less than or equal to value
+         * @param {Array<string>} [finishedAtRange] Filter results where finished_at is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
+         * @param {string} [loggingCid] 
+         * @param {string} [loggingCidContains] Filter results where logging_cid contains value
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [parentTask] parent_task
-         * @param {string} [reservedResourcesRecord] reserved_resources_record
-         * @param {string} [startedAt] started_at
-         * @param {string} [startedAtGt] started_at__gt
-         * @param {string} [startedAtGte] started_at__gte
-         * @param {string} [startedAtLt] started_at__lt
-         * @param {string} [startedAtLte] started_at__lte
-         * @param {string} [startedAtRange] started_at__range
-         * @param {string} [state] state
-         * @param {string} [stateIn] state__in
-         * @param {string} [taskGroup] task_group
-         * @param {string} [worker] worker
-         * @param {string} [workerIn] worker__in
+         * @param {string} [parentTask] Foreign Key referenced by HREF
+         * @param {Array<string>} [reservedResourcesRecord] 
+         * @param {string} [startedAt] ISO 8601 formatted dates are supported
+         * @param {string} [startedAtGt] Filter results where started_at is greater than value
+         * @param {string} [startedAtGte] Filter results where started_at is greater than or equal to value
+         * @param {string} [startedAtLt] Filter results where started_at is less than value
+         * @param {string} [startedAtLte] Filter results where started_at is less than or equal to value
+         * @param {Array<string>} [startedAtRange] Filter results where started_at is between two comma separated values
+         * @param {'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting'} [state] 
+         * @param {Array<string>} [stateIn] Filter results where state is in a comma-separated list of values
+         * @param {string} [taskGroup] Foreign Key referenced by HREF
+         * @param {string} [worker] Foreign Key referenced by HREF
+         * @param {Array<string>} [workerIn] Filter results where worker is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: string, limit?: number, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: string, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: string, state?: string, stateIn?: string, taskGroup?: string, worker?: string, workerIn?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: Array<string>, limit?: number, loggingCid?: string, loggingCidContains?: string, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: Array<string>, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: Array<string>, state?: 'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting', stateIn?: Array<string>, taskGroup?: string, worker?: string, workerIn?: Array<string>, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/tasks/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9006,9 +11252,7 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9021,31 +11265,49 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
             }
 
             if (finishedAt !== undefined) {
-                localVarQueryParameter['finished_at'] = finishedAt;
+                localVarQueryParameter['finished_at'] = (finishedAt as any instanceof Date) ?
+                    (finishedAt as any).toISOString() :
+                    finishedAt;
             }
 
             if (finishedAtGt !== undefined) {
-                localVarQueryParameter['finished_at__gt'] = finishedAtGt;
+                localVarQueryParameter['finished_at__gt'] = (finishedAtGt as any instanceof Date) ?
+                    (finishedAtGt as any).toISOString() :
+                    finishedAtGt;
             }
 
             if (finishedAtGte !== undefined) {
-                localVarQueryParameter['finished_at__gte'] = finishedAtGte;
+                localVarQueryParameter['finished_at__gte'] = (finishedAtGte as any instanceof Date) ?
+                    (finishedAtGte as any).toISOString() :
+                    finishedAtGte;
             }
 
             if (finishedAtLt !== undefined) {
-                localVarQueryParameter['finished_at__lt'] = finishedAtLt;
+                localVarQueryParameter['finished_at__lt'] = (finishedAtLt as any instanceof Date) ?
+                    (finishedAtLt as any).toISOString() :
+                    finishedAtLt;
             }
 
             if (finishedAtLte !== undefined) {
-                localVarQueryParameter['finished_at__lte'] = finishedAtLte;
+                localVarQueryParameter['finished_at__lte'] = (finishedAtLte as any instanceof Date) ?
+                    (finishedAtLte as any).toISOString() :
+                    finishedAtLte;
             }
 
-            if (finishedAtRange !== undefined) {
-                localVarQueryParameter['finished_at__range'] = finishedAtRange;
+            if (finishedAtRange) {
+                localVarQueryParameter['finished_at__range'] = finishedAtRange.join(COLLECTION_FORMATS.csv);
             }
 
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
+            }
+
+            if (loggingCid !== undefined) {
+                localVarQueryParameter['logging_cid'] = loggingCid;
+            }
+
+            if (loggingCidContains !== undefined) {
+                localVarQueryParameter['logging_cid__contains'] = loggingCidContains;
             }
 
             if (name !== undefined) {
@@ -9068,40 +11330,50 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['parent_task'] = parentTask;
             }
 
-            if (reservedResourcesRecord !== undefined) {
+            if (reservedResourcesRecord) {
                 localVarQueryParameter['reserved_resources_record'] = reservedResourcesRecord;
             }
 
             if (startedAt !== undefined) {
-                localVarQueryParameter['started_at'] = startedAt;
+                localVarQueryParameter['started_at'] = (startedAt as any instanceof Date) ?
+                    (startedAt as any).toISOString() :
+                    startedAt;
             }
 
             if (startedAtGt !== undefined) {
-                localVarQueryParameter['started_at__gt'] = startedAtGt;
+                localVarQueryParameter['started_at__gt'] = (startedAtGt as any instanceof Date) ?
+                    (startedAtGt as any).toISOString() :
+                    startedAtGt;
             }
 
             if (startedAtGte !== undefined) {
-                localVarQueryParameter['started_at__gte'] = startedAtGte;
+                localVarQueryParameter['started_at__gte'] = (startedAtGte as any instanceof Date) ?
+                    (startedAtGte as any).toISOString() :
+                    startedAtGte;
             }
 
             if (startedAtLt !== undefined) {
-                localVarQueryParameter['started_at__lt'] = startedAtLt;
+                localVarQueryParameter['started_at__lt'] = (startedAtLt as any instanceof Date) ?
+                    (startedAtLt as any).toISOString() :
+                    startedAtLt;
             }
 
             if (startedAtLte !== undefined) {
-                localVarQueryParameter['started_at__lte'] = startedAtLte;
+                localVarQueryParameter['started_at__lte'] = (startedAtLte as any instanceof Date) ?
+                    (startedAtLte as any).toISOString() :
+                    startedAtLte;
             }
 
-            if (startedAtRange !== undefined) {
-                localVarQueryParameter['started_at__range'] = startedAtRange;
+            if (startedAtRange) {
+                localVarQueryParameter['started_at__range'] = startedAtRange.join(COLLECTION_FORMATS.csv);
             }
 
             if (state !== undefined) {
                 localVarQueryParameter['state'] = state;
             }
 
-            if (stateIn !== undefined) {
-                localVarQueryParameter['state__in'] = stateIn;
+            if (stateIn) {
+                localVarQueryParameter['state__in'] = stateIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (taskGroup !== undefined) {
@@ -9112,8 +11384,8 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['worker'] = worker;
             }
 
-            if (workerIn !== undefined) {
-                localVarQueryParameter['worker__in'] = workerIn;
+            if (workerIn) {
+                localVarQueryParameter['worker__in'] = workerIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (fields !== undefined) {
@@ -9126,19 +11398,12 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9153,13 +11418,11 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
          */
         read: async (taskHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'taskHref' is not null or undefined
-            if (taskHref === null || taskHref === undefined) {
-                throw new RequiredError('taskHref','Required parameter taskHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'taskHref', taskHref)
             const localVarPath = `{task_href}`
-                .replace(`{${"task_href"}}`, encodeURIComponent(String(taskHref)));
+                .replace(`{${"task_href"}}`, String(taskHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9171,9 +11434,7 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9187,19 +11448,12 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9213,17 +11467,13 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
          */
         tasksCancel: async (taskHref: string, patchedTaskCancel: PatchedTaskCancel, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'taskHref' is not null or undefined
-            if (taskHref === null || taskHref === undefined) {
-                throw new RequiredError('taskHref','Required parameter taskHref was null or undefined when calling tasksCancel.');
-            }
+            assertParamExists('tasksCancel', 'taskHref', taskHref)
             // verify required parameter 'patchedTaskCancel' is not null or undefined
-            if (patchedTaskCancel === null || patchedTaskCancel === undefined) {
-                throw new RequiredError('patchedTaskCancel','Required parameter patchedTaskCancel was null or undefined when calling tasksCancel.');
-            }
+            assertParamExists('tasksCancel', 'patchedTaskCancel', patchedTaskCancel)
             const localVarPath = `{task_href}`
-                .replace(`{${"task_href"}}`, encodeURIComponent(String(taskHref)));
+                .replace(`{${"task_href"}}`, String(taskHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9235,9 +11485,7 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9245,26 +11493,13 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof patchedTaskCancel !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(patchedTaskCancel !== undefined ? patchedTaskCancel : {})
-                : (patchedTaskCancel || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedTaskCancel, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9276,6 +11511,7 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
  * @export
  */
 export const TasksApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TasksApiAxiosParamCreator(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -9285,52 +11521,48 @@ export const TasksApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(taskHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await TasksApiAxiosParamCreator(configuration)._delete(taskHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(taskHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List tasks
-         * @param {string} [childTasks] child_tasks
-         * @param {string} [createdResources] created_resources
-         * @param {string} [finishedAt] finished_at
-         * @param {string} [finishedAtGt] finished_at__gt
-         * @param {string} [finishedAtGte] finished_at__gte
-         * @param {string} [finishedAtLt] finished_at__lt
-         * @param {string} [finishedAtLte] finished_at__lte
-         * @param {string} [finishedAtRange] finished_at__range
+         * @param {string} [childTasks] Foreign Key referenced by HREF
+         * @param {string} [createdResources] 
+         * @param {string} [finishedAt] ISO 8601 formatted dates are supported
+         * @param {string} [finishedAtGt] Filter results where finished_at is greater than value
+         * @param {string} [finishedAtGte] Filter results where finished_at is greater than or equal to value
+         * @param {string} [finishedAtLt] Filter results where finished_at is less than value
+         * @param {string} [finishedAtLte] Filter results where finished_at is less than or equal to value
+         * @param {Array<string>} [finishedAtRange] Filter results where finished_at is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
+         * @param {string} [loggingCid] 
+         * @param {string} [loggingCidContains] Filter results where logging_cid contains value
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [parentTask] parent_task
-         * @param {string} [reservedResourcesRecord] reserved_resources_record
-         * @param {string} [startedAt] started_at
-         * @param {string} [startedAtGt] started_at__gt
-         * @param {string} [startedAtGte] started_at__gte
-         * @param {string} [startedAtLt] started_at__lt
-         * @param {string} [startedAtLte] started_at__lte
-         * @param {string} [startedAtRange] started_at__range
-         * @param {string} [state] state
-         * @param {string} [stateIn] state__in
-         * @param {string} [taskGroup] task_group
-         * @param {string} [worker] worker
-         * @param {string} [workerIn] worker__in
+         * @param {string} [parentTask] Foreign Key referenced by HREF
+         * @param {Array<string>} [reservedResourcesRecord] 
+         * @param {string} [startedAt] ISO 8601 formatted dates are supported
+         * @param {string} [startedAtGt] Filter results where started_at is greater than value
+         * @param {string} [startedAtGte] Filter results where started_at is greater than or equal to value
+         * @param {string} [startedAtLt] Filter results where started_at is less than value
+         * @param {string} [startedAtLte] Filter results where started_at is less than or equal to value
+         * @param {Array<string>} [startedAtRange] Filter results where started_at is between two comma separated values
+         * @param {'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting'} [state] 
+         * @param {Array<string>} [stateIn] Filter results where state is in a comma-separated list of values
+         * @param {string} [taskGroup] Foreign Key referenced by HREF
+         * @param {string} [worker] Foreign Key referenced by HREF
+         * @param {Array<string>} [workerIn] Filter results where worker is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: string, limit?: number, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: string, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: string, state?: string, stateIn?: string, taskGroup?: string, worker?: string, workerIn?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedTaskResponseList>> {
-            const localVarAxiosArgs = await TasksApiAxiosParamCreator(configuration).list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: Array<string>, limit?: number, loggingCid?: string, loggingCidContains?: string, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: Array<string>, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: Array<string>, state?: 'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting', stateIn?: Array<string>, taskGroup?: string, worker?: string, workerIn?: Array<string>, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedTaskResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, loggingCid, loggingCidContains, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -9342,11 +11574,8 @@ export const TasksApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(taskHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
-            const localVarAxiosArgs = await TasksApiAxiosParamCreator(configuration).read(taskHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(taskHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * This operation cancels a task.
@@ -9357,11 +11586,8 @@ export const TasksApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async tasksCancel(taskHref: string, patchedTaskCancel: PatchedTaskCancel, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskResponse>> {
-            const localVarAxiosArgs = await TasksApiAxiosParamCreator(configuration).tasksCancel(taskHref, patchedTaskCancel, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.tasksCancel(taskHref, patchedTaskCancel, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -9371,6 +11597,7 @@ export const TasksApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const TasksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TasksApiFp(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -9380,44 +11607,46 @@ export const TasksApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         _delete(taskHref: string, options?: any): AxiosPromise<void> {
-            return TasksApiFp(configuration)._delete(taskHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(taskHref, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List tasks
-         * @param {string} [childTasks] child_tasks
-         * @param {string} [createdResources] created_resources
-         * @param {string} [finishedAt] finished_at
-         * @param {string} [finishedAtGt] finished_at__gt
-         * @param {string} [finishedAtGte] finished_at__gte
-         * @param {string} [finishedAtLt] finished_at__lt
-         * @param {string} [finishedAtLte] finished_at__lte
-         * @param {string} [finishedAtRange] finished_at__range
+         * @param {string} [childTasks] Foreign Key referenced by HREF
+         * @param {string} [createdResources] 
+         * @param {string} [finishedAt] ISO 8601 formatted dates are supported
+         * @param {string} [finishedAtGt] Filter results where finished_at is greater than value
+         * @param {string} [finishedAtGte] Filter results where finished_at is greater than or equal to value
+         * @param {string} [finishedAtLt] Filter results where finished_at is less than value
+         * @param {string} [finishedAtLte] Filter results where finished_at is less than or equal to value
+         * @param {Array<string>} [finishedAtRange] Filter results where finished_at is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
+         * @param {string} [loggingCid] 
+         * @param {string} [loggingCidContains] Filter results where logging_cid contains value
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [parentTask] parent_task
-         * @param {string} [reservedResourcesRecord] reserved_resources_record
-         * @param {string} [startedAt] started_at
-         * @param {string} [startedAtGt] started_at__gt
-         * @param {string} [startedAtGte] started_at__gte
-         * @param {string} [startedAtLt] started_at__lt
-         * @param {string} [startedAtLte] started_at__lte
-         * @param {string} [startedAtRange] started_at__range
-         * @param {string} [state] state
-         * @param {string} [stateIn] state__in
-         * @param {string} [taskGroup] task_group
-         * @param {string} [worker] worker
-         * @param {string} [workerIn] worker__in
+         * @param {string} [parentTask] Foreign Key referenced by HREF
+         * @param {Array<string>} [reservedResourcesRecord] 
+         * @param {string} [startedAt] ISO 8601 formatted dates are supported
+         * @param {string} [startedAtGt] Filter results where started_at is greater than value
+         * @param {string} [startedAtGte] Filter results where started_at is greater than or equal to value
+         * @param {string} [startedAtLt] Filter results where started_at is less than value
+         * @param {string} [startedAtLte] Filter results where started_at is less than or equal to value
+         * @param {Array<string>} [startedAtRange] Filter results where started_at is between two comma separated values
+         * @param {'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting'} [state] 
+         * @param {Array<string>} [stateIn] Filter results where state is in a comma-separated list of values
+         * @param {string} [taskGroup] Foreign Key referenced by HREF
+         * @param {string} [worker] Foreign Key referenced by HREF
+         * @param {Array<string>} [workerIn] Filter results where worker is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: string, limit?: number, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: string, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: string, state?: string, stateIn?: string, taskGroup?: string, worker?: string, workerIn?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedTaskResponseList> {
-            return TasksApiFp(configuration).list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: Array<string>, limit?: number, loggingCid?: string, loggingCidContains?: string, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: Array<string>, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: Array<string>, state?: 'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting', stateIn?: Array<string>, taskGroup?: string, worker?: string, workerIn?: Array<string>, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedTaskResponseList> {
+            return localVarFp.list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, loggingCid, loggingCidContains, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -9429,7 +11658,7 @@ export const TasksApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         read(taskHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<TaskResponse> {
-            return TasksApiFp(configuration).read(taskHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(taskHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * This operation cancels a task.
@@ -9440,7 +11669,7 @@ export const TasksApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         tasksCancel(taskHref: string, patchedTaskCancel: PatchedTaskCancel, options?: any): AxiosPromise<TaskResponse> {
-            return TasksApiFp(configuration).tasksCancel(taskHref, patchedTaskCancel, options).then((request) => request(axios, basePath));
+            return localVarFp.tasksCancel(taskHref, patchedTaskCancel, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -9467,40 +11696,42 @@ export class TasksApi extends BaseAPI {
     /**
      * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
      * @summary List tasks
-     * @param {string} [childTasks] child_tasks
-     * @param {string} [createdResources] created_resources
-     * @param {string} [finishedAt] finished_at
-     * @param {string} [finishedAtGt] finished_at__gt
-     * @param {string} [finishedAtGte] finished_at__gte
-     * @param {string} [finishedAtLt] finished_at__lt
-     * @param {string} [finishedAtLte] finished_at__lte
-     * @param {string} [finishedAtRange] finished_at__range
+     * @param {string} [childTasks] Foreign Key referenced by HREF
+     * @param {string} [createdResources] 
+     * @param {string} [finishedAt] ISO 8601 formatted dates are supported
+     * @param {string} [finishedAtGt] Filter results where finished_at is greater than value
+     * @param {string} [finishedAtGte] Filter results where finished_at is greater than or equal to value
+     * @param {string} [finishedAtLt] Filter results where finished_at is less than value
+     * @param {string} [finishedAtLte] Filter results where finished_at is less than or equal to value
+     * @param {Array<string>} [finishedAtRange] Filter results where finished_at is between two comma separated values
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
+     * @param {string} [loggingCid] 
+     * @param {string} [loggingCidContains] Filter results where logging_cid contains value
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [parentTask] parent_task
-     * @param {string} [reservedResourcesRecord] reserved_resources_record
-     * @param {string} [startedAt] started_at
-     * @param {string} [startedAtGt] started_at__gt
-     * @param {string} [startedAtGte] started_at__gte
-     * @param {string} [startedAtLt] started_at__lt
-     * @param {string} [startedAtLte] started_at__lte
-     * @param {string} [startedAtRange] started_at__range
-     * @param {string} [state] state
-     * @param {string} [stateIn] state__in
-     * @param {string} [taskGroup] task_group
-     * @param {string} [worker] worker
-     * @param {string} [workerIn] worker__in
+     * @param {string} [parentTask] Foreign Key referenced by HREF
+     * @param {Array<string>} [reservedResourcesRecord] 
+     * @param {string} [startedAt] ISO 8601 formatted dates are supported
+     * @param {string} [startedAtGt] Filter results where started_at is greater than value
+     * @param {string} [startedAtGte] Filter results where started_at is greater than or equal to value
+     * @param {string} [startedAtLt] Filter results where started_at is less than value
+     * @param {string} [startedAtLte] Filter results where started_at is less than or equal to value
+     * @param {Array<string>} [startedAtRange] Filter results where started_at is between two comma separated values
+     * @param {'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting'} [state] 
+     * @param {Array<string>} [stateIn] Filter results where state is in a comma-separated list of values
+     * @param {string} [taskGroup] Foreign Key referenced by HREF
+     * @param {string} [worker] Foreign Key referenced by HREF
+     * @param {Array<string>} [workerIn] Filter results where worker is in a comma-separated list of values
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TasksApi
      */
-    public list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: string, limit?: number, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: string, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: string, state?: string, stateIn?: string, taskGroup?: string, worker?: string, workerIn?: string, fields?: string, excludeFields?: string, options?: any) {
-        return TasksApiFp(this.configuration).list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
+    public list(childTasks?: string, createdResources?: string, finishedAt?: string, finishedAtGt?: string, finishedAtGte?: string, finishedAtLt?: string, finishedAtLte?: string, finishedAtRange?: Array<string>, limit?: number, loggingCid?: string, loggingCidContains?: string, name?: string, nameContains?: string, offset?: number, ordering?: string, parentTask?: string, reservedResourcesRecord?: Array<string>, startedAt?: string, startedAtGt?: string, startedAtGte?: string, startedAtLt?: string, startedAtLte?: string, startedAtRange?: Array<string>, state?: 'canceled' | 'canceling' | 'completed' | 'failed' | 'running' | 'skipped' | 'waiting', stateIn?: Array<string>, taskGroup?: string, worker?: string, workerIn?: Array<string>, fields?: string, excludeFields?: string, options?: any) {
+        return TasksApiFp(this.configuration).list(childTasks, createdResources, finishedAt, finishedAtGt, finishedAtGte, finishedAtLt, finishedAtLte, finishedAtRange, limit, loggingCid, loggingCidContains, name, nameContains, offset, ordering, parentTask, reservedResourcesRecord, startedAt, startedAtGt, startedAtGte, startedAtLt, startedAtLte, startedAtRange, state, stateIn, taskGroup, worker, workerIn, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -9532,6 +11763,7 @@ export class TasksApi extends BaseAPI {
 }
 
 
+
 /**
  * UploadsApi - axios parameter creator
  * @export
@@ -9547,13 +11779,11 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
          */
         _delete: async (uploadHref: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'uploadHref' is not null or undefined
-            if (uploadHref === null || uploadHref === undefined) {
-                throw new RequiredError('uploadHref','Required parameter uploadHref was null or undefined when calling _delete.');
-            }
+            assertParamExists('_delete', 'uploadHref', uploadHref)
             const localVarPath = `{upload_href}`
-                .replace(`{${"upload_href"}}`, encodeURIComponent(String(uploadHref)));
+                .replace(`{${"upload_href"}}`, String(uploadHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9565,27 +11795,18 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9599,17 +11820,13 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
          */
         commit: async (uploadHref: string, uploadCommit: UploadCommit, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'uploadHref' is not null or undefined
-            if (uploadHref === null || uploadHref === undefined) {
-                throw new RequiredError('uploadHref','Required parameter uploadHref was null or undefined when calling commit.');
-            }
+            assertParamExists('commit', 'uploadHref', uploadHref)
             // verify required parameter 'uploadCommit' is not null or undefined
-            if (uploadCommit === null || uploadCommit === undefined) {
-                throw new RequiredError('uploadCommit','Required parameter uploadCommit was null or undefined when calling commit.');
-            }
+            assertParamExists('commit', 'uploadCommit', uploadCommit)
             const localVarPath = `{upload_href}commit/`
-                .replace(`{${"upload_href"}}`, encodeURIComponent(String(uploadHref)));
+                .replace(`{${"upload_href"}}`, String(uploadHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9621,9 +11838,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9631,26 +11846,13 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof uploadCommit !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(uploadCommit !== undefined ? uploadCommit : {})
-                : (uploadCommit || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(uploadCommit, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9663,12 +11865,10 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
          */
         create: async (upload: Upload, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'upload' is not null or undefined
-            if (upload === null || upload === undefined) {
-                throw new RequiredError('upload','Required parameter upload was null or undefined when calling create.');
-            }
+            assertParamExists('create', 'upload', upload)
             const localVarPath = `/pulp/api/v3/uploads/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9680,9 +11880,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9690,26 +11888,13 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const nonString = typeof upload !== 'string';
-            const needsSerialization = nonString && configuration && configuration.isJsonMime
-                ? configuration.isJsonMime(localVarRequestOptions.headers['Content-Type'])
-                : nonString;
-            localVarRequestOptions.data =  needsSerialization
-                ? JSON.stringify(upload !== undefined ? upload : {})
-                : (upload || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(upload, localVarRequestOptions, configuration)
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9727,7 +11912,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
         list: async (limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/uploads/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9739,9 +11924,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9767,19 +11950,12 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9794,13 +11970,11 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
          */
         read: async (uploadHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'uploadHref' is not null or undefined
-            if (uploadHref === null || uploadHref === undefined) {
-                throw new RequiredError('uploadHref','Required parameter uploadHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'uploadHref', uploadHref)
             const localVarPath = `{upload_href}`
-                .replace(`{${"upload_href"}}`, encodeURIComponent(String(uploadHref)));
+                .replace(`{${"upload_href"}}`, String(uploadHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9812,9 +11986,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9828,19 +12000,12 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9856,21 +12021,15 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
          */
         update: async (contentRange: string, uploadHref: string, file: any, sha256?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'contentRange' is not null or undefined
-            if (contentRange === null || contentRange === undefined) {
-                throw new RequiredError('contentRange','Required parameter contentRange was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'contentRange', contentRange)
             // verify required parameter 'uploadHref' is not null or undefined
-            if (uploadHref === null || uploadHref === undefined) {
-                throw new RequiredError('uploadHref','Required parameter uploadHref was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'uploadHref', uploadHref)
             // verify required parameter 'file' is not null or undefined
-            if (file === null || file === undefined) {
-                throw new RequiredError('file','Required parameter file was null or undefined when calling update.');
-            }
+            assertParamExists('update', 'file', file)
             const localVarPath = `{upload_href}`
-                .replace(`{${"upload_href"}}`, encodeURIComponent(String(uploadHref)));
+                .replace(`{${"upload_href"}}`, String(uploadHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -9883,9 +12042,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -9905,20 +12062,13 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
     
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = localVarFormParams;
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -9930,6 +12080,7 @@ export const UploadsApiAxiosParamCreator = function (configuration?: Configurati
  * @export
  */
 export const UploadsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UploadsApiAxiosParamCreator(configuration)
     return {
         /**
          * View for chunked uploads.
@@ -9939,11 +12090,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async _delete(uploadHref: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration)._delete(uploadHref, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator._delete(uploadHref, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Queues a Task that creates an Artifact, and the Upload gets deleted and cannot be re-used.
@@ -9954,11 +12102,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async commit(uploadHref: string, uploadCommit: UploadCommit, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AsyncOperationResponse>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration).commit(uploadHref, uploadCommit, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.commit(uploadHref, uploadCommit, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * View for chunked uploads.
@@ -9968,11 +12113,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async create(upload: Upload, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadResponse>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration).create(upload, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(upload, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * View for chunked uploads.
@@ -9986,11 +12128,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async list(limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedUploadResponseList>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration).list(limit, offset, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(limit, offset, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * View for chunked uploads.
@@ -10002,11 +12141,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(uploadHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadDetailResponse>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration).read(uploadHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(uploadHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Upload a chunk for an upload.
@@ -10019,11 +12155,8 @@ export const UploadsApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async update(contentRange: string, uploadHref: string, file: any, sha256?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadResponse>> {
-            const localVarAxiosArgs = await UploadsApiAxiosParamCreator(configuration).update(contentRange, uploadHref, file, sha256, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(contentRange, uploadHref, file, sha256, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -10033,6 +12166,7 @@ export const UploadsApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const UploadsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UploadsApiFp(configuration)
     return {
         /**
          * View for chunked uploads.
@@ -10042,7 +12176,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         _delete(uploadHref: string, options?: any): AxiosPromise<void> {
-            return UploadsApiFp(configuration)._delete(uploadHref, options).then((request) => request(axios, basePath));
+            return localVarFp._delete(uploadHref, options).then((request) => request(axios, basePath));
         },
         /**
          * Queues a Task that creates an Artifact, and the Upload gets deleted and cannot be re-used.
@@ -10053,7 +12187,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         commit(uploadHref: string, uploadCommit: UploadCommit, options?: any): AxiosPromise<AsyncOperationResponse> {
-            return UploadsApiFp(configuration).commit(uploadHref, uploadCommit, options).then((request) => request(axios, basePath));
+            return localVarFp.commit(uploadHref, uploadCommit, options).then((request) => request(axios, basePath));
         },
         /**
          * View for chunked uploads.
@@ -10063,7 +12197,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         create(upload: Upload, options?: any): AxiosPromise<UploadResponse> {
-            return UploadsApiFp(configuration).create(upload, options).then((request) => request(axios, basePath));
+            return localVarFp.create(upload, options).then((request) => request(axios, basePath));
         },
         /**
          * View for chunked uploads.
@@ -10077,7 +12211,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         list(limit?: number, offset?: number, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedUploadResponseList> {
-            return UploadsApiFp(configuration).list(limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.list(limit, offset, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * View for chunked uploads.
@@ -10089,7 +12223,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         read(uploadHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<UploadDetailResponse> {
-            return UploadsApiFp(configuration).read(uploadHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(uploadHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * Upload a chunk for an upload.
@@ -10102,7 +12236,7 @@ export const UploadsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         update(contentRange: string, uploadHref: string, file: any, sha256?: string, options?: any): AxiosPromise<UploadResponse> {
-            return UploadsApiFp(configuration).update(contentRange, uploadHref, file, sha256, options).then((request) => request(axios, basePath));
+            return localVarFp.update(contentRange, uploadHref, file, sha256, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -10198,6 +12332,7 @@ export class UploadsApi extends BaseAPI {
 }
 
 
+
 /**
  * UsersApi - axios parameter creator
  * @export
@@ -10207,40 +12342,40 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List users
-         * @param {string} [email] email
-         * @param {string} [emailContains] email__contains
-         * @param {string} [emailIcontains] email__icontains
-         * @param {string} [emailIexact] email__iexact
-         * @param {string} [emailIn] email__in
-         * @param {string} [firstName] first_name
-         * @param {string} [firstNameContains] first_name__contains
-         * @param {string} [firstNameIcontains] first_name__icontains
-         * @param {string} [firstNameIexact] first_name__iexact
-         * @param {string} [firstNameIn] first_name__in
-         * @param {string} [isActive] is_active
-         * @param {string} [isStaff] is_staff
-         * @param {string} [lastName] last_name
-         * @param {string} [lastNameContains] last_name__contains
-         * @param {string} [lastNameIcontains] last_name__icontains
-         * @param {string} [lastNameIexact] last_name__iexact
-         * @param {string} [lastNameIn] last_name__in
+         * @param {string} [email] Filter results where email matches value
+         * @param {string} [emailContains] Filter results where email contains value
+         * @param {string} [emailIcontains] Filter results where email contains value
+         * @param {string} [emailIexact] Filter results where email matches value
+         * @param {Array<string>} [emailIn] Filter results where email is in a comma-separated list of values
+         * @param {string} [firstName] Filter results where first_name matches value
+         * @param {string} [firstNameContains] Filter results where first_name contains value
+         * @param {string} [firstNameIcontains] Filter results where first_name contains value
+         * @param {string} [firstNameIexact] Filter results where first_name matches value
+         * @param {Array<string>} [firstNameIn] Filter results where first_name is in a comma-separated list of values
+         * @param {boolean} [isActive] Filter results where is_active matches value
+         * @param {boolean} [isStaff] Filter results where is_staff matches value
+         * @param {string} [lastName] Filter results where last_name matches value
+         * @param {string} [lastNameContains] Filter results where last_name contains value
+         * @param {string} [lastNameIcontains] Filter results where last_name contains value
+         * @param {string} [lastNameIexact] Filter results where last_name matches value
+         * @param {Array<string>} [lastNameIn] Filter results where last_name is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [username] username
-         * @param {string} [usernameContains] username__contains
-         * @param {string} [usernameIcontains] username__icontains
-         * @param {string} [usernameIexact] username__iexact
-         * @param {string} [usernameIn] username__in
+         * @param {string} [username] Filter results where username matches value
+         * @param {string} [usernameContains] Filter results where username contains value
+         * @param {string} [usernameIcontains] Filter results where username contains value
+         * @param {string} [usernameIexact] Filter results where username matches value
+         * @param {Array<string>} [usernameIn] Filter results where username is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: string, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: string, isActive?: string, isStaff?: string, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: string, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: Array<string>, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: Array<string>, isActive?: boolean, isStaff?: boolean, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: Array<string>, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: Array<string>, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/users/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -10252,9 +12387,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -10274,8 +12407,8 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['email__iexact'] = emailIexact;
             }
 
-            if (emailIn !== undefined) {
-                localVarQueryParameter['email__in'] = emailIn;
+            if (emailIn) {
+                localVarQueryParameter['email__in'] = emailIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (firstName !== undefined) {
@@ -10294,8 +12427,8 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['first_name__iexact'] = firstNameIexact;
             }
 
-            if (firstNameIn !== undefined) {
-                localVarQueryParameter['first_name__in'] = firstNameIn;
+            if (firstNameIn) {
+                localVarQueryParameter['first_name__in'] = firstNameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (isActive !== undefined) {
@@ -10322,8 +12455,8 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['last_name__iexact'] = lastNameIexact;
             }
 
-            if (lastNameIn !== undefined) {
-                localVarQueryParameter['last_name__in'] = lastNameIn;
+            if (lastNameIn) {
+                localVarQueryParameter['last_name__in'] = lastNameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (limit !== undefined) {
@@ -10354,8 +12487,8 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['username__iexact'] = usernameIexact;
             }
 
-            if (usernameIn !== undefined) {
-                localVarQueryParameter['username__in'] = usernameIn;
+            if (usernameIn) {
+                localVarQueryParameter['username__in'] = usernameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (fields !== undefined) {
@@ -10368,19 +12501,12 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -10394,13 +12520,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          */
         permissions: async (authUserHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authUserHref' is not null or undefined
-            if (authUserHref === null || authUserHref === undefined) {
-                throw new RequiredError('authUserHref','Required parameter authUserHref was null or undefined when calling permissions.');
-            }
+            assertParamExists('permissions', 'authUserHref', authUserHref)
             const localVarPath = `{auth_user_href}permissions/`
-                .replace(`{${"auth_user_href"}}`, encodeURIComponent(String(authUserHref)));
+                .replace(`{${"auth_user_href"}}`, String(authUserHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -10412,9 +12536,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -10428,19 +12550,12 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -10455,13 +12570,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          */
         read: async (authUserHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'authUserHref' is not null or undefined
-            if (authUserHref === null || authUserHref === undefined) {
-                throw new RequiredError('authUserHref','Required parameter authUserHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'authUserHref', authUserHref)
             const localVarPath = `{auth_user_href}`
-                .replace(`{${"auth_user_href"}}`, encodeURIComponent(String(authUserHref)));
+                .replace(`{${"auth_user_href"}}`, String(authUserHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -10473,9 +12586,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -10489,19 +12600,12 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -10513,46 +12617,44 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
  * @export
  */
 export const UsersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsersApiAxiosParamCreator(configuration)
     return {
         /**
          * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List users
-         * @param {string} [email] email
-         * @param {string} [emailContains] email__contains
-         * @param {string} [emailIcontains] email__icontains
-         * @param {string} [emailIexact] email__iexact
-         * @param {string} [emailIn] email__in
-         * @param {string} [firstName] first_name
-         * @param {string} [firstNameContains] first_name__contains
-         * @param {string} [firstNameIcontains] first_name__icontains
-         * @param {string} [firstNameIexact] first_name__iexact
-         * @param {string} [firstNameIn] first_name__in
-         * @param {string} [isActive] is_active
-         * @param {string} [isStaff] is_staff
-         * @param {string} [lastName] last_name
-         * @param {string} [lastNameContains] last_name__contains
-         * @param {string} [lastNameIcontains] last_name__icontains
-         * @param {string} [lastNameIexact] last_name__iexact
-         * @param {string} [lastNameIn] last_name__in
+         * @param {string} [email] Filter results where email matches value
+         * @param {string} [emailContains] Filter results where email contains value
+         * @param {string} [emailIcontains] Filter results where email contains value
+         * @param {string} [emailIexact] Filter results where email matches value
+         * @param {Array<string>} [emailIn] Filter results where email is in a comma-separated list of values
+         * @param {string} [firstName] Filter results where first_name matches value
+         * @param {string} [firstNameContains] Filter results where first_name contains value
+         * @param {string} [firstNameIcontains] Filter results where first_name contains value
+         * @param {string} [firstNameIexact] Filter results where first_name matches value
+         * @param {Array<string>} [firstNameIn] Filter results where first_name is in a comma-separated list of values
+         * @param {boolean} [isActive] Filter results where is_active matches value
+         * @param {boolean} [isStaff] Filter results where is_staff matches value
+         * @param {string} [lastName] Filter results where last_name matches value
+         * @param {string} [lastNameContains] Filter results where last_name contains value
+         * @param {string} [lastNameIcontains] Filter results where last_name contains value
+         * @param {string} [lastNameIexact] Filter results where last_name matches value
+         * @param {Array<string>} [lastNameIn] Filter results where last_name is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [username] username
-         * @param {string} [usernameContains] username__contains
-         * @param {string} [usernameIcontains] username__icontains
-         * @param {string} [usernameIexact] username__iexact
-         * @param {string} [usernameIn] username__in
+         * @param {string} [username] Filter results where username matches value
+         * @param {string} [usernameContains] Filter results where username contains value
+         * @param {string} [usernameIcontains] Filter results where username contains value
+         * @param {string} [usernameIexact] Filter results where username matches value
+         * @param {Array<string>} [usernameIn] Filter results where username is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: string, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: string, isActive?: string, isStaff?: string, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: string, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedUserResponseList>> {
-            const localVarAxiosArgs = await UsersApiAxiosParamCreator(configuration).list(email, emailContains, emailIcontains, emailIexact, emailIn, firstName, firstNameContains, firstNameIcontains, firstNameIexact, firstNameIn, isActive, isStaff, lastName, lastNameContains, lastNameIcontains, lastNameIexact, lastNameIn, limit, offset, ordering, username, usernameContains, usernameIcontains, usernameIexact, usernameIn, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: Array<string>, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: Array<string>, isActive?: boolean, isStaff?: boolean, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: Array<string>, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: Array<string>, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedUserResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(email, emailContains, emailIcontains, emailIexact, emailIn, firstName, firstNameContains, firstNameIcontains, firstNameIexact, firstNameIn, isActive, isStaff, lastName, lastNameContains, lastNameIcontains, lastNameIexact, lastNameIn, limit, offset, ordering, username, usernameContains, usernameIcontains, usernameIexact, usernameIn, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * List user permissions.
@@ -10563,11 +12665,8 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async permissions(authUserHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PermissionResponse>> {
-            const localVarAxiosArgs = await UsersApiAxiosParamCreator(configuration).permissions(authUserHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.permissions(authUserHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -10579,11 +12678,8 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(authUserHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
-            const localVarAxiosArgs = await UsersApiAxiosParamCreator(configuration).read(authUserHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(authUserHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -10593,42 +12689,43 @@ export const UsersApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const UsersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsersApiFp(configuration)
     return {
         /**
          * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
          * @summary List users
-         * @param {string} [email] email
-         * @param {string} [emailContains] email__contains
-         * @param {string} [emailIcontains] email__icontains
-         * @param {string} [emailIexact] email__iexact
-         * @param {string} [emailIn] email__in
-         * @param {string} [firstName] first_name
-         * @param {string} [firstNameContains] first_name__contains
-         * @param {string} [firstNameIcontains] first_name__icontains
-         * @param {string} [firstNameIexact] first_name__iexact
-         * @param {string} [firstNameIn] first_name__in
-         * @param {string} [isActive] is_active
-         * @param {string} [isStaff] is_staff
-         * @param {string} [lastName] last_name
-         * @param {string} [lastNameContains] last_name__contains
-         * @param {string} [lastNameIcontains] last_name__icontains
-         * @param {string} [lastNameIexact] last_name__iexact
-         * @param {string} [lastNameIn] last_name__in
+         * @param {string} [email] Filter results where email matches value
+         * @param {string} [emailContains] Filter results where email contains value
+         * @param {string} [emailIcontains] Filter results where email contains value
+         * @param {string} [emailIexact] Filter results where email matches value
+         * @param {Array<string>} [emailIn] Filter results where email is in a comma-separated list of values
+         * @param {string} [firstName] Filter results where first_name matches value
+         * @param {string} [firstNameContains] Filter results where first_name contains value
+         * @param {string} [firstNameIcontains] Filter results where first_name contains value
+         * @param {string} [firstNameIexact] Filter results where first_name matches value
+         * @param {Array<string>} [firstNameIn] Filter results where first_name is in a comma-separated list of values
+         * @param {boolean} [isActive] Filter results where is_active matches value
+         * @param {boolean} [isStaff] Filter results where is_staff matches value
+         * @param {string} [lastName] Filter results where last_name matches value
+         * @param {string} [lastNameContains] Filter results where last_name contains value
+         * @param {string} [lastNameIcontains] Filter results where last_name contains value
+         * @param {string} [lastNameIexact] Filter results where last_name matches value
+         * @param {Array<string>} [lastNameIn] Filter results where last_name is in a comma-separated list of values
          * @param {number} [limit] Number of results to return per page.
          * @param {number} [offset] The initial index from which to return the results.
          * @param {string} [ordering] Which field to use when ordering the results.
-         * @param {string} [username] username
-         * @param {string} [usernameContains] username__contains
-         * @param {string} [usernameIcontains] username__icontains
-         * @param {string} [usernameIexact] username__iexact
-         * @param {string} [usernameIn] username__in
+         * @param {string} [username] Filter results where username matches value
+         * @param {string} [usernameContains] Filter results where username contains value
+         * @param {string} [usernameIcontains] Filter results where username contains value
+         * @param {string} [usernameIexact] Filter results where username matches value
+         * @param {Array<string>} [usernameIn] Filter results where username is in a comma-separated list of values
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: string, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: string, isActive?: string, isStaff?: string, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: string, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedUserResponseList> {
-            return UsersApiFp(configuration).list(email, emailContains, emailIcontains, emailIexact, emailIn, firstName, firstNameContains, firstNameIcontains, firstNameIexact, firstNameIn, isActive, isStaff, lastName, lastNameContains, lastNameIcontains, lastNameIexact, lastNameIn, limit, offset, ordering, username, usernameContains, usernameIcontains, usernameIexact, usernameIn, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: Array<string>, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: Array<string>, isActive?: boolean, isStaff?: boolean, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: Array<string>, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: Array<string>, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedUserResponseList> {
+            return localVarFp.list(email, emailContains, emailIcontains, emailIexact, emailIn, firstName, firstNameContains, firstNameIcontains, firstNameIexact, firstNameIn, isActive, isStaff, lastName, lastNameContains, lastNameIcontains, lastNameIexact, lastNameIn, limit, offset, ordering, username, usernameContains, usernameIcontains, usernameIexact, usernameIn, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * List user permissions.
@@ -10639,7 +12736,7 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         permissions(authUserHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PermissionResponse> {
-            return UsersApiFp(configuration).permissions(authUserHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.permissions(authUserHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
@@ -10651,7 +12748,7 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          * @throws {RequiredError}
          */
         read(authUserHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<UserResponse> {
-            return UsersApiFp(configuration).read(authUserHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(authUserHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -10666,38 +12763,38 @@ export class UsersApi extends BaseAPI {
     /**
      * ViewSet for User.  NOTE: This API endpoint is in \"tech preview\" and subject to change
      * @summary List users
-     * @param {string} [email] email
-     * @param {string} [emailContains] email__contains
-     * @param {string} [emailIcontains] email__icontains
-     * @param {string} [emailIexact] email__iexact
-     * @param {string} [emailIn] email__in
-     * @param {string} [firstName] first_name
-     * @param {string} [firstNameContains] first_name__contains
-     * @param {string} [firstNameIcontains] first_name__icontains
-     * @param {string} [firstNameIexact] first_name__iexact
-     * @param {string} [firstNameIn] first_name__in
-     * @param {string} [isActive] is_active
-     * @param {string} [isStaff] is_staff
-     * @param {string} [lastName] last_name
-     * @param {string} [lastNameContains] last_name__contains
-     * @param {string} [lastNameIcontains] last_name__icontains
-     * @param {string} [lastNameIexact] last_name__iexact
-     * @param {string} [lastNameIn] last_name__in
+     * @param {string} [email] Filter results where email matches value
+     * @param {string} [emailContains] Filter results where email contains value
+     * @param {string} [emailIcontains] Filter results where email contains value
+     * @param {string} [emailIexact] Filter results where email matches value
+     * @param {Array<string>} [emailIn] Filter results where email is in a comma-separated list of values
+     * @param {string} [firstName] Filter results where first_name matches value
+     * @param {string} [firstNameContains] Filter results where first_name contains value
+     * @param {string} [firstNameIcontains] Filter results where first_name contains value
+     * @param {string} [firstNameIexact] Filter results where first_name matches value
+     * @param {Array<string>} [firstNameIn] Filter results where first_name is in a comma-separated list of values
+     * @param {boolean} [isActive] Filter results where is_active matches value
+     * @param {boolean} [isStaff] Filter results where is_staff matches value
+     * @param {string} [lastName] Filter results where last_name matches value
+     * @param {string} [lastNameContains] Filter results where last_name contains value
+     * @param {string} [lastNameIcontains] Filter results where last_name contains value
+     * @param {string} [lastNameIexact] Filter results where last_name matches value
+     * @param {Array<string>} [lastNameIn] Filter results where last_name is in a comma-separated list of values
      * @param {number} [limit] Number of results to return per page.
      * @param {number} [offset] The initial index from which to return the results.
      * @param {string} [ordering] Which field to use when ordering the results.
-     * @param {string} [username] username
-     * @param {string} [usernameContains] username__contains
-     * @param {string} [usernameIcontains] username__icontains
-     * @param {string} [usernameIexact] username__iexact
-     * @param {string} [usernameIn] username__in
+     * @param {string} [username] Filter results where username matches value
+     * @param {string} [usernameContains] Filter results where username contains value
+     * @param {string} [usernameIcontains] Filter results where username contains value
+     * @param {string} [usernameIexact] Filter results where username matches value
+     * @param {Array<string>} [usernameIn] Filter results where username is in a comma-separated list of values
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: string, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: string, isActive?: string, isStaff?: string, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: string, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(email?: string, emailContains?: string, emailIcontains?: string, emailIexact?: string, emailIn?: Array<string>, firstName?: string, firstNameContains?: string, firstNameIcontains?: string, firstNameIexact?: string, firstNameIn?: Array<string>, isActive?: boolean, isStaff?: boolean, lastName?: string, lastNameContains?: string, lastNameIcontains?: string, lastNameIexact?: string, lastNameIn?: Array<string>, limit?: number, offset?: number, ordering?: string, username?: string, usernameContains?: string, usernameIcontains?: string, usernameIexact?: string, usernameIn?: Array<string>, fields?: string, excludeFields?: string, options?: any) {
         return UsersApiFp(this.configuration).list(email, emailContains, emailIcontains, emailIexact, emailIn, firstName, firstNameContains, firstNameIcontains, firstNameIexact, firstNameIn, isActive, isStaff, lastName, lastNameContains, lastNameIcontains, lastNameIexact, lastNameIn, limit, offset, ordering, username, usernameContains, usernameIcontains, usernameIexact, usernameIn, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10730,6 +12827,7 @@ export class UsersApi extends BaseAPI {
 }
 
 
+
 /**
  * WorkersApi - axios parameter creator
  * @export
@@ -10739,31 +12837,31 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List workers
-         * @param {string} [lastHeartbeat] last_heartbeat
-         * @param {string} [lastHeartbeatGt] last_heartbeat__gt
-         * @param {string} [lastHeartbeatGte] last_heartbeat__gte
-         * @param {string} [lastHeartbeatLt] last_heartbeat__lt
-         * @param {string} [lastHeartbeatLte] last_heartbeat__lte
-         * @param {string} [lastHeartbeatRange] last_heartbeat__range
+         * @param {string} [lastHeartbeat] ISO 8601 formatted dates are supported
+         * @param {string} [lastHeartbeatGt] Filter results where last_heartbeat is greater than value
+         * @param {string} [lastHeartbeatGte] Filter results where last_heartbeat is greater than or equal to value
+         * @param {string} [lastHeartbeatLt] Filter results where last_heartbeat is less than value
+         * @param {string} [lastHeartbeatLte] Filter results where last_heartbeat is less than or equal to value
+         * @param {Array<string>} [lastHeartbeatRange] Filter results where last_heartbeat is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [missing] missing
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {boolean} [missing] 
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [online] online
+         * @param {boolean} [online] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: string, limit?: number, missing?: string, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, online?: string, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
+        list: async (lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: Array<string>, limit?: number, missing?: boolean, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, online?: boolean, ordering?: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/pulp/api/v3/workers/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -10775,34 +12873,42 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
             if (lastHeartbeat !== undefined) {
-                localVarQueryParameter['last_heartbeat'] = lastHeartbeat;
+                localVarQueryParameter['last_heartbeat'] = (lastHeartbeat as any instanceof Date) ?
+                    (lastHeartbeat as any).toISOString() :
+                    lastHeartbeat;
             }
 
             if (lastHeartbeatGt !== undefined) {
-                localVarQueryParameter['last_heartbeat__gt'] = lastHeartbeatGt;
+                localVarQueryParameter['last_heartbeat__gt'] = (lastHeartbeatGt as any instanceof Date) ?
+                    (lastHeartbeatGt as any).toISOString() :
+                    lastHeartbeatGt;
             }
 
             if (lastHeartbeatGte !== undefined) {
-                localVarQueryParameter['last_heartbeat__gte'] = lastHeartbeatGte;
+                localVarQueryParameter['last_heartbeat__gte'] = (lastHeartbeatGte as any instanceof Date) ?
+                    (lastHeartbeatGte as any).toISOString() :
+                    lastHeartbeatGte;
             }
 
             if (lastHeartbeatLt !== undefined) {
-                localVarQueryParameter['last_heartbeat__lt'] = lastHeartbeatLt;
+                localVarQueryParameter['last_heartbeat__lt'] = (lastHeartbeatLt as any instanceof Date) ?
+                    (lastHeartbeatLt as any).toISOString() :
+                    lastHeartbeatLt;
             }
 
             if (lastHeartbeatLte !== undefined) {
-                localVarQueryParameter['last_heartbeat__lte'] = lastHeartbeatLte;
+                localVarQueryParameter['last_heartbeat__lte'] = (lastHeartbeatLte as any instanceof Date) ?
+                    (lastHeartbeatLte as any).toISOString() :
+                    lastHeartbeatLte;
             }
 
-            if (lastHeartbeatRange !== undefined) {
-                localVarQueryParameter['last_heartbeat__range'] = lastHeartbeatRange;
+            if (lastHeartbeatRange) {
+                localVarQueryParameter['last_heartbeat__range'] = lastHeartbeatRange.join(COLLECTION_FORMATS.csv);
             }
 
             if (limit !== undefined) {
@@ -10825,8 +12931,8 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['name__icontains'] = nameIcontains;
             }
 
-            if (nameIn !== undefined) {
-                localVarQueryParameter['name__in'] = nameIn;
+            if (nameIn) {
+                localVarQueryParameter['name__in'] = nameIn.join(COLLECTION_FORMATS.csv);
             }
 
             if (nameStartswith !== undefined) {
@@ -10855,19 +12961,12 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -10882,13 +12981,11 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
          */
         read: async (workerHref: string, fields?: string, excludeFields?: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'workerHref' is not null or undefined
-            if (workerHref === null || workerHref === undefined) {
-                throw new RequiredError('workerHref','Required parameter workerHref was null or undefined when calling read.');
-            }
+            assertParamExists('read', 'workerHref', workerHref)
             const localVarPath = `{worker_href}`
-                .replace(`{${"worker_href"}}`, encodeURIComponent(String(workerHref)));
+                .replace(`{${"worker_href"}}`, String(workerHref));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -10900,9 +12997,7 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication basicAuth required
             // http basic authentication required
-            if (configuration && (configuration.username || configuration.password)) {
-                localVarRequestOptions["auth"] = { username: configuration.username, password: configuration.password };
-            }
+            setBasicAuthToObject(localVarRequestOptions, configuration)
 
             // authentication cookieAuth required
 
@@ -10916,19 +13011,12 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
-            const queryParameters = new URLSearchParams(localVarUrlObj.search);
-            for (const key in localVarQueryParameter) {
-                queryParameters.set(key, localVarQueryParameter[key]);
-            }
-            for (const key in options.query) {
-                queryParameters.set(key, options.query[key]);
-            }
-            localVarUrlObj.search = (new URLSearchParams(queryParameters)).toString();
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: localVarUrlObj.pathname + localVarUrlObj.search + localVarUrlObj.hash,
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -10940,37 +13028,35 @@ export const WorkersApiAxiosParamCreator = function (configuration?: Configurati
  * @export
  */
 export const WorkersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = WorkersApiAxiosParamCreator(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List workers
-         * @param {string} [lastHeartbeat] last_heartbeat
-         * @param {string} [lastHeartbeatGt] last_heartbeat__gt
-         * @param {string} [lastHeartbeatGte] last_heartbeat__gte
-         * @param {string} [lastHeartbeatLt] last_heartbeat__lt
-         * @param {string} [lastHeartbeatLte] last_heartbeat__lte
-         * @param {string} [lastHeartbeatRange] last_heartbeat__range
+         * @param {string} [lastHeartbeat] ISO 8601 formatted dates are supported
+         * @param {string} [lastHeartbeatGt] Filter results where last_heartbeat is greater than value
+         * @param {string} [lastHeartbeatGte] Filter results where last_heartbeat is greater than or equal to value
+         * @param {string} [lastHeartbeatLt] Filter results where last_heartbeat is less than value
+         * @param {string} [lastHeartbeatLte] Filter results where last_heartbeat is less than or equal to value
+         * @param {Array<string>} [lastHeartbeatRange] Filter results where last_heartbeat is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [missing] missing
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {boolean} [missing] 
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [online] online
+         * @param {boolean} [online] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: string, limit?: number, missing?: string, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, online?: string, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedWorkerResponseList>> {
-            const localVarAxiosArgs = await WorkersApiAxiosParamCreator(configuration).list(lastHeartbeat, lastHeartbeatGt, lastHeartbeatGte, lastHeartbeatLt, lastHeartbeatLte, lastHeartbeatRange, limit, missing, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, online, ordering, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: Array<string>, limit?: number, missing?: boolean, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, online?: boolean, ordering?: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedWorkerResponseList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(lastHeartbeat, lastHeartbeatGt, lastHeartbeatGte, lastHeartbeatLt, lastHeartbeatLte, lastHeartbeatRange, limit, missing, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, online, ordering, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -10982,11 +13068,8 @@ export const WorkersApiFp = function(configuration?: Configuration) {
          * @throws {RequiredError}
          */
         async read(workerHref: string, fields?: string, excludeFields?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WorkerResponse>> {
-            const localVarAxiosArgs = await WorkersApiAxiosParamCreator(configuration).read(workerHref, fields, excludeFields, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: (configuration?.basePath || basePath) + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+            const localVarAxiosArgs = await localVarAxiosParamCreator.read(workerHref, fields, excludeFields, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -10996,33 +13079,34 @@ export const WorkersApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const WorkersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = WorkersApiFp(configuration)
     return {
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
          * @summary List workers
-         * @param {string} [lastHeartbeat] last_heartbeat
-         * @param {string} [lastHeartbeatGt] last_heartbeat__gt
-         * @param {string} [lastHeartbeatGte] last_heartbeat__gte
-         * @param {string} [lastHeartbeatLt] last_heartbeat__lt
-         * @param {string} [lastHeartbeatLte] last_heartbeat__lte
-         * @param {string} [lastHeartbeatRange] last_heartbeat__range
+         * @param {string} [lastHeartbeat] ISO 8601 formatted dates are supported
+         * @param {string} [lastHeartbeatGt] Filter results where last_heartbeat is greater than value
+         * @param {string} [lastHeartbeatGte] Filter results where last_heartbeat is greater than or equal to value
+         * @param {string} [lastHeartbeatLt] Filter results where last_heartbeat is less than value
+         * @param {string} [lastHeartbeatLte] Filter results where last_heartbeat is less than or equal to value
+         * @param {Array<string>} [lastHeartbeatRange] Filter results where last_heartbeat is between two comma separated values
          * @param {number} [limit] Number of results to return per page.
-         * @param {string} [missing] missing
-         * @param {string} [name] name
-         * @param {string} [nameContains] name__contains
-         * @param {string} [nameIcontains] name__icontains
-         * @param {string} [nameIn] name__in
-         * @param {string} [nameStartswith] name__startswith
+         * @param {boolean} [missing] 
+         * @param {string} [name] 
+         * @param {string} [nameContains] Filter results where name contains value
+         * @param {string} [nameIcontains] Filter results where name contains value
+         * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+         * @param {string} [nameStartswith] Filter results where name starts with value
          * @param {number} [offset] The initial index from which to return the results.
-         * @param {string} [online] online
+         * @param {boolean} [online] 
          * @param {string} [ordering] Which field to use when ordering the results.
          * @param {string} [fields] A list of fields to include in the response.
          * @param {string} [excludeFields] A list of fields to exclude from the response.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: string, limit?: number, missing?: string, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, online?: string, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedWorkerResponseList> {
-            return WorkersApiFp(configuration).list(lastHeartbeat, lastHeartbeatGt, lastHeartbeatGte, lastHeartbeatLt, lastHeartbeatLte, lastHeartbeatRange, limit, missing, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, online, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
+        list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: Array<string>, limit?: number, missing?: boolean, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, online?: boolean, ordering?: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<PaginatedWorkerResponseList> {
+            return localVarFp.list(lastHeartbeat, lastHeartbeatGt, lastHeartbeatGte, lastHeartbeatLt, lastHeartbeatLte, lastHeartbeatRange, limit, missing, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, online, ordering, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
         /**
          * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
@@ -11034,7 +13118,7 @@ export const WorkersApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         read(workerHref: string, fields?: string, excludeFields?: string, options?: any): AxiosPromise<WorkerResponse> {
-            return WorkersApiFp(configuration).read(workerHref, fields, excludeFields, options).then((request) => request(axios, basePath));
+            return localVarFp.read(workerHref, fields, excludeFields, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -11049,21 +13133,21 @@ export class WorkersApi extends BaseAPI {
     /**
      * A customized named ModelViewSet that knows how to register itself with the Pulp API router.  This viewset is discoverable by its name. \"Normal\" Django Models and Master/Detail models are supported by the ``register_with`` method.  Attributes:     lookup_field (str): The name of the field by which an object should be looked up, in         addition to any parent lookups if this ViewSet is nested. Defaults to \'pk\'     endpoint_name (str): The name of the final path segment that should identify the ViewSet\'s         collection endpoint.     nest_prefix (str): Optional prefix under which this ViewSet should be nested. This must         correspond to the \"parent_prefix\" of a router with rest_framework_nested.NestedMixin.         None indicates this ViewSet should not be nested.     parent_lookup_kwargs (dict): Optional mapping of key names that would appear in self.kwargs         to django model filter expressions that can be used with the corresponding value from         self.kwargs, used only by a nested ViewSet to filter based on the parent object\'s         identity.     schema (DefaultSchema): The schema class to use by default in a viewset.
      * @summary List workers
-     * @param {string} [lastHeartbeat] last_heartbeat
-     * @param {string} [lastHeartbeatGt] last_heartbeat__gt
-     * @param {string} [lastHeartbeatGte] last_heartbeat__gte
-     * @param {string} [lastHeartbeatLt] last_heartbeat__lt
-     * @param {string} [lastHeartbeatLte] last_heartbeat__lte
-     * @param {string} [lastHeartbeatRange] last_heartbeat__range
+     * @param {string} [lastHeartbeat] ISO 8601 formatted dates are supported
+     * @param {string} [lastHeartbeatGt] Filter results where last_heartbeat is greater than value
+     * @param {string} [lastHeartbeatGte] Filter results where last_heartbeat is greater than or equal to value
+     * @param {string} [lastHeartbeatLt] Filter results where last_heartbeat is less than value
+     * @param {string} [lastHeartbeatLte] Filter results where last_heartbeat is less than or equal to value
+     * @param {Array<string>} [lastHeartbeatRange] Filter results where last_heartbeat is between two comma separated values
      * @param {number} [limit] Number of results to return per page.
-     * @param {string} [missing] missing
-     * @param {string} [name] name
-     * @param {string} [nameContains] name__contains
-     * @param {string} [nameIcontains] name__icontains
-     * @param {string} [nameIn] name__in
-     * @param {string} [nameStartswith] name__startswith
+     * @param {boolean} [missing] 
+     * @param {string} [name] 
+     * @param {string} [nameContains] Filter results where name contains value
+     * @param {string} [nameIcontains] Filter results where name contains value
+     * @param {Array<string>} [nameIn] Filter results where name is in a comma-separated list of values
+     * @param {string} [nameStartswith] Filter results where name starts with value
      * @param {number} [offset] The initial index from which to return the results.
-     * @param {string} [online] online
+     * @param {boolean} [online] 
      * @param {string} [ordering] Which field to use when ordering the results.
      * @param {string} [fields] A list of fields to include in the response.
      * @param {string} [excludeFields] A list of fields to exclude from the response.
@@ -11071,7 +13155,7 @@ export class WorkersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkersApi
      */
-    public list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: string, limit?: number, missing?: string, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: string, nameStartswith?: string, offset?: number, online?: string, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
+    public list(lastHeartbeat?: string, lastHeartbeatGt?: string, lastHeartbeatGte?: string, lastHeartbeatLt?: string, lastHeartbeatLte?: string, lastHeartbeatRange?: Array<string>, limit?: number, missing?: boolean, name?: string, nameContains?: string, nameIcontains?: string, nameIn?: Array<string>, nameStartswith?: string, offset?: number, online?: boolean, ordering?: string, fields?: string, excludeFields?: string, options?: any) {
         return WorkersApiFp(this.configuration).list(lastHeartbeat, lastHeartbeatGt, lastHeartbeatGte, lastHeartbeatLt, lastHeartbeatLte, lastHeartbeatRange, limit, missing, name, nameContains, nameIcontains, nameIn, nameStartswith, offset, online, ordering, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -11089,5 +13173,6 @@ export class WorkersApi extends BaseAPI {
         return WorkersApiFp(this.configuration).read(workerHref, fields, excludeFields, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
