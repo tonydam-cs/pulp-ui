@@ -4,9 +4,14 @@ A Pulp plugin to provide a Web UI for Pulp 3.
 
 For more information, please see the [documentation](docs/index.rst) or the [Pulp project page](https://pulpproject.org/).
 
+## Setup
+
+### Pulp REST API
 
 The Web UI project assumes that Pulp's REST API is available at http://localhost:8080/. The simplest way to deploy pulp is
 using the [single container](https://pulpproject.org/pulp-in-one-container/).
+
+### Pulp UI
 
 Once you have Pulp installed, you need to install [npm](https://www.npmjs.com/get-npm). It gets installed together with
 [node.js](https://nodejs.org/en/download/)
@@ -17,10 +22,14 @@ Once you have `npm`, you can run the following commands to install, build, and l
     npm install
     npm run start:dev
 
+## Technologies
+
 The Web UI project uses [webpack](https://webpack.js.org/concepts/) to bundle all the TypeScript assets and serve them
 using a development web server. The config for the development server is [here](pulp_ui/app/webpack.dev.js).
 
 The Web UI project was seeded using [Patternly React Seed](https://github.com/patternfly/patternfly-react-seed) project.
+
+### Clients
 
 The pulpcore-client and pulp_file client are generated using the ``generate.sh`` script from 
 [pulp-openapi-generator](https://github.com/pulp/pulp-openapi-generator) repository.
