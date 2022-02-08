@@ -13,6 +13,7 @@ import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { TasksIconConfig } from '@patternfly/react-icons';
 import { Contacts } from './Contacts/Contacts';
+import { RepoList } from './RepoList/RepoList';
 import { Status } from './Status/Status';
 
 let routeFocusTimer: number;
@@ -76,6 +77,13 @@ const routes: AppRouteConfig[] = [
     exact: true,
     path: '/ViewRepo',
     title: 'Pulp 3 | Content Page'
+  },
+  {
+    component: RepoList,
+    exact: true,
+    label: 'Repository List',
+    path: '/RepoList',
+    title: 'Pulp 3 | Repository List'
   },
   {
     component: MonitorTasks,
