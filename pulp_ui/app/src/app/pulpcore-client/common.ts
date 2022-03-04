@@ -53,11 +53,7 @@ export const setApiKeyToObject = async function (object: any, keyParamName: stri
  */
 export const setBasicAuthToObject = function (object: any, configuration?: Configuration) {
     //object["auth"] = { username: configuration.username, password: configuration.password };
-<<<<<<< HEAD
-    object["auth"] = { username: "admin", password: "password" };
-=======
     object["auth"] = { username: "admin", password: "password" }
->>>>>>> bca00ba (Retrieved list of repositories through API call and displayed placeholder text for each repo on repolist page; hardcoded username and password for API calls)
 }
 
 /**
