@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Button, Card, CardHeader, CardBody } from '@patternfly/react-core';
 /*
 List of possible props / fields returned by API call (full descriptions 
 at https://docs.pulpproject.org/pulpcore/restapi.html#operation/repositories_list):
@@ -17,7 +17,14 @@ const RepoItem = (props) => {
     console.log(props);
 
     return <div>
-        <p>This is a repo item! name: {props.name}</p>
+        <Card isHoverable>
+            <CardHeader>{props.name && <h1>{props.name}</h1>}</CardHeader>
+            <CardBody>
+                Last Sync: 
+                <Button>View Sync History</Button>
+                <Button>Sync</Button>
+            </CardBody>
+        </Card>
     </div>
 }
 
