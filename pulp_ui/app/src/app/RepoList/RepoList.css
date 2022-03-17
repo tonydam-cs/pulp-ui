@@ -1,11 +1,20 @@
+.card-header {
+    font-size: 25px;
+    font-weight: bold;
+
+}
+
+.side-spacing-left {
+    margin-left: 16px;
+}
+
+.side-spacing-right {
+    margin-right: 16px;
+}
+
 .space-between-container{
     display: flex;
     flex-direction: horizontal;
     justify-content: space-between;
 
-}
-
-.side-spacing{
-    margin-left: 10px;
-    margin-right: 10px;
 }

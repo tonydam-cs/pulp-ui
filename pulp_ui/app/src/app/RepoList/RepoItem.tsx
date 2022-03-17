@@ -19,12 +19,18 @@ const RepoItem = (props) => {
 
     return <div>
         <Card isHoverable>
-            <CardHeader>{props.name && <h1>{props.name}</h1>}</CardHeader>
+            <CardHeader>
+                {props.name && 
+                    <Button variant='link'>
+                        <h1 className='card-header'>{props.name}</h1>
+                    </Button>
+                }
+            </CardHeader>
             <CardBody className='space-between-container'>
-                Last Sync: 
+                <p className='side-spacing-left'>Last Sync: </p>
                 <div className='space-between-container'>
-                    <Button className='side-spacing' variant="secondary">View Sync History</Button>
-                    <Button className='side-spacing' variant="primary">Sync</Button>
+                    <Button className='side-spacing-right' variant="secondary">View Sync History</Button>
+                    <Button className='side-spacing-right' variant="danger">Sync</Button>
                 </div>
             </CardBody>
         </Card>
