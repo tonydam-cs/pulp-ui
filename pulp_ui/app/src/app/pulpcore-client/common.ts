@@ -53,7 +53,7 @@ export const setApiKeyToObject = async function (object: any, keyParamName: stri
  */
 export const setBasicAuthToObject = function (object: any, configuration?: Configuration) {
     //object["auth"] = { username: configuration.username, password: configuration.password };
-    object["auth"] = { username: "admin", password: "password" };
+    object["auth"] = { username: "admin", password: "password" }
 }
 
 /**
