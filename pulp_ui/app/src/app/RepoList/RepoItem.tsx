@@ -18,7 +18,7 @@ const RepoItem = (props) => {
     console.log(props);
 
     return <div>
-        <Card isHoverable>
+        <Card isHoverable className='card'>
             <CardHeader>
                 {props.name && 
                     <Button variant='link'>
