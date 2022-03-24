@@ -8,11 +8,15 @@
 
 }
 
-.side-spacing-left {
+.spacing-bottom {
+    margin-bottom: 16px;
+}
+
+.spacing-left {
     margin-left: 16px;
 }
 
-.side-spacing-right {
+.spacing-right {
     margin-right: 16px;
 }
 
