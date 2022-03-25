@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
+import * as PulpCoreClient from '@app/pulpcore-client';
 import { Button, Card, CardHeader, CardBody, Divider } from '@patternfly/react-core';
 import './RepoList.css';
 /*
@@ -16,6 +18,31 @@ retain_repo_versions
 */
 const RepoItem = (props) => {
     console.log(props);
+
+    const [list, setList] = useState<JSX.Element[]>([<p key="rp_list_placeholder">Loading repository list...</p>]);
+    const [remotePromise, setRemotePromise] = useState<Promise<Response>>();
+
+    useEffect(() => {
+        const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
+        //const repoAPI = new PulpCoreClient.Remotes
+        //const tempList = repoAPI.list();
+        //setListPromise(tempList);
+        const requestOptions = {
+            headers: {
+                'Authorization': 'Basic ' + btoa('admin:password')
+            }
+        }
+        setRemotePromise(fetch('https://pulp/pulp/api/v3/remotes/file/file/', requestOptions));
+    }, []);
+
+    useEffect(() => {
+        if(remotePromise) {
+            remotePromise.then((temp) => {
+                console.log('remote promise completed');
+                console.group(temp);
+            })
+        }
+    }, [remotePromise]);
 
     return <div>
         <Card isHoverable className='card'>
