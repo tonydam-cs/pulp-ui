@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import * as PulpCoreClient from '@app/pulpcore-client';
+import * as PulpRPMClient from '@app/pulp_rpm-client';
 import { Button, Card, CardHeader, CardBody, Divider } from '@patternfly/react-core';
 import './RepoList.css';
 /*
@@ -24,7 +25,7 @@ const RepoItem = (props) => {
 
     useEffect(() => {
         const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
-        //const repoAPI = new PulpCoreClient.Remotes
+        const repoAPI = new PulpRPMClient.RemotesRpmApi(configuration);
         //const tempList = repoAPI.list();
         //setListPromise(tempList);
         const requestOptions = {
