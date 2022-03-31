@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
-import * as PulpCoreClient from '@app/pulpcore-client';
 import * as PulpRPMClient from '@app/pulp_rpm-client';
 import { Button, Card, CardHeader, CardBody, Divider } from '@patternfly/react-core';
 import './RepoList.css';
@@ -21,29 +20,30 @@ const RepoItem = (props) => {
     console.log(props);
 
     const [list, setList] = useState<JSX.Element[]>([<p key="rp_list_placeholder">Loading repository list...</p>]);
-    const [remotePromise, setRemotePromise] = useState<Promise<Response>>();
+    const [listPromise, setListPromise] = useState<Promise<AxiosResponse<PulpRPMClient.PaginatedrpmRpmRemoteResponseList>>>();
+    const [lastSync, setLastSync] = useState<string>('');
 
     useEffect(() => {
-        const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
-        const repoAPI = new PulpRPMClient.RemotesRpmApi(configuration);
-        //const tempList = repoAPI.list();
-        //setListPromise(tempList);
-        const requestOptions = {
-            headers: {
-                'Authorization': 'Basic ' + btoa('admin:password')
-            }
-        }
-        setRemotePromise(fetch('https://pulp/pulp/api/v3/remotes/file/file/', requestOptions));
+        const configuration = new PulpRPMClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
+        const remoteAPI = new PulpRPMClient.RemotesRpmApi(configuration);
+        const tempList = remoteAPI.list();
+        setListPromise(tempList);
     }, []);
 
     useEffect(() => {
-        if(remotePromise) {
-            remotePromise.then((temp) => {
+        if(listPromise) {
+            listPromise.then((temp) => {
                 console.log('remote promise completed');
-                console.group(temp);
+                console.log(temp);
+                if(temp.data && temp.data.results && temp.data.results.length > 0 && temp.data.results[0].pulp_created) {
+                    setLastSync(temp.data.results[0].pulp_created);
+                }
+                else {
+                    setLastSync("Unavailable");
+                }
             })
         }
-    }, [remotePromise]);
+    }, [listPromise]);
 
     return <div>
         <Card isHoverable className='card'>
@@ -63,7 +63,7 @@ const RepoItem = (props) => {
             <CardBody>
             <Divider className='spacing-bottom' component='div'/>
                 <div className='space-between-container'>
-                    <p className='spacing-left'>Last Sync: </p>
+                    <p className='spacing-left'>Date of Last Sync: {lastSync}</p>
                     <div className='space-between-container'>
                         <Button className='spacing-right' variant="secondary">View Sync History</Button>
                         <Button className='spacing-right' variant="danger">Sync</Button>
