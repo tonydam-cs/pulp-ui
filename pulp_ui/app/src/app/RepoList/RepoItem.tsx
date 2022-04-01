@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
+import * as PulpFileClient from '@app/pulp_file-client';
 import * as PulpRPMClient from '@app/pulp_rpm-client';
 import { Button, Card, CardHeader, CardBody, Divider } from '@patternfly/react-core';
 import './RepoList.css';
@@ -44,6 +45,12 @@ const RepoItem = (props) => {
             })
         }
     }, [listPromise]);
+
+    const onSync = () => {
+        const configuration = new PulpFileClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
+        const repoAPI = new PulpFileClient.RepositoriesFileApi(configuration);
+        
+    }
 
     return <div>
         <Card isHoverable className='card'>
