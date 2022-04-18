@@ -28,7 +28,6 @@ const RepoList = () => {
     }, [listPromise]);
     
     return <div>
-        <h1>This is the repo list page!</h1>
         {list}
     </div>
 }

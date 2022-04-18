@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
-import * as PulpFileClient from '@app/pulp_file-client';
 import * as PulpRPMClient from '@app/pulp_rpm-client';
 import { Button, Card, CardHeader, CardBody, Divider } from '@patternfly/react-core';
 import './RepoList.css';
@@ -18,9 +17,6 @@ description
 retain_repo_versions
 */
 const RepoItem = (props) => {
-    console.log(props);
-
-    const [list, setList] = useState<JSX.Element[]>([<p key="rp_list_placeholder">Loading repository list...</p>]);
     const [listPromise, setListPromise] = useState<Promise<AxiosResponse<PulpRPMClient.PaginatedrpmRpmRemoteResponseList>>>();
     const [lastSync, setLastSync] = useState<string>('');
 
@@ -34,8 +30,6 @@ const RepoItem = (props) => {
     useEffect(() => {
         if(listPromise) {
             listPromise.then((temp) => {
-                console.log('remote promise completed');
-                console.log(temp);
                 if(temp.data && temp.data.results && temp.data.results.length > 0 && temp.data.results[0].pulp_created) {
                     setLastSync(temp.data.results[0].pulp_created);
                 }
@@ -45,12 +39,6 @@ const RepoItem = (props) => {
             })
         }
     }, [listPromise]);
-
-    const onSync = () => {
-        const configuration = new PulpFileClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
-        const repoAPI = new PulpFileClient.RepositoriesFileApi(configuration);
-        
-    }
 
     return <div>
         <Card isHoverable className='card'>
@@ -72,7 +60,7 @@ const RepoItem = (props) => {
                 <div className='space-between-container'>
                     <p className='spacing-left'>Date of Last Sync: {lastSync}</p>
                     <div className='space-between-container'>
-                        <Button className='spacing-right' variant="secondary">View Sync History</Button>
+                        <Button className='spacing-right' variant="secondary">View History</Button>
                         <Button className='spacing-right' variant="danger">Sync</Button>
                     </div>
                 </div>
