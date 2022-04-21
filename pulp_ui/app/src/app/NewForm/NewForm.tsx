@@ -1,74 +1,87 @@
-// Create a new form for creating a new repository.
-import ReactDOM from "react-dom";
+/**********************************************************************
+ * Author: Stephanie La (student at Umass Lowell)
+ * My task was to create a new page for creating a repository.
+ * So I needed three fields: Create a remote, create a repository,
+ * and create a distribution. I have created 3 fields for each,
+ * with captions and placeholder text as an example so people 
+ * know what to put in each box. This is currently only static 
+ * UI so more work must be done to route this page with the create
+ * button on the dashboard page. Data will not be saved and 
+ * potentially must be saved (may need to use state values and more).
+ * Not really sure what is fieldId, id, name, or aria-describedby, but
+ * I think they're just identifiers. If needed to change, just go ahead.
+ * I just used filler strings to fill these properties.
+ * Website for reference: 
+ * https://www.patternfly.org/v4/components/form
+ * https://www.patternfly.org/v4/components/button/
+ * 
+ */
+
 import React from 'react';
-import { TextInput } from '@patternfly/react-core';
-import { Button } from '@patternfly/react-core';
-import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
+import { Form, FormGroup, TextInput, Button, TextContent, ActionGroup, Text, TextVariants} from '@patternfly/react-core';
+// Please only import things you need!
 
-import {
-  TextContent,
-  Text,
-  TextVariants,
-  TextList,
-  TextListVariants,
-  TextListItem,
-  TextListItemVariants
-} from '@patternfly/react-core';
-
-
-const Headings = () => (
-  <TextContent>
-    <Text component={TextVariants.h1}>Create a New Repository</Text>
-    <Text component={TextVariants.h2}>Second level</Text>
-    <Text component={TextVariants.h3}>Third level</Text>
-    <Text component={TextVariants.h4}>Fourth level</Text>
-    <Text component={TextVariants.h5}>Fifth level</Text>
-    <Text component={TextVariants.h6}>Sixth level</Text>
+class NewForm extends React.Component{
+  render (){
+    return(
+<Form>
+<TextContent>
+  <Text component={TextVariants.h1}>Create a New Respository</Text>
   </TextContent>
-)
-
-class SimpleTextInput extends React.Component {
-  handleTextInputChange: (value: any) => void;
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: ''
-    };
-    this.handleTextInputChange = value => {
-      this.setState({ value });
-    };
-  }
-
-  render() {
-    const { value } = this.state;
-
-    return (
-      <TextInput value={value} type="text" onChange={this.handleTextInputChange} aria-label="text input example" />
+    <FormGroup
+        label="Create a remote"
+        isRequired
+        fieldId="first-box"
+        helperText="Type command here."
+        >
+          <TextInput
+            isRequired
+            type="text"
+            placeholder="pulp rpm remote create --name 'remote-foo' --url 'https://fixtures.pulpproject.org/rpm-unsigned/'"
+            id="first-box-input"
+            name="first-box-input"
+            aria-describedby="first-box-input"
+          />
+    </FormGroup>
+    <FormGroup
+        label="Create a repository"
+        isRequired
+        fieldId="second-box"
+        helperText="Type command here."
+    >
+          <TextInput
+            isRequired
+            type="text"
+            placeholder="pulp rpm repository create --name 'repo-foo' --autopublish --remote remote-foo"
+            id="second-box-input"
+            name="second-box-input"
+            aria-describedby="second-box-input"
+          />
+    </FormGroup>
+    <FormGroup
+        label="Create a distribution"
+        isRequired
+        fieldId="third-box"
+        helperText="Type command here."
+    >
+          <TextInput
+            isRequired
+            type="text"
+            placeholder="pulp rpm distribution create --base-path path/foo --repository repo-foo --name dist-foo"
+            id="third-box-input"
+            name="third-box-input"
+            aria-describedby="third-box-input"
+          />
+    </FormGroup>
+    <ActionGroup>
+          <Button variant="primary">Submit</Button>
+          <Button variant="link">Cancel</Button>
+        </ActionGroup>
+    {/* <React.Fragment>
+    <Button type="submit">Submit</Button> 
+  </React.Fragment> */}
+      </Form>
     );
   }
 }
-
-export const ButtonVariations: React.FunctionComponent = () => (
-  <React.Fragment>
-    <Button variant="primary">Primary</Button> <Button variant="secondary">Secondary</Button>{' '}
-    <Button variant="secondary" isDanger>
-      Danger Secondary
-    </Button>{' '}
-    <Button variant="tertiary">Tertiary</Button> <Button variant="danger">Danger</Button>{' '}
-    <Button variant="warning">Warning</Button>
-    <br />
-    <br />
-    
-    <br />
-    <br />
-    <Button variant="plain" aria-label="Action">
-      <TimesIcon />
-    </Button>
-    <br />
-    <br />
-    <Button variant="control">Control</Button>{' '}
-    <Button variant="control" aria-label="Copy">
-      <CopyIcon />
-    </Button>
-  </React.Fragment>
-);
+export {NewForm}
