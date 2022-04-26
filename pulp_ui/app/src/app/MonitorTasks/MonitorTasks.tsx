@@ -8,67 +8,12 @@ import './MonitorTasks.css';
 import * as PulpCoreClient from '@app/pulpcore-client';
 
 import {
-    Avatar,
-    Brand,
-    Breadcrumb,
-    BreadcrumbItem,
     Button,
-    ButtonVariant,
-    Dropdown,
-    Card,
-    CardTitle,
-    CardBody,
-    DataList,
-    DataListAction,
-    DataListCell,
-    DataListItem,
-    DataListItemCells,
-    DataListItemRow,
-    Toolbar,
-    ToolbarItem,
-    ToolbarContent,
-    ToolbarToggleGroup,
-    ToolbarGroup,
-    Divider,
-    Drawer,
-    DrawerActions,
-    DrawerCloseButton,
-    DrawerContent,
-    DrawerContentBody,
-    DrawerHead,
-    DrawerPanelBody,
-    DrawerPanelContent,
-    DropdownToggle,
-    DropdownItem,
-    DropdownSeparator,
-    Flex,
-    FlexItem,
-    Gallery,
-    GalleryItem,
-    InputGroup,
-    KebabToggle,
-    List,
-    ListItem,
-    Nav,
-    NavItem,
-    NavList,
     Page,
-    PageHeader,
     PageSection,
     PageSectionVariants,
-    PageSidebar,
-    Progress,
-    Select,
-    SelectVariant,
-    SelectOption,
-    SkipToContent,
-    Stack,
-    StackItem,
     Text,
     TextContent,
-    TextInput,
-    Title,
-    CardHeader
 } from "@patternfly/react-core";
 import { TaskResponse } from "@app/pulpcore-client";
 
@@ -88,7 +33,8 @@ const MonitorTasks: React.FunctionComponent = () => {
     function taskREAD() {
         const getTaskData = async () => {
             const configuration = new PulpCoreClient.Configuration({username: 'admin', password: 'password', basePath: 'http://localhost:9000'});
-            const tasksAPI = new PulpCoreClient.TasksApi({configuration: configuration});
+            //const tasksAPI = new PulpCoreClient.TasksApi({configuration: configuration});
+            const tasksAPI = new PulpCoreClient.TasksApi(configuration);
             const taskList = await tasksAPI.list();
             setTaskData({
               task_count: taskList.data.count,
