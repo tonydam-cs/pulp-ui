@@ -9,6 +9,7 @@ import { MonitorTasks } from '@app/MonitorTasks/MonitorTasks';
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
+import { NewForm } from '@app/NewForm/NewForm';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { TasksIconConfig } from '@patternfly/react-icons';
@@ -91,6 +92,14 @@ const routes: AppRouteConfig[] = [
     label: 'Monitor Tasks',
     path: '/monitor',
     title: "Pulp 3 | Monitor Tasks"
+  },
+  {
+    component: NewForm,
+    exact: true,
+    label: 'Create a New Repository',
+    path: '/NewForm',
+    title: 'Pulp 3 | Create a Repository'
+
   },
   {
     component: Support,
