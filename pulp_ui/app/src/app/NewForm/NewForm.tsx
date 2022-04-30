@@ -18,8 +18,14 @@
  */
 
 import React from 'react';
-import { Form, FormGroup, TextInput, Button, TextContent, ActionGroup, Text, TextVariants} from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, InputGroup, Button, TextContent, ActionGroup, Text, TextVariants} from '@patternfly/react-core';
+import CheckCircleIcon from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 // Please only import things you need!
+
+// this has problems. const functions don't really work with class components.
+// May need to change/revise below into function component.
+// const ProgressButton: React.FunctionComponent = () => {
+//   const [loginState, setLoginState] = React.useState<'notLoggedIn' | 'loading' | 'loggedIn'>('notLoggedIn');
 
 class NewForm extends React.Component{
   render (){
@@ -29,52 +35,46 @@ class NewForm extends React.Component{
   <Text component={TextVariants.h1}>Create a New Respository</Text>
   </TextContent>
     <FormGroup
-        label="Create a remote"
+        label="Name"
         isRequired
         fieldId="first-box"
-        helperText="Type command here."
         >
           <TextInput
             isRequired
             type="text"
-            placeholder="pulp rpm remote create --name 'remote-foo' --url 'https://fixtures.pulpproject.org/rpm-unsigned/'"
             id="first-box-input"
             name="first-box-input"
             aria-describedby="first-box-input"
           />
     </FormGroup>
     <FormGroup
-        label="Create a repository"
+        label="URL"
         isRequired
         fieldId="second-box"
-        helperText="Type command here."
     >
           <TextInput
             isRequired
             type="text"
-            placeholder="pulp rpm repository create --name 'repo-foo' --autopublish --remote remote-foo"
             id="second-box-input"
             name="second-box-input"
             aria-describedby="second-box-input"
           />
     </FormGroup>
     <FormGroup
-        label="Create a distribution"
+        label="Base Path"
         isRequired
         fieldId="third-box"
-        helperText="Type command here."
     >
           <TextInput
             isRequired
             type="text"
-            placeholder="pulp rpm distribution create --base-path path/foo --repository repo-foo --name dist-foo"
             id="third-box-input"
             name="third-box-input"
             aria-describedby="third-box-input"
           />
     </FormGroup>
     <ActionGroup>
-          <Button variant="primary">Submit</Button>
+          <Button variant="primary">Create</Button>
           <Button variant="link">Cancel</Button>
         </ActionGroup>
     {/* <React.Fragment>
